@@ -42,6 +42,16 @@ Table accounts {
   note: "Contains user information"
 }
 
+Table configs {
+  id char(16) [pk]
+	account_id char(16) [not null] // See Ref configs.account_id
+	timezone timezone [not null]
+
+	note: "Contains the user's account config"
+}
+
+Ref: accounts.id - configs.account_id [delete: cascade]
+
 Table google {
   id varchar [pk]
 	account_id char(16) [not null] // See Ref google.account_id
@@ -54,15 +64,15 @@ Table google {
 
 Ref: accounts.id - google.account_id [delete: restrict]
 
-Table configs {
-  id char(16) [pk]
-	account_id char(16) [not null] // See Ref configs.account_id
-	timezone timezone [not null]
+Table magic_link_codes {
+	account_id char(16) [pk] // See Ref magic_link_codes.account_id
+  code char(32) [not null]
+  created_at timestamp [not null]
 
-	note: "Contains the user's account config"
+	note: "Contains codes to be used by the users to login"
 }
 
-Ref: accounts.id < configs.account_id [delete: cascade]
+Ref: accounts.id - magic_link_codes.account_id [delete: cascade]
 
 //
 //
