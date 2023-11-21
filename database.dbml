@@ -10,6 +10,62 @@ Project Econominhas {
 
 //
 //
+// Accounts
+//
+//
+
+enum timezone {
+	"America/Araguaina" [note: '-03:00']
+	"America/Bahia" [note: '-03:00']
+	"America/Belem" [note: '-03:00']
+	"America/Boa_Vista" [note: '-04:00']
+	"America/Campo_Grande" [note: '-04:00']
+	"America/Cuiaba" [note: '-04:00']
+	"America/Eirunepe" [note: '-05:00']
+	"America/Fortaleza" [note: '-03:00']
+	"America/Maceio" [note: '-03:00']
+	"America/Manaus" [note: '-04:00']
+	"America/Noronha" [note: '-02:00']
+	"America/Porto_Velho" [note: '-04:00']
+	"America/Recife" [note: '-03:00']
+	"America/Rio_Branco" [note: '-05:00']
+	"America/Santarem" [note: '-03:00']
+	"America/Sao_Paulo" [note: '-03:00']
+}
+
+Table accounts {
+  id char(16) [pk]
+  email varchar(150) [unique]
+  phone varchar(25) [unique]
+  created_at timestamp [default: `now()`, not null]
+
+  note: "Contains user information"
+}
+
+Table google {
+  id varchar [pk]
+	account_id char(16) [not null] // See Ref google.account_id
+  access_token varchar [not null]
+  refresh_token varchar [not null]
+  expires_at timestamp [not null]
+
+	note: "Contains user's link to google account"
+}
+
+Ref: accounts.id - google.account_id [delete: restrict]
+
+Table configs {
+  id char(16) [pk]
+	account_id char(16) [not null] // See Ref configs.account_id
+	timezone timezone [not null]
+
+	note: "Contains the user's account config"
+}
+
+Ref: accounts.id < configs.account_id [delete: cascade]
+
+//
+//
 // Subscriptions
 //
 //
@@ -18,6 +74,10 @@ Table subscriptions {
   id char(16) [pk]
 	name varchar(50) [not null]
 	icon varchar(50) [not null]
+	color char(7) [not null]
+	icon_color char(7) [not null]
+	monthly_price smallint [not null]
+	yearly_price smallint [not null]
 	// Number limits
 	bank_accounts smallint [not null, note: '-1 = Infinite']
 	postpaid_card smallint [not null, note: '-1 = Infinite']
@@ -31,54 +91,51 @@ Table subscriptions {
 	bank_integrations smallint [not null, note: '-1 = Infinite']
 	// Boolean limits
 	web boolean [not null, note: 'If the user has access to the web version']
+
+	note: "Contains information about the subscriptions"
 }
 
-//
-//
-// Accounts
-//
-//
-
-Table accounts {
+Table users_subscriptions {
   id char(16) [pk]
-	subscription_id char(16) [not null]  // See Ref accounts.subscription_id
-  email varchar [unique]
-  phone varchar [unique]
-  created_at timestamp [default: `now()`, not null]
-  note: "table 'accounts' contains user information"
+	account_id char(16) [not null] // See Ref users_subscriptions.account_id
+	subscription_id char(16) [not null]  // See Ref configs.subscription_id
+	started_at timestamp [not null]
+	last_renewal_at timestamp
+	cancelled_at timestamp [note: 'The base subscription will never have a cancelled_at, it will ALWAYS be active']
+
+	note: "Contains the user's subscription"
 }
 
-Ref: subscriptions.id - accounts.subscription_id [delete: restrict]
+Ref: accounts.id < users_subscriptions.account_id [delete: restrict]
+Ref: subscriptions.id - users_subscriptions.subscription_id [delete: restrict]
 
-Table google {
-  id varchar [pk]
-	account_id char(16) [not null] // See Ref google.account_id
-  access_token varchar [not null]
-  refresh_token varchar [not null]
-  expires_at timestamp [not null]
-  note: "table 'google' contains user's link to google account"
-}
+//
+//
+// Temrs of service\
+//
+//
 
-Ref: accounts.id - google.account_id [delete: restrict]
-
-Table terms_of_use {
+Table terms {
   id varchar [pk] // semver
-  terms varchar [not null]
+  terms_of_use varchar [not null]
+  privacy_policy varchar [not null]
   live_at timestamp
   created_at timestamp [default: `now()`, not null]
-  note: "table 'terms_of_use' contains the terms of use"
+
+	note: "Contains the terms of use and privacy policy"
 }
 
-Table terms_of_use_accepted {
+Table terms_accepted {
   id char(16) [pk]
-	account_id char(16) [not null] // See Ref terms_of_use_accepted.account_id
-	terms_of_use_id varchar [not null] // See Ref terms_of_use_accepted.terms_of_use_id
+	account_id char(16) [not null] // See Ref terms_accepted.account_id
+	terms_id varchar [not null] // See Ref terms_accepted.terms_id
   accepted_at timestamp [default: `now()`, not null]
-  note: "table 'terms_of_use_accepted' contains the record of all the terms accepted by the user"
+
+	note: "Contains the record of all the terms accepted by the user"
 }
 
-Ref: accounts.id < terms_of_use_accepted.account_id [delete: cascade]
-Ref: terms_of_use.id < terms_of_use_accepted.terms_of_use_id [delete: restrict]
+Ref: accounts.id < terms_accepted.account_id [delete: cascade]
+Ref: terms.id < terms_accepted.terms_id [delete: restrict]
 
 //
 //
@@ -92,7 +149,8 @@ Table bank_providers {
 	code char(3) [not null]
 	icon_url varchar(200) [not null]
 	color char(7) [not null]
-  note: "table 'bank_providers' contains the record of all the existant banks"
+
+  note: "Contains the record of all the existant banks"
 }
 
 Table bank_accounts {
@@ -103,7 +161,8 @@ Table bank_accounts {
 	branch char(4) [not null]
 	balance int [not null]
 	name varchar(50) [not null]
-  note: "table 'bank_accounts' contains the record of all the user's banks accounts"
+
+	note: "Contains the record of all the user's banks accounts"
 }
 
 Ref: accounts.id < bank_accounts.account_id [delete: restrict]
@@ -143,7 +202,8 @@ Table card_providers {
 	type card_type [not null]
 	network card_network [not null]
 	statement_days smallint [note: 'Only postpaid cards have this column']
-  note: "table 'card_providers' contains the record of all the existant cards"
+
+	note: "Contains the record of all the existant cards"
 }
 
 Ref: bank_providers.id < card_providers.bank_id [delete: restrict]
@@ -162,7 +222,7 @@ Table cards {
 
 	balance int [note: 'Only prepaid cards have this column']
 
-  note: "table 'cards' contains the record of all the user's cards"
+  note: "Contains the record of all the user's cards"
 }
 
 Ref: accounts.id < cards.account_id [delete: restrict]
@@ -182,7 +242,8 @@ Table categories {
 	icon_url varchar(200) [not null]
 	color char(7) [not null]
 	active boolean [not null]
-  note: "table 'categories' contains all the user's categories"
+
+	note: "Contains all the user's categories"
 }
 
 Ref: accounts.id < categories.account_id [delete: restrict]
@@ -198,7 +259,8 @@ Table budgets {
 	account_id char(16) [not null] // See Ref budget.account_id
 	name varchar(50) [not null]
 	year char(4) [not null]
-  note: "table 'budgets' contains the user's budget information"
+
+	note: "Contains the user's budget information"
 }
 
 Ref: accounts.id < budgets.account_id [delete: restrict]
@@ -208,7 +270,8 @@ Table budget_items {
 	category_id char(16) [not null] // See Ref budget_items.category_id
 	month char(2) [not null]
 	budget int [not null]
-  note: "table 'budget_items' contains the user's budgets by category"
+
+	note: "Contains the user's budgets by category"
 
 	indexes {
   	(budget_id, category_id, month) [pk]
@@ -247,9 +310,9 @@ enum recurrent_transaction_frequency {
 	SEMI_ANNUALY [note: 'Once every 6 months']
 }
 
-enum recurrency_rule {
-	EXACT_VALUE
-	MBWOPM [note: 'MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the value is multiplied by the amount of weeks of the previous month']
+enum recurrent_transaction_rule {
+	EXACT_AMOUNT
+	MBWOPM [note: 'MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the amount is multiplied by the amount of weeks of the previous month']
 }
 
 Table transactions {
@@ -258,27 +321,25 @@ Table transactions {
 	type transaction_type [not null]
 	name varchar(50) [not null]
 	description varchar(300) [not null]
-	value int [not null]
+	amount int [not null]
 	budget_id char(16) [not null] // See Ref transactions.budget_id
   created_at timestamp [default: `now()`, not null]
 
 	payment_method payment_method [note: 'Only type=IN,type=OUT transactions have this column']
 	category_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref transactions.category_id
 	card_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref transactions.card_id
-	installment_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref transactions.installment_id
 	bank_account_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref transactions.bank_account_id
 
 	bank_account_from_id char(16) [note: 'Only type=TRANSFER transactions have this column'] // See Ref transactions.bank_account_from_id
 	bank_account_to_id char(16) [note: 'Only type=TRANSFER transactions have this column'] // See Ref transactions.bank_account_to_id
 
-  note: "table 'transactions' contains all the user's transactions"
+  note: "Contains all the user's transactions"
 }
 
 Ref: accounts.id < transactions.account_id [delete: restrict]
 Ref: categories.id < transactions.category_id [delete: restrict]
 Ref: budgets.id < transactions.budget_id [delete: restrict]
 Ref: cards.id < transactions.card_id [delete: restrict]
-Ref: installments.id - transactions.installment_id [delete: restrict]
 Ref: bank_accounts.id < transactions.bank_account_id [delete: restrict]
 Ref: bank_accounts.id < transactions.bank_account_from_id [delete: restrict]
 Ref: bank_accounts.id < transactions.bank_account_to_id [delete: restrict]
@@ -290,20 +351,20 @@ Table installments {
 	transaction_id char(16) [not null] // See Ref transactions.budget_id
   created_at timestamp [default: `now()`, not null]
 
-  note: "table 'installments' contains the installment data of an transactions"
+  note: "Contains the installment data of an transactions"
 }
 
 Ref: transactions.id - installments.transaction_id [delete: cascade]
 
 Table recurrent_transaction_rules {
   id char(16) [pk]
-	rule recurrency_rule [not null]
+	rule recurrent_transaction_rule [not null]
 	weekday int
 	weekdays int[]
 	day_of_the_month varchar(5)
 	month int
 
-  note: "table 'recurrent_transactions' contains all the user's recurrent transactions"
+  note: "Contains the recurrent transactions rules to be executed"
 }
 
 Table recurrent_transactions {
@@ -315,7 +376,7 @@ Table recurrent_transactions {
 	type transaction_type
 	name varchar(50) [not null]
 	description varchar(300) [not null]
-	value int [not null]
+	amount int [not null]
 	// Only type=IN,type=OUT
 	category_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref recurrent_transactions.category_id
 	card_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref recurrent_transactions.card_id
@@ -324,7 +385,7 @@ Table recurrent_transactions {
 	bank_account_from_id char(16) [note: 'Only type=TRANSFER transactions have this column'] // See Ref recurrent_transactions.bank_account_from_id
 	bank_account_to_id char(16) [note: 'Only type=TRANSFER transactions have this column'] // See Ref recurrent_transactions.bank_account_to_id
 
-  note: "table 'recurrent_transactions' contains all the user's recurrent transactions"
+  note: "Contains all the user's recurrent transactions"
 }
 
 Ref: accounts.id < recurrent_transactions.account_id [delete: restrict]
