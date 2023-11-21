@@ -39,22 +39,11 @@ Table accounts {
   phone varchar(25) [unique]
   created_at timestamp [default: `now()`, not null]
 
-  note: "Contains user information"
+  note: "Contains user's sign in information"
 }
-
-Table configs {
-  id char(16) [pk]
-	account_id char(16) [not null] // See Ref configs.account_id
-	timezone timezone [not null]
-
-	note: "Contains the user's account config"
-}
-
-Ref: accounts.id - configs.account_id [delete: cascade]
 
 Table google {
-  id varchar [pk]
-	account_id char(16) [not null] // See Ref google.account_id
+	account_id char(16) [pk] // See Ref google.account_id
   access_token varchar [not null]
   refresh_token varchar [not null]
   expires_at timestamp [not null]
@@ -63,6 +52,20 @@ Table google {
 }
 
 Ref: accounts.id - google.account_id [delete: restrict]
+
+Table configs {
+	account_id char(16) [pk] // See Ref configs.account_id
+	name varchar(20) [not null]
+	timezone timezone [not null]
+	current_budget_id char(16) // See Ref accounts.current_budget_id
+	salary_id char(16) // See Ref accounts.salary_id
+
+  note: "Contains user's account config"
+}
+
+Ref: accounts.id - configs.account_id [delete: cascade]
+Ref: budgets.id - configs.current_budget_id [delete: set null]
+Ref: recurrent_transactions.id - configs.salary_id [delete: set null]
 
 Table magic_link_codes {
 	account_id char(16) [pk] // See Ref magic_link_codes.account_id
@@ -99,8 +102,10 @@ Table subscriptions {
 	tags smallint [not null, note: '-1 = Infinite']
 	reminders smallint [not null, note: '-1 = Infinite']
 	bank_integrations smallint [not null, note: '-1 = Infinite']
+	budgets smallint [not null, note: '-1 = Infinite']
 	// Boolean limits
 	web boolean [not null, note: 'If the user has access to the web version']
+	ctl_bpm boolean [not null, note: 'Control budget per month: If allows the user to have a more precisa control over his budget, allowing him to edit each months budget, or he can only defines 1 value for all months of the year']
 
 	note: "Contains information about the subscriptions"
 }
@@ -117,7 +122,7 @@ Table users_subscriptions {
 }
 
 Ref: accounts.id < users_subscriptions.account_id [delete: restrict]
-Ref: subscriptions.id - users_subscriptions.subscription_id [delete: restrict]
+Ref: subscriptions.id < users_subscriptions.subscription_id [delete: restrict]
 
 //
 //
@@ -249,6 +254,7 @@ Table categories {
   id char(16) [pk]
 	account_id char(16) [not null] // See Ref categories.account_id
 	name varchar(50) [not null]
+	description varchar(300) [not null]
 	icon_url varchar(200) [not null]
 	color char(7) [not null]
 	active boolean [not null]
@@ -268,7 +274,7 @@ Table budgets {
   id char(16) [pk]
 	account_id char(16) [not null] // See Ref budget.account_id
 	name varchar(50) [not null]
-	year char(4) [not null]
+	description varchar(300) [not null]
 
 	note: "Contains the user's budget information"
 }
@@ -279,12 +285,13 @@ Table budget_items {
 	budget_id char(16) [not null] // See Ref budget_items.budget_id
 	category_id char(16) [not null] // See Ref budget_items.category_id
 	month char(2) [not null]
+	year char(4) [not null]
 	budget int [not null]
 
 	note: "Contains the user's budgets by category"
 
 	indexes {
-  	(budget_id, category_id, month) [pk]
+  	(budget_id, category_id, month, year) [pk]
 	}
 }
 
@@ -323,6 +330,7 @@ enum recurrent_transaction_frequency {
 enum recurrent_transaction_rule {
 	EXACT_AMOUNT
 	MBWOPM [note: 'MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the amount is multiplied by the amount of weeks of the previous month']
+	MBDOPM [note: 'MULTIPLY_BY_DAYS_OF_PREV_MONTH, the amount is multiplied by the amount of days of the previous month']
 }
 
 Table transactions {
@@ -334,6 +342,8 @@ Table transactions {
 	amount int [not null]
 	budget_id char(16) [not null] // See Ref transactions.budget_id
   created_at timestamp [default: `now()`, not null]
+	system_managed boolean [not null, note: 'Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user']
+	recurrent_transaction_id char(16) // See Ref transactions.recurrent_transaction_id
 
 	payment_method payment_method [note: 'Only type=IN,type=OUT transactions have this column']
 	category_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref transactions.category_id
@@ -349,16 +359,16 @@ Table transactions {
 Ref: accounts.id < transactions.account_id [delete: restrict]
 Ref: categories.id < transactions.category_id [delete: restrict]
 Ref: budgets.id < transactions.budget_id [delete: restrict]
+Ref: recurrent_transactions.id < transactions.recurrent_transaction_id [delete: set null]
 Ref: cards.id < transactions.card_id [delete: restrict]
 Ref: bank_accounts.id < transactions.bank_account_id [delete: restrict]
 Ref: bank_accounts.id < transactions.bank_account_from_id [delete: restrict]
 Ref: bank_accounts.id < transactions.bank_account_to_id [delete: restrict]
 
 Table installments {
-  id char(16) [pk]
+	transaction_id char(16) [pk] // See Ref transactions.budget_id
 	total smallint [not null]
 	current smallint [not null]
-	transaction_id char(16) [not null] // See Ref transactions.budget_id
   created_at timestamp [default: `now()`, not null]
 
   note: "Contains the installment data of an transactions"
@@ -366,8 +376,43 @@ Table installments {
 
 Ref: transactions.id - installments.transaction_id [delete: cascade]
 
-Table recurrent_transaction_rules {
+Table recurrent_transactions {
   id char(16) [pk]
+	account_id char(16) [not null] // See Ref recurrent_transactions.account_id
+	budget_id char(16) [not null] // See Ref recurrent_transactions.budget_id
+	frequency recurrent_transaction_frequency [not null]
+	system_managed boolean [not null, note: 'Define if the recurrent transaction is automatic controlled by the system, or if it\'s created and controled by the user']
+	// Data to create the transaction
+	type transaction_type
+	name varchar(50) [not null]
+	description varchar(300) [not null]
+	amount int [not null]
+	system_managed_t boolean [not null, note: 'Define if the transaction is automatic controlled by the system, or if it\'s controled by the user']
+	// Only type=IN,type=OUT
+	category_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref recurrent_transactions.category_id
+	card_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref recurrent_transactions.card_id
+	bank_account_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref recurrent_transactions.bank_account_id
+	// Only Only type=TRANSFER
+	bank_account_from_id char(16) [note: 'Only type=TRANSFER transactions have this column'] // See Ref recurrent_transactions.bank_account_from_id
+	bank_account_to_id char(16) [note: 'Only type=TRANSFER transactions have this column'] // See Ref recurrent_transactions.bank_account_to_id
+
+  note: '''
+	Contains all the user's recurrent transactions.
+
+	The recurrent transactions are linked to the budget, this way the user can have a better control of which transactions he wants to execute.
+	'''
+}
+
+Ref: accounts.id < recurrent_transactions.account_id [delete: restrict]
+Ref: budgets.id < recurrent_transactions.budget_id [delete: restrict]
+Ref: categories.id < recurrent_transactions.category_id [delete: restrict]
+Ref: cards.id < recurrent_transactions.card_id [delete: restrict]
+Ref: bank_accounts.id < recurrent_transactions.bank_account_id [delete: restrict]
+Ref: bank_accounts.id < recurrent_transactions.bank_account_from_id [delete: restrict]
+Ref: bank_accounts.id < recurrent_transactions.bank_account_to_id [delete: restrict]
+
+Table recurrent_transaction_rules {
+	recurrent_transaction_id char(16) [pk]  // See Ref recurrent_transaction_rules.recurrent_transaction_id
 	rule recurrent_transaction_rule [not null]
 	weekday int
 	weekdays int[]
@@ -377,31 +422,4 @@ Table recurrent_transaction_rules {
   note: "Contains the recurrent transactions rules to be executed"
 }
 
-Table recurrent_transactions {
-  id char(16) [pk]
-	account_id char(16) [not null] // See Ref recurrent_transactions.account_id
-	frequency recurrent_transaction_frequency [not null]
-	rule_id char(16) [not null]  // See Ref recurrent_transactions.rule_id
-	// Data to create the transaction
-	type transaction_type
-	name varchar(50) [not null]
-	description varchar(300) [not null]
-	amount int [not null]
-	// Only type=IN,type=OUT
-	category_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref recurrent_transactions.category_id
-	card_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref recurrent_transactions.card_id
-	bank_account_id char(16) [note: 'Only type=IN,type=OUT transactions have this column'] // See Ref recurrent_transactions.bank_account_id
-	// Only Only type=TRANSFER
-	bank_account_from_id char(16) [note: 'Only type=TRANSFER transactions have this column'] // See Ref recurrent_transactions.bank_account_from_id
-	bank_account_to_id char(16) [note: 'Only type=TRANSFER transactions have this column'] // See Ref recurrent_transactions.bank_account_to_id
-
-  note: "Contains all the user's recurrent transactions"
-}
-
-Ref: accounts.id < recurrent_transactions.account_id [delete: restrict]
-Ref: recurrent_transaction_rules.id < recurrent_transactions.rule_id [delete: restrict]
-Ref: categories.id < recurrent_transactions.category_id [delete: restrict]
-Ref: cards.id < recurrent_transactions.card_id [delete: restrict]
-Ref: bank_accounts.id < recurrent_transactions.bank_account_id [delete: restrict]
-Ref: bank_accounts.id < recurrent_transactions.bank_account_from_id [delete: restrict]
-Ref: bank_accounts.id < recurrent_transactions.bank_account_to_id [delete: restrict]
+Ref: recurrent_transactions.id - recurrent_transaction_rules.recurrent_transaction_id [delete: cascade]
