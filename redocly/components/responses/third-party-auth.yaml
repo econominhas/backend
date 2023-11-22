@@ -1,0 +1,22 @@
+"200":
+  description: |
+    Sign In: User already existed
+  content:
+    application/json:
+      schema:
+        $ref: ../schemas/auth-response-content.yaml
+"201":
+  description: |
+    Sign Up: User created
+  content:
+    application/json:
+      schema:
+        $ref: ../schemas/auth-response-content.yaml
+"400":
+  description: |
+    Something went wrong, we don't return any specific details because of user's privacy.
+
+    Possible causes:
+    - Code invalid or expired
+    - User's email isn't verified on the provider
+    - An user with the same email, that it's connected to the same provider, but with a different provider ID already exists. In this case we can't link the accounts, because they may be different users.

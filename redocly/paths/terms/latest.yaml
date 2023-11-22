@@ -1,0 +1,15 @@
+get:
+  tags:
+    - Terms Of Service
+  summary: Get latest terms and policies
+  description: |
+    Get latest terms and policies
+  operationId: terms-latest
+  responses:
+    "200":
+      description: |
+        Returns latest terms data
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/TermsOfService.yaml

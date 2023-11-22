@@ -1,20 +1,17 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: Example.com
-  termsOfService: https://example.com/terms/
+  title: API Econominhas
+  termsOfService: https://econominhas.com.br/termos-de-servico/
   contact:
-    email: contact@example.com
-    url: http://example.com/contact
+    email: contato@econominhas.com.br
+    url: http://econominhas.com.br/contato
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   x-logo:
-    url: https://redocly.github.io/openapi-template/logo.png
+    url: https://https://raw.githubusercontent.com/econominhas/backend/master/redocly/html/logo.png
   description: >
-    This is an **example** API to demonstrate features of the OpenAPI
-    specification.
-
     # Introduction
 
     This API definition is intended to to be a good starting point for
@@ -38,43 +35,53 @@ info:
     implementation logic. Similar to what
     interfaces have done for lower-level programming, OpenAPI removes the
     guesswork in calling the service.
+
 tags:
-  - name: Echo
-    description: Example echo operations.
-  - name: User
-    description: Operations about users.
-  - name: Tag
-    description: This is a tag description.
+  - name: Auth
+    description: User creation and authentication.
+  - name: Account
+    description: User account config.
+  - name: Terms Of Service
+    description: To manage terms of service and privacy policy.
+  - name: Subscription
+    description: To manage subscriptions.
+  - name: Category
+    description: To manage bank categories.
+  - name: Budget
+    description: To manage bank budgets.
+  - name: Bank Account
+    description: To manage bank accounts.
+  - name: Card
+    description: To manage credit cards and vouchers.
+  - name: Transaction
+    description: To manage transactions.
+  - name: Recurrent Transaction
+    description: To manage recurrent transactions.
+
 servers:
-  - url: https://{tenant}/api/v1
-    variables:
-      tenant:
-        default: www
-        description: Your tenant id
-  - url: https://example.com/api/v1
+  - url: https://econominhas.com.br/api/v1
+
 paths:
-  /users/{username}:
-    $ref: paths/users_{username}.yaml
-  /echo:
-    $ref: paths/echo.yaml
-  /pathItem:
-    $ref: paths/pathItem.yaml
-  /pathItemWithExamples:
-    $ref: paths/pathItemWithExamples.yaml
+  /auth/google:
+    $ref: paths/auth/google.yaml
+  /auth/email:
+    $ref: paths/auth/email.yaml
+  /auth/phone:
+    $ref: paths/auth/phone.yaml
+  /auth/code:
+    $ref: paths/auth/code.yaml
+
+  /accounts/iam:
+    $ref: paths/accounts/iam.yaml
+
+  /terms/accept:
+    $ref: paths/terms/accept.yaml
+  /terms/latest:
+    $ref: paths/terms/latest.yaml
+
 components:
   securitySchemes:
-    main_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: http://example.com/api/oauth/dialog
-          scopes:
-            read:users: read users info
-            write:users: modify or remove users
-    api_key:
-      type: apiKey
-      in: header
-      name: api_key
-    basic_auth:
+    bearer:
       type: http
-      scheme: basic
+      scheme: bearer
+      bearerFormat: JWT

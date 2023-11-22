@@ -1,0 +1,35 @@
+post:
+  tags:
+    - Terms Of Service
+  summary: Accept terms and policies
+  description: |
+    Accept terms and policies
+  operationId: terms-accept
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Accept terms and policies
+          properties:
+            id:
+              description: ID of the terms and policies
+              type: string
+              format: uuid
+    required: true
+  responses:
+    "201":
+      description: |
+        Terms accepted
+    "400":
+      description: |
+        Possible causes:
+        - Version is previous than the one that he already has accepted
+        - Version is not live yet
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml
+    "404":
+      description: |
+        Terms and policies doesn't exists

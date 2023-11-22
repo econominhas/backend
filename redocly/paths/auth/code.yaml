@@ -1,0 +1,22 @@
+post:
+  tags:
+    - Auth
+  summary: Exchange magic link code
+  description: |
+    Exchange magic link code for the user's auth tokens.
+  operationId: auth-code
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Exchange magic link code
+          properties:
+            code:
+              description: Code sent by us to the user
+              type: string
+              examples:
+                - "ZBwidKKKfaCayu6bajbG066Tu49b6uSa"
+    required: true
+  responses:
+    $ref: ../../components/responses/third-party-auth.yaml

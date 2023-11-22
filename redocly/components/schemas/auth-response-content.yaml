@@ -1,0 +1,20 @@
+type: object
+title: Auth Response Content
+properties:
+  accessToken:
+    description: |
+      Access token used to make requests. Short lived, should be refreshed with the `refreshToken` when it expires (`expiresAt`).
+    type: string
+    examples:
+      - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  refreshToken:
+    description: |
+      Long lived token, used to generate other `accessToken`s
+    type: string
+    examples:
+      - "ZBwidKKKfaCayu6bajbG066Tu49b6uSaVBtTKcek2Gp6lje7Zt0RCT9B6I2Azu6f"
+  expiresAt:
+    description: |
+      Expiration date of the `accessToken`
+    type: string
+    format: date-time

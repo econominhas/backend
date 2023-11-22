@@ -1,0 +1,25 @@
+post:
+  tags:
+    - Auth
+  summary: Sign In/Up with email
+  description: |
+    Sign Ins or Sign Ups a user using a magic link sent to the user's email.
+  operationId: auth-email
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Auth with email
+          properties:
+            email:
+              description: User's email
+              type: string
+              format: email
+              examples:
+                - foo@bar.com
+    required: true
+  responses:
+    "201":
+      description: |
+        A magic link was sent to the user's email

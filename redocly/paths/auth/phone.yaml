@@ -1,0 +1,24 @@
+post:
+  tags:
+    - Auth
+  summary: Sign In/Up with phone number
+  description: |
+    Sign Ins or Sign Ups a user using a magic link sent to the user's phone.
+  operationId: auth-phone
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Auth with phone number
+          properties:
+            phone:
+              description: User's complete phone number, including country code
+              type: string
+              examples:
+                - "+5511999999999"
+    required: true
+  responses:
+    "201":
+      description: |
+        A magic link was sent to the user's phone

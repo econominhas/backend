@@ -1,3 +1,21 @@
 {
-	"cSpell.words": ["openapi", "redocly"]
+	"cSpell.words": ["openapi", "redocly"],
+
+	// Add a vertical line on the 80 characters limit
+	"editor.rulers": [80],
+
+	// Config Default End Of Line Formatting
+	"files.eol": "\n",
+
+	// Disable Identation Detection,
+	// Because All The Indentations MUST BE
+	// Tabs With 2 Spaces (ﾉ °益°)ﾉ 彡 ┻━┻
+	"editor.detectIndentation": false,
+
+	// ======================= Formatters ===========================
+
+	"[yaml]": {
+		"editor.detectIndentation": true,
+		"editor.insertSpaces": true
+	}
 }
