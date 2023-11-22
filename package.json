@@ -1,9 +1,13 @@
 {
 	"dependencies": {},
 	"devDependencies": {
+		"@redocly/cli": "^1.4.1",
 		"dbdocs": "^0.8.4"
 	},
 	"scripts": {
-		"dbdocs": "dbdocs build ./database.dbml"
+		"docs-db": "dbdocs build ./database.dbml",
+		"docs-serve": "redocly preview-docs",
+		"docs-build": "redocly bundle -o dist/bundle.yaml",
+		"docs-lint": "redocly lint"
 	}
 }
