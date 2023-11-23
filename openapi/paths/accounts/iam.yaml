@@ -15,6 +15,9 @@ get:
         application/json:
           schema:
             type: object
+            required:
+              - id
+              - subscription
             properties:
               id:
                 description: User's ID
@@ -27,5 +30,8 @@ get:
                   id:
                     description: User's Google's ID
                     type: string
+              subscription:
+                $ref: ../../components/entities/Subscription.yaml
+
     "401":
       $ref: ../../components/responses/unauthorized.yaml

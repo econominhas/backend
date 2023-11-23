@@ -1,0 +1,97 @@
+type: object
+title: SubscriptionEntity
+required:
+  - id
+  - name
+  - icon
+  - color
+  - iconColor
+  - monthlyPrice
+  - yearlyPrice
+  - bankAccounts
+  - postpaidCards
+  - prepaidCards
+  - categories
+  - transactionsPerMonth
+  - recurrentTransactions
+  - reports
+  - tags
+  - reminders
+  - bankIntegrations
+  - budgets
+  - web
+  - ctlBtm
+properties:
+  id:
+    description: Card ID
+    type: string
+    format: uuid
+  name:
+    $ref: ../../components/fields/name.yaml
+  icon:
+    $ref: ../../components/fields/icon.yaml
+  color:
+    $ref: ../../components/fields/color.yaml
+  iconColor:
+    $ref: ../../components/fields/color.yaml
+  monthlyPrice:
+    description: Price if paid per month
+    type: integer
+    minimum: 1
+  yearlyPrice:
+    description: Price if paid per year
+    type: integer
+    minimum: 1
+
+  bankAccounts:
+    description: bankAccounts limit
+    type: integer
+    minimum: -1
+  postpaidCards:
+    description: postpaidCards limit
+    type: integer
+    minimum: -1
+  prepaidCards:
+    description: prepaidCards limit
+    type: integer
+    minimum: -1
+  categories:
+    description: categories limit
+    type: integer
+    minimum: -1
+  transaction:
+    description: transaction limit
+    type: integer
+    minimum: -1
+  recurrentTransactions:
+    description: recurrentTransactions limit
+    type: integer
+    minimum: -1
+  reports:
+    description: reports limit
+    type: integer
+    minimum: -1
+  tags:
+    description: tags limit
+    type: integer
+    minimum: -1
+  reminders:
+    description: reminders limit
+    type: integer
+    minimum: -1
+  bankIntegrations:
+    description: bankIntegrations limit
+    type: integer
+    minimum: -1
+  budgets:
+    description: budgets limit
+    type: integer
+    minimum: -1
+  web:
+    description: web limit
+    type: integer
+    minimum: -1
+  ctlBtm:
+    description: ctlBtm limit
+    type: integer
+    minimum: -1
