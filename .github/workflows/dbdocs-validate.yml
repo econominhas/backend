@@ -1,7 +1,7 @@
-name: dbdocs
+name: dbdocs-validate
 
 on:
-  push:
+  pull_request:
     branches:
       - master
     paths:
@@ -16,7 +16,5 @@ jobs:
       - name: Install dbdocs
         run: sudo npm install -g dbdocs
 
-      - name: Update dbdocs project
-        env:
-          DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
-        run: dbdocs build ./database.dbml
+      - name: Validate dbdocs
+        run: dbdocs validate ./database.dbml
