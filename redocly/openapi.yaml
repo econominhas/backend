@@ -89,6 +89,9 @@ paths:
   /cards/providers:
     $ref: paths/cards/providers.yaml
 
+  /categories:
+    $ref: paths/categories/index.yaml
+
   /terms/accept:
     $ref: paths/terms/accept.yaml
   /terms/latest:

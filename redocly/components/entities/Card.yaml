@@ -1,6 +1,8 @@
 type: object
 title: CardEntity
 required:
+  - id
+  - accountId
   - cardProviderId
   - name
   - lastFourDigits

@@ -9,19 +9,19 @@ properties:
     description: |
       Current page cursor
     type: integer
-    min: 1
+    minimum: 1
   nextPage:
     description: |
       Next page cursor
     type: integer
-    min: 1
+    minimum: 1
   prevPage:
     description: |
       Previous page cursor
     type: integer
-    min: 1
+    minimum: 1
   limit:
     description: |
       Max items returned by the request
     type: integer
-    min: 1
+    minimum: 1

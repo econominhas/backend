@@ -35,8 +35,7 @@ post:
       description: |
         Bank account created
     "400":
-      description: |
-        TODO
+      $ref: ../../components/responses/bad-request.yaml
     "401":
       $ref: ../../components/responses/unauthorized.yaml
     "404":

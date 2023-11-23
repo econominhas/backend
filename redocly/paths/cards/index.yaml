@@ -4,7 +4,7 @@ post:
   summary: Create card
   description: |
     Create card
-  operationId: cards-create
+  operationId: card-create
   security:
     - bearer: []
   requestBody:
@@ -38,8 +38,7 @@ post:
       description: |
         Card created
     "400":
-      description: |
-        TODO
+      $ref: ../../components/responses/bad-request.yaml
     "401":
       $ref: ../../components/responses/unauthorized.yaml
     "404":
@@ -52,7 +51,7 @@ get:
   summary: Get a list of user's cards
   description: |
     Get user's cards
-  operationId: cards-get
+  operationId: card-get
   security:
     - bearer: []
   responses:

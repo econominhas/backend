@@ -240,7 +240,6 @@ Table cards {
 
 Ref: accounts.id < cards.account_id [delete: restrict]
 Ref: card_providers.id < cards.card_provider_id [delete: restrict]
-Ref: bank_accounts.id < cards.pay_with_bank_account_id [delete: restrict]
 
 //
 //

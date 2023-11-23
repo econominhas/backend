@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - ./database.dbml
+      - "*.dbml"
 
 jobs:
   build:

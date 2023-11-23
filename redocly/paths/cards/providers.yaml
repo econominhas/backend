@@ -4,7 +4,7 @@ get:
   summary: Get a list of card providers
   description: |
     Get a list of card providers
-  operationId: cards-providers
+  operationId: card-providers
   security:
     - bearer: []
   responses:
