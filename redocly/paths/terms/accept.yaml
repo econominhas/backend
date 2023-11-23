@@ -13,9 +13,11 @@ post:
         schema:
           type: object
           title: Accept terms and policies
+          required:
+            - id
           properties:
             id:
-              description: ID of the terms and policies
+              description: Terms and policies ID
               type: string
               format: uuid
     required: true

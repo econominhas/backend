@@ -1,0 +1,74 @@
+post:
+  tags:
+    - Bank Account
+  summary: Create bank account
+  description: |
+    Create bank account
+  operationId: bank-account-create
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Accept terms and policies
+          required:
+            - bankProviderId
+            - accountNumber
+            - branch
+            - balance
+          properties:
+            bankProviderId:
+              description: ID of bank provider
+              type: string
+              format: uuid
+            accountNumber:
+              $ref: ../../components/fields/account-number.yaml
+            branch:
+              $ref: ../../components/fields/branch.yaml
+            balance:
+              $ref: ../../components/fields/balance.yaml
+    required: true
+  responses:
+    "201":
+      description: |
+        Bank account created
+    "400":
+      description: |
+        TODO
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml
+    "404":
+      description: |
+        Bank provider doesn't exists
+
+get:
+  tags:
+    - Bank Account
+  summary: Get a list of user's bank accounts
+  description: |
+    Get user's bank accounts
+  operationId: bank-account-get
+  security:
+    - bearer: []
+  responses:
+    "200":
+      description: |
+        Bank account created
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - paging
+              - data
+            properties:
+              paging:
+                $ref: ../../components/schemas/paging.yaml
+              data:
+                type: array
+                items:
+                  $ref: ../../components/entities/BankAccount.yaml
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml

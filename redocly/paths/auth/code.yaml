@@ -11,6 +11,8 @@ post:
         schema:
           type: object
           title: Exchange magic link code
+          required:
+            - code
           properties:
             code:
               description: Code sent by us to the user

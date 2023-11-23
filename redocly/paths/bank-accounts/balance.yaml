@@ -1,0 +1,35 @@
+patch:
+  tags:
+    - Bank Account
+  summary: Update bank account balance
+  description: |
+    Update bank account balance
+  operationId: bank-account-balance
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Update bank account balance
+          required:
+            - id
+            - balance
+          properties:
+            id:
+              description: Bank account ID
+              type: string
+              format: uuid
+            balance:
+              $ref: ../../components/fields/balance.yaml
+    required: true
+  responses:
+    "204":
+      description: |
+        Balance updated
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml
+    "404":
+      description: |
+        Bank account doesn't exists

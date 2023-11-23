@@ -41,22 +41,24 @@ tags:
     description: User creation and authentication.
   - name: Account
     description: User account config.
-  - name: Terms Of Service
-    description: To manage terms of service and privacy policy.
-  - name: Subscription
-    description: To manage subscriptions.
-  - name: Category
-    description: To manage bank categories.
-  - name: Budget
-    description: To manage bank budgets.
+  - name: Bank
+    description: To manage bank providers.
   - name: Bank Account
     description: To manage bank accounts.
+  - name: Budget
+    description: To manage bank budgets.
   - name: Card
     description: To manage credit cards and vouchers.
-  - name: Transaction
-    description: To manage transactions.
+  - name: Category
+    description: To manage bank categories.
   - name: Recurrent Transaction
     description: To manage recurrent transactions.
+  - name: Subscription
+    description: To manage subscriptions.
+  - name: Terms Of Service
+    description: To manage terms of service and privacy policy.
+  - name: Transaction
+    description: To manage transactions.
 
 servers:
   - url: https://econominhas.com.br/api/v1
@@ -78,6 +80,14 @@ paths:
     $ref: paths/terms/accept.yaml
   /terms/latest:
     $ref: paths/terms/latest.yaml
+
+  /banks/providers:
+    $ref: paths/banks/providers.yaml
+
+  /bank-accounts:
+    $ref: paths/bank-accounts/index.yaml
+  /bank-accounts/balance:
+    $ref: paths/bank-accounts/balance.yaml
 
 components:
   securitySchemes:

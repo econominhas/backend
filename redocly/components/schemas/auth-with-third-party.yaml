@@ -1,5 +1,8 @@
 type: object
 title: Auth with Third Party Provider
+required:
+  - code
+  - timezone
 properties:
   code:
     description: Code returned by the auth provider

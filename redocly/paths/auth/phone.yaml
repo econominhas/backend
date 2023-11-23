@@ -11,6 +11,8 @@ post:
         schema:
           type: object
           title: Auth with phone number
+          required:
+            - phone
           properties:
             phone:
               description: User's complete phone number, including country code

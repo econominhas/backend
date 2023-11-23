@@ -1,5 +1,5 @@
 {
-	"cSpell.words": ["openapi", "redocly"],
+	"cSpell.words": ["dbdocs", "dbml", "openapi", "redocly"],
 
 	// Add a vertical line on the 80 characters limit
 	"editor.rulers": [80],

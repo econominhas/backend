@@ -1,0 +1,21 @@
+type: object
+title: BankProviderEntity
+required:
+  - id
+  - name
+  - code
+  - iconUrl
+  - color
+properties:
+  id:
+    description: Bank provider ID
+    type: string
+    format: uuid
+  name:
+    $ref: ../fields/name.yaml
+  code:
+    $ref: ../fields/bank-provider-code.yaml
+  iconUrl:
+    $ref: ../fields/icon-url.yaml
+  color:
+    $ref: ../fields/color.yaml

@@ -1,0 +1,6 @@
+description: |
+  Color HEX code
+type: string
+format: hex
+examples:
+  - "#ffffff"

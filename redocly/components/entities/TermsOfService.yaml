@@ -1,8 +1,13 @@
 type: object
 title: TermsOfServiceEntity
+required:
+  - id
+  - termsOfUse
+  - privacyPolicy
+  - liveAt
 properties:
   id:
-    description: ID of the terms of service
+    description: Terms and policies ID
     type: string
     format: semVer
     examples:

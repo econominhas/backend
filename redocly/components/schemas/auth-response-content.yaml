@@ -1,5 +1,9 @@
 type: object
 title: Auth Response Content
+required:
+  - accessToken
+  - refreshToken
+  - expiresAt
 properties:
   accessToken:
     description: |

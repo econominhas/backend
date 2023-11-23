@@ -1,0 +1,4 @@
+description: Account number
+type: string
+examples:
+  - "3208037-8"

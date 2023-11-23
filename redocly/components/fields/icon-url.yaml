@@ -1,0 +1,6 @@
+description: |
+  Icon url
+type: string
+format: url
+examples:
+  - "https://example.com/foo.jpg"

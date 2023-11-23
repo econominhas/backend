@@ -1,0 +1,5 @@
+description: |
+  Bank account balance (Multiplied by 100, Ex: R$ 10.00 = 1000)
+type: integer
+examples:
+  - 1000

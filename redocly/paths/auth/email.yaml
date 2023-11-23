@@ -11,6 +11,8 @@ post:
         schema:
           type: object
           title: Auth with email
+          required:
+            - email
           properties:
             email:
               description: User's email

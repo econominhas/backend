@@ -1,0 +1,29 @@
+get:
+  tags:
+    - Bank
+  summary: Get a list of bank providers
+  description: |
+    Get a list of bank providers
+  operationId: banks-providers
+  security:
+    - bearer: []
+  responses:
+    "200":
+      description: |
+        List of bank providers
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - paging
+              - data
+            properties:
+              paging:
+                $ref: ../../components/schemas/paging.yaml
+              data:
+                type: array
+                items:
+                  $ref: ../../components/entities/BankProvider.yaml
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml
