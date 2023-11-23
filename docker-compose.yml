@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  localstack:
+    # https://medium.com/@muthomititus/a-guide-to-localstack-with-docker-compose-e1487e3a776f
+    image: localstack/localstack:1.0.4
+    ports:
+      - '4566:4566'
+    environment:
+      - SERVICES=s3:4566
+      - HOSTNAME=localstack
+      - HOSTNAME_EXTERNAL=localstack
+      - DEFAULT_REGION=us-east-1
+    volumes:
+      - './localstack/buckets.sh:/docker-entrypoint-initaws.d/buckets.sh'
+    networks:
+      - monetizzer-api_network
+
+  mongodb:
+    image: 'mongo:latest'
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_DATABASE=database
+      - MONGODB_DATA_DIR=/data/db
+      - MONDODB_LOG_DIR=/dev/null
+    volumes:
+      - 'mongo:/data/db'
+    networks:
+      - monetizzer-api_network
+
+  api:
+    build:
+      context: '.'
+      dockerfile: Dockerfile.dev
+    container_name: monetizzer_api
+    command: yarn start:docker
+    depends_on:
+      - mongodb
+      - localstack
+    ports:
+      - 3000:3000
+    env_file:
+      - .env.docker
+    volumes:
+      - ./:/app/
+    networks:
+      - monetizzer-api_network
+
+volumes:
+  mongo:
+
+networks:
+  monetizzer-api_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: '172.16.0.0/24'
+          gateway: 172.16.0.254
