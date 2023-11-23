@@ -76,11 +76,6 @@ paths:
   /accounts/iam:
     $ref: paths/accounts/iam.yaml
 
-  /terms/accept:
-    $ref: paths/terms/accept.yaml
-  /terms/latest:
-    $ref: paths/terms/latest.yaml
-
   /banks/providers:
     $ref: paths/banks/providers.yaml
 
@@ -88,6 +83,16 @@ paths:
     $ref: paths/bank-accounts/index.yaml
   /bank-accounts/balance:
     $ref: paths/bank-accounts/balance.yaml
+
+  /cards:
+    $ref: paths/cards/index.yaml
+  /cards/providers:
+    $ref: paths/cards/providers.yaml
+
+  /terms/accept:
+    $ref: paths/terms/accept.yaml
+  /terms/latest:
+    $ref: paths/terms/latest.yaml
 
 components:
   securitySchemes:

@@ -1,0 +1,7 @@
+description: |
+  Card statement days
+
+  Alert: Only postpaid cards have this field
+type: integer
+minimum: 1
+maximum: 31

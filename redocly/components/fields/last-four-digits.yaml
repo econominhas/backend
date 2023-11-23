@@ -1,0 +1,7 @@
+description: Last four digits of the card
+type: string
+pattern: "^[0-9]*$"
+minLength: 4
+maxLength: 4
+examples:
+  - "123"

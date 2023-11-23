@@ -1,5 +1,6 @@
 description: Bank account branch
 type: string
+pattern: "^[0-9]*$"
 minLength: 3
 maxLength: 3
 examples:

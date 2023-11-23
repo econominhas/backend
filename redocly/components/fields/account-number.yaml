@@ -1,4 +1,7 @@
 description: Account number
 type: string
+pattern: "^[0-9]*$"
+minLength: 8
+maxLength: 8
 examples:
-  - "3208037-8"
+  - "32080378"

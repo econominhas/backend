@@ -230,10 +230,8 @@ Table cards {
 	name varchar(50) [not null]
 	last_four_digits char(4) [not null]
 
-	due_day char(2) [note: 'Only postpaid cards have this column']
+	due_day smallint [note: 'Only postpaid cards have this column']
 	limit int [note: 'Only postpaid cards have this column']
-	pay_at card_pay_at [note: 'Only postpaid cards have this column']
-	pay_with_bank_account_id char(16) [note: 'Only postpaid cards have this column'] // See Ref cards.bank_id
 
 	balance int [note: 'Only prepaid cards have this column']
 

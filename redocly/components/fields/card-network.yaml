@@ -1,0 +1,8 @@
+description: |
+  Card network
+type: string
+enum:
+  - VISA
+  - MASTERCARD
+  - ELO
+  - SODEXO

@@ -1,0 +1,8 @@
+description: |
+  Card type
+type: string
+enum:
+  - CREDIT
+  - VA
+  - VR
+  - VT

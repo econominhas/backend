@@ -1,10 +1,10 @@
 post:
   tags:
-    - Bank Account
-  summary: Create bank account
+    - Card
+  summary: Create card
   description: |
-    Create bank account
-  operationId: bank-account-create
+    Create card
+  operationId: cards-create
   security:
     - bearer: []
   requestBody:
@@ -12,28 +12,31 @@ post:
       application/json:
         schema:
           type: object
-          title: Create bank account
+          title: Accept terms and policies
           required:
-            - bankProviderId
-            - accountNumber
-            - branch
-            - balance
+            - cardProviderId
+            - name
+            - lastFourDigits
           properties:
-            bankProviderId:
-              description: ID of bank provider
+            cardProviderId:
+              description: Card provider ID
               type: string
               format: uuid
-            accountNumber:
-              $ref: ../../components/fields/account-number.yaml
-            branch:
-              $ref: ../../components/fields/branch.yaml
+            name:
+              $ref: ../../components/fields/name.yaml
+            lastFourDigits:
+              $ref: ../../components/fields/last-four-digits.yaml
+            dueDay:
+              $ref: ../../components/fields/due-day.yaml
+            limit:
+              $ref: ../../components/fields/card-limit.yaml
             balance:
               $ref: ../../components/fields/balance.yaml
     required: true
   responses:
     "201":
       description: |
-        Bank account created
+        Card created
     "400":
       description: |
         TODO
@@ -41,15 +44,15 @@ post:
       $ref: ../../components/responses/unauthorized.yaml
     "404":
       description: |
-        Bank provider doesn't exists
+        Card provider doesn't exists
 
 get:
   tags:
-    - Bank Account
-  summary: Get a list of user's bank accounts
+    - Card
+  summary: Get a list of user's cards
   description: |
-    Get user's bank accounts
-  operationId: bank-account-get
+    Get user's cards
+  operationId: cards-get
   security:
     - bearer: []
   responses:
@@ -69,6 +72,6 @@ get:
               data:
                 type: array
                 items:
-                  $ref: ../../components/entities/BankAccount.yaml
+                  $ref: ../../components/entities/Card.yaml
     "401":
       $ref: ../../components/responses/unauthorized.yaml

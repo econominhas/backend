@@ -1,5 +1,7 @@
 description: |
-  Bank account balance (Multiplied by 100, Ex: R$ 10.00 = 1000)
+  Multiplied by 100, Ex: R$ 10.00 = 1000
+
+  Alert for Card Entities: Only prepaid cards have this field
 type: integer
 examples:
   - 1000

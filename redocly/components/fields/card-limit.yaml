@@ -1,0 +1,6 @@
+description: |
+  Card limit
+
+  Alert: Only postpaid cards have this field
+type: integer
+minimum: 1

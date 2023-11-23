@@ -1,0 +1,29 @@
+type: object
+title: CardEntity
+required:
+  - cardProviderId
+  - name
+  - lastFourDigits
+properties:
+  id:
+    description: Card ID
+    type: string
+    format: uuid
+  accountId:
+    description: User ID
+    type: string
+    format: uuid
+  cardProviderId:
+    description: Card provider ID
+    type: string
+    format: uuid
+  name:
+    $ref: ../../components/fields/name.yaml
+  lastFourDigits:
+    $ref: ../../components/fields/last-four-digits.yaml
+  dueDay:
+    $ref: ../../components/fields/due-day.yaml
+  limit:
+    $ref: ../../components/fields/card-limit.yaml
+  balance:
+    $ref: ../../components/fields/balance.yaml

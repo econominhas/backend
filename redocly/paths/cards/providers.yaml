@@ -1,0 +1,29 @@
+get:
+  tags:
+    - Card
+  summary: Get a list of card providers
+  description: |
+    Get a list of card providers
+  operationId: cards-providers
+  security:
+    - bearer: []
+  responses:
+    "200":
+      description: |
+        List of card providers
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - paging
+              - data
+            properties:
+              paging:
+                $ref: ../../components/schemas/paging.yaml
+              data:
+                type: array
+                items:
+                  $ref: ../../components/entities/CardProvider.yaml
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml

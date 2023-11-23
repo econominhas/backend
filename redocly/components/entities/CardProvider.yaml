@@ -1,0 +1,32 @@
+type: object
+title: CardProviderEntity
+required:
+  - id
+  - bankId
+  - name
+  - iconUrl
+  - color
+  - type
+  - network
+  - statementDays
+properties:
+  id:
+    description: Card provider ID
+    type: string
+    format: uuid
+  bankId:
+    description: Bank provider ID
+    type: string
+    format: uuid
+  name:
+    $ref: ../fields/name.yaml
+  iconUrl:
+    $ref: ../fields/icon-url.yaml
+  color:
+    $ref: ../fields/color.yaml
+  type:
+    $ref: ../fields/card-type.yaml
+  network:
+    $ref: ../fields/card-network.yaml
+  statementDays:
+    $ref: ../fields/card-statement-days.yaml

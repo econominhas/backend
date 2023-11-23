@@ -1,0 +1,4 @@
+description: Card statement days
+type: integer
+minimum: 1
+maximum: 31
