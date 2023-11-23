@@ -1,7 +1,7 @@
 # See https://redocly.com/docs/cli/configuration/ for more information.
 apis:
   sample@v1:
-    root: ./redocly/openapi.yaml
+    root: ./openapi/openapi.yaml
 extends:
   - recommended
 rules:
@@ -9,7 +9,7 @@ rules:
   security-defined: off
 theme:
   openapi:
-    htmlTemplate: ./redocly/html/index.html
+    htmlTemplate: ./openapi/html/index.html
     theme:
       colors:
         primary:
