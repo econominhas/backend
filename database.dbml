@@ -33,6 +33,10 @@ enum timezone {
 	"America/Sao_Paulo" [note: '-03:00']
 }
 
+enum sign_in_provider {
+	"GOOGLE"
+}
+
 Table accounts {
   id char(16) [pk]
   email varchar(150) [unique]
@@ -42,16 +46,21 @@ Table accounts {
   note: "Contains user's sign in information"
 }
 
-Table google {
-	account_id char(16) [pk] // See Ref google.account_id
+Table sign_in_providers {
+	account_id char(16) [not null] // See Ref google.account_id
+	provider sign_in_provider [not null]
   access_token varchar [not null]
   refresh_token varchar [not null]
   expires_at timestamp [not null]
 
 	note: "Contains user's link to google account"
+
+	indexes {
+  	(account_id, provider) [pk]
+	}
 }
 
-Ref: accounts.id - google.account_id [delete: restrict]
+Ref: accounts.id < sign_in_provider.account_id [delete: cascade]
 
 Table configs {
 	account_id char(16) [pk] // See Ref configs.account_id

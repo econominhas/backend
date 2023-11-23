@@ -1,0 +1,18 @@
+export enum TimezoneEnum {
+	'America/Araguaina' = 'America/Araguaina', // '-03:00'
+	'America/Bahia' = 'America/Bahia', // '-03:00'
+	'America/Belem' = 'America/Belem', // '-03:00'
+	'America/Boa_Vista' = 'America/Boa_Vista', // '-04:00'
+	'America/Campo_Grande' = 'America/Campo_Grande', // '-04:00'
+	'America/Cuiaba' = 'America/Cuiaba', // '-04:00'
+	'America/Eirunepe' = 'America/Eirunepe', // '-05:00'
+	'America/Fortaleza' = 'America/Fortaleza', // '-03:00'
+	'America/Maceio' = 'America/Maceio', // '-03:00'
+	'America/Manaus' = 'America/Manaus', // '-04:00'
+	'America/Noronha' = 'America/Noronha', // '-02:00'
+	'America/Porto_Velho' = 'America/Porto_Velho', // '-04:00'
+	'America/Recife' = 'America/Recife', // '-03:00'
+	'America/Rio_Branco' = 'America/Rio_Branco', // '-05:00'
+	'America/Santarem' = 'America/Santarem', // '-03:00'
+	'America/Sao_Paulo' = 'America/Sao_Paulo', // '-03:00'
+}
