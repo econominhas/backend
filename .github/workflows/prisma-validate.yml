@@ -1,0 +1,20 @@
+name: prisma-validate
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '*.prisma'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install prisma
+        run: sudo yarn add -g prisma
+
+      - name: Validate prisma
+        run: prisma validate

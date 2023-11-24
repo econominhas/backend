@@ -147,7 +147,7 @@ Ref: subscriptions.id < users_subscriptions.subscription_id [delete: restrict]
 
 //
 //
-// Temrs of service\
+// Temrs of service
 //
 //
 
