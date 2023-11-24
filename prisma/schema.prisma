@@ -79,10 +79,12 @@ model Config {
   accountId       String       @id @db.Char(16)
   name            String?      @db.VarChar(20)
   timezone        TimezoneEnum
-  currentBudgetId String?      @db.Char(16)
-  salaryId        String?      @db.Char(16)
+  currentBudgetId String?      @unique @db.Char(16)
+  salaryId        String?      @unique @db.Char(16)
 
-  Account Account?
+  Account       Account?
+  BurrentBudget Budget?               @relation(fields: [currentBudgetId], references: [id])
+  Salary        RecurrentTransaction? @relation(fields: [salaryId], references: [id])
 }
 
 // Contains codes to be used by the users to login
@@ -323,6 +325,7 @@ model Budget {
   Account              Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
   BudgetItem           BudgetItem[]
   RecurrentTransaction RecurrentTransaction[]
+  Config               Config?
 }
 
 // Contains the user's budgets by category, month and year
@@ -451,6 +454,7 @@ model RecurrentTransaction {
   Account                  Account                  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   Budget                   Budget                   @relation(fields: [budgetId], references: [id], onDelete: Restrict)
   RecurrentTransactionRule RecurrentTransactionRule @relation(fields: [id], references: [recurrentTransactionId])
+  Config                   Config?
   // Data to create the transaction
   BudgetItem               BudgetItem               @relation(fields: [budgetItemId], references: [id], onDelete: Restrict)
   // Transaction type=IN,OUT
