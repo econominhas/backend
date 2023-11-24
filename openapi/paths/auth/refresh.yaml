@@ -1,0 +1,40 @@
+post:
+  tags:
+    - Auth
+  summary: Refresh `accessToken`
+  description: |
+    Refresh `accessToken`
+  operationId: auth-refresh
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Refresh `accessToken`
+          required:
+            - refreshToken
+          properties:
+            refreshToken:
+              $ref: ../../components/fields/refresh-token.yaml
+    required: true
+  responses:
+    '200':
+      description: |
+        Refresh succeeded
+      content:
+        application/json:
+          schema:
+            type: object
+            title: Refresh response content
+            required:
+              - accessToken
+              - expiresAt
+            properties:
+              accessToken:
+                $ref: ../../components/fields/access-token.yaml
+              expiresAt:
+                $ref: ../../components/fields/expires-at.yaml
+
+    '400':
+      description: |
+        Invalid refresh token

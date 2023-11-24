@@ -1,7 +1,6 @@
 import {
 	Collection,
 	Entity,
-	Enum,
 	OneToMany,
 	OneToOne,
 	PrimaryKey,
@@ -9,39 +8,8 @@ import {
 } from '@mikro-orm/core';
 import { SignInProviderEnum } from 'src/types/enums/sign-in-provider';
 import { TimezoneEnum } from 'src/types/enums/timezone';
-
-@Entity()
-class SignInProviderEntity {
-	@PrimaryKey({ type: 'char(16)' })
-	accountId!: string;
-
-	@Enum(() => SignInProviderEnum)
-	provider!: SignInProviderEnum;
-
-	@PrimaryKey({ type: 'varchar(50)' })
-	providerId!: string;
-
-	@Property({ type: 'varchar(100)' })
-	accessToken!: string;
-
-	@Property({ type: 'varchar(100)' })
-	refreshToken!: string;
-
-	@Property({ type: 'timestamp' })
-	expiresAt!: Date;
-}
-
-@Entity()
-class ConfigEntity {
-	@PrimaryKey({ type: 'char(16)' })
-	id!: string;
-
-	@Property({ type: 'varchar(20)' })
-	name!: string;
-
-	@Enum(() => TimezoneEnum)
-	timezone!: TimezoneEnum;
-}
+import { ConfigEntity } from './config';
+import { SignInProviderEntity } from './sign-in-provider';
 
 @Entity()
 export class AccountEntity {
@@ -72,25 +40,26 @@ export class AccountEntity {
  *
  */
 
-export type CreateInput =
-	| {
-			email: string;
-			timezone: TimezoneEnum;
-	  }
-	| {
-			phone: string;
-			timezone: TimezoneEnum;
-	  }
-	| {
-			email: string;
-			timezone: TimezoneEnum;
-			google: {
-				id: string;
-				accessToken: string;
-				refreshToken: string;
-				expiresAt: Date;
-			};
-	  };
+export interface CreateWithEmail {
+	email: string;
+	timezone: TimezoneEnum;
+}
+export interface CreateWithPhone {
+	phone: string;
+	timezone: TimezoneEnum;
+}
+export interface CreateWithGoogle {
+	email: string;
+	timezone: TimezoneEnum;
+	google: {
+		id: string;
+		accessToken: string;
+		refreshToken: string;
+		expiresAt: Date;
+	};
+}
+
+export type CreateInput = CreateWithEmail | CreateWithPhone | CreateWithGoogle;
 
 export interface GetByIdInput {
 	id: string;
@@ -115,21 +84,34 @@ export interface GetManyByProviderInput {
 	email?: string;
 }
 
-export interface AccountRepository {
-	create: (i: CreateInput) => Promise<AccountEntity>;
+export interface UpdateProviderInput {
+	accountId: string;
+	provider: SignInProviderEnum;
+	providerId: string;
+	accessToken: string;
+	refreshToken: string;
+	expiresAt: Date;
+}
 
-	getById: (i: GetByIdInput) => Promise<AccountEntity | undefined>;
+export abstract class AccountRepository {
+	abstract create(i: CreateInput): Promise<AccountEntity>;
 
-	getByEmail: (i: GetByEmailInput) => Promise<AccountEntity | undefined>;
+	abstract getById(i: GetByIdInput): Promise<AccountEntity | undefined>;
 
-	getByPhone: (i: GetByPhoneInput) => Promise<AccountEntity | undefined>;
+	abstract getByEmail(i: GetByEmailInput): Promise<AccountEntity | undefined>;
 
-	getByProvider: (i: GetByProviderInput) => Promise<AccountEntity | undefined>;
+	abstract getByPhone(i: GetByPhoneInput): Promise<AccountEntity | undefined>;
+
+	abstract getByProvider(
+		i: GetByProviderInput,
+	): Promise<AccountEntity | undefined>;
 
 	// Get by provider information (id or email)
-	getManyByProvider: (
+	abstract getManyByProvider(
 		i: GetManyByProviderInput,
-	) => Promise<Array<AccountEntity>>;
+	): Promise<Array<AccountEntity>>;
+
+	abstract updateGoogle(i: UpdateProviderInput): Promise<void>;
 }
 
 /**
@@ -144,6 +126,7 @@ export interface AuthOutput {
 	refreshToken: string;
 	accessToken: string;
 	expiresAt: string;
+	isFirstAccess?: true;
 }
 
 export interface RefreshOutput {
@@ -151,19 +134,24 @@ export interface RefreshOutput {
 	expiresAt: string;
 }
 
-export interface CreateWithProviderInput {
+export interface CreateWith3rdPartyProviderInput {
 	code: string;
-	provider: SignInProviderEnum;
+	originUrl: string;
 	timezone: TimezoneEnum;
 }
 
-export interface SendMagicLinkInput {
+export interface CreateWithEmailProviderInput {
 	email: string;
 	timezone: TimezoneEnum;
 }
 
-export interface ExchangeMagicLinkCodeInput {
-	id: string;
+export interface CreateWithPhoneProviderInput {
+	phone: string;
+	timezone: TimezoneEnum;
+}
+
+export interface ExchangeCodeInput {
+	accountId: string;
 	code: string;
 }
 
@@ -181,11 +169,15 @@ export interface IamOutput {
 }
 
 export interface AccountUseCase {
-	createFromGoogleOauth: (i: CreateWithProviderInput) => Promise<AuthOutput>;
+	createFromGoogleProvider: (
+		i: CreateWith3rdPartyProviderInput,
+	) => Promise<AuthOutput>;
 
-	sendMagicLink: (i: SendMagicLinkInput) => Promise<void>;
+	createFromEmailProvider: (i: CreateWithEmailProviderInput) => Promise<void>;
 
-	exchangeMagicLinkCode: (i: ExchangeMagicLinkCodeInput) => Promise<AuthOutput>;
+	createFromPhoneProvider: (i: CreateWithPhoneProviderInput) => Promise<void>;
+
+	exchangeCode: (i: ExchangeCodeInput) => Promise<AuthOutput>;
 
 	refreshToken: (i: RefreshTokenInput) => Promise<RefreshOutput>;
 

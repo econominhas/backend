@@ -1,0 +1,4 @@
+description: |
+  Expiration date of the `accessToken`
+type: string
+format: date-time

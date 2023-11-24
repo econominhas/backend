@@ -1,4 +1,4 @@
-import { NamingStrategy, UnderscoreNamingStrategy } from '@mikro-orm/core';
+import { UnderscoreNamingStrategy } from '@mikro-orm/core';
 import { camelCase, pascalCase, snakeCase } from 'change-case';
 
 export class CustomNamingStrategy extends UnderscoreNamingStrategy {

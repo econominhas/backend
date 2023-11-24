@@ -8,7 +8,7 @@ get:
   security:
     - bearer: []
   responses:
-    "200":
+    '200':
       description: |
         Returns user's data
       content:
@@ -23,15 +23,12 @@ get:
                 description: User's ID
                 type: string
                 format: uuid
-              google:
-                description: Google's information
-                type: object
-                properties:
-                  id:
-                    description: User's Google's ID
-                    type: string
+              googleId:
+                description: User's Google's ID
+                type: string
               subscription:
+                description: User's current active subscription
                 $ref: ../../components/entities/Subscription.yaml
 
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml

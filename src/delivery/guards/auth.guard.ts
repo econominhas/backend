@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Type, mixin } from '@nestjs/common';
 import { verify } from 'jsonwebtoken';
 
-export const AuthGuard = (): Type<CanActivate> => {
+const MakeAuthGuard = (): Type<CanActivate> => {
 	class AuthGuardMixin implements CanActivate {
 		async canActivate(context: ExecutionContext): Promise<boolean> {
 			const request = context.switchToHttp().getRequest();
@@ -25,3 +25,5 @@ export const AuthGuard = (): Type<CanActivate> => {
 	const guard = mixin(AuthGuardMixin);
 	return guard;
 };
+
+export const AuthGuard = MakeAuthGuard();

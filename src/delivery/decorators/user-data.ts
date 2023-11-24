@@ -12,7 +12,7 @@ export const UserData = createParamDecorator(
 		const payload = decode(token) as TokenPayload;
 
 		return {
-			accountId: payload.sub,
+			accountId: payload?.sub,
 		};
 	},
 );

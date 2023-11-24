@@ -12,13 +12,18 @@ post:
           type: object
           title: Exchange magic link code
           required:
+            - accountId
             - code
           properties:
+            accountId:
+              description: User's ID
+              type: string
+              format: uuid
             code:
               description: Code sent by us to the user
               type: string
               examples:
-                - "ZBwidKKKfaCayu6bajbG066Tu49b6uSa"
+                - 'ZBwidKKKfaCayu6bajbG066Tu49b6uSa'
     required: true
   responses:
-    $ref: ../../components/responses/third-party-auth.yaml
+    $ref: ../../components/responses/auth.yaml

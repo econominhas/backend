@@ -1,0 +1,5 @@
+description: |
+  Long lived token, used to generate other `accessToken`s
+type: string
+examples:
+  - 'ZBwidKKKfaCayu6bajbG066Tu49b6uSaVBtTKcek2Gp6lje7Zt0RCT9B6I2Azu6f'

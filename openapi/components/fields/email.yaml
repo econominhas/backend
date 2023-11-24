@@ -1,0 +1,5 @@
+description: User's email
+type: string
+format: email
+examples:
+  - foo@bar.com

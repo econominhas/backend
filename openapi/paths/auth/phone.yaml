@@ -13,14 +13,14 @@ post:
           title: Auth with phone number
           required:
             - phone
+            - timezone
           properties:
             phone:
-              description: User's complete phone number, including country code
-              type: string
-              examples:
-                - "+5511999999999"
+              $ref: ../../components/fields/phone.yaml
+            timezone:
+              $ref: ../../components/fields/timezone.yaml
     required: true
   responses:
-    "201":
+    '204':
       description: |
         A magic link was sent to the user's phone

@@ -72,6 +72,8 @@ paths:
     $ref: paths/auth/phone.yaml
   /auth/code:
     $ref: paths/auth/code.yaml
+  /auth/refresh:
+    $ref: paths/auth/refresh.yaml
 
   /accounts/iam:
     $ref: paths/accounts/iam.yaml

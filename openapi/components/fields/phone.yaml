@@ -1,0 +1,4 @@
+description: User's complete phone number, including country code
+type: string
+examples:
+  - '+5511999999999'

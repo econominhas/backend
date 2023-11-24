@@ -1,0 +1,20 @@
+type: object
+title: Auth with Third Party Provider
+required:
+  - code
+  - originUrl
+  - timezone
+properties:
+  code:
+    description: Code returned by the auth provider
+    type: string
+    examples:
+      - example
+  originUrl:
+    description: The origin of this request, same url used for `redirect_uri`
+    type: string
+    format: url
+    examples:
+      - https://example.com/google
+  timezone:
+    $ref: ../fields/timezone.yaml

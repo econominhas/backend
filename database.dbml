@@ -49,6 +49,7 @@ Table accounts {
 Table sign_in_providers {
 	account_id char(16) [not null] // See Ref google.account_id
 	provider sign_in_provider [not null]
+	provider_id varchar(50) [not null]
   access_token varchar [not null]
   refresh_token varchar [not null]
   expires_at timestamp [not null]
@@ -56,11 +57,11 @@ Table sign_in_providers {
 	note: "Contains user's link to google account"
 
 	indexes {
-  	(account_id, provider) [pk]
+  	(account_id, provider, provider_id) [pk]
 	}
 }
 
-Ref: accounts.id < sign_in_provider.account_id [delete: cascade]
+Ref: accounts.id < sign_in_providers.account_id [delete: cascade]
 
 Table configs {
 	account_id char(16) [pk] // See Ref configs.account_id
@@ -79,12 +80,23 @@ Ref: recurrent_transactions.id - configs.salary_id [delete: set null]
 Table magic_link_codes {
 	account_id char(16) [pk] // See Ref magic_link_codes.account_id
   code char(32) [not null]
-  created_at timestamp [not null]
+  is_first_access boolean [not null]
+  created_at timestamp [default: `now()`, not null]
 
 	note: "Contains codes to be used by the users to login"
 }
 
 Ref: accounts.id - magic_link_codes.account_id [delete: cascade]
+
+Table refresh_tokens {
+	account_id char(16) [pk] // See Ref refresh_tokens.account_id
+  refresh_token char(64) [not null]
+  created_at timestamp [default: `now()`, not null]
+
+	note: "Contains codes to be used to refresh the access token"
+}
+
+Ref: accounts.id - refresh_tokens.account_id [delete: cascade]
 
 //
 //
