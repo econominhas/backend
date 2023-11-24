@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install prisma
-        run: sudo yarn add -g prisma
+        run: yarn add -D prisma
 
       - name: Validate prisma
         run: prisma validate

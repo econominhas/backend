@@ -42,3 +42,6 @@ lerna-debug.log*
 # Temp
 /tmp
 /local-aws
+
+# Generated
+/prisma/*.dbml

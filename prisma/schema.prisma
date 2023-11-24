@@ -5,6 +5,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider            = "prisma-dbml-generator"
+  output              = "."
+  projectName         = "Econominhas"
+  projectDatabaseType = "PostgreSQL"
+  projectNote         = "The best way to manage your finances"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -221,9 +229,9 @@ model BankAccount {
   Transaction              Transaction[]          @relation(name: "TransactionBankAccount")
   TransactionFrom          Transaction[]          @relation(name: "TransactionBankAccountFrom")
   TransactionTo            Transaction[]          @relation(name: "TransactionBankAccountTo")
-  RecurrentTransaction     RecurrentTransaction[] @relation(name: "TransactionBankAccount")
-  RecurrentTransactionFrom RecurrentTransaction[] @relation(name: "TransactionBankAccountFrom")
-  RecurrentTransactionTo   RecurrentTransaction[] @relation(name: "TransactionBankAccountTo")
+  RecurrentTransaction     RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccount")
+  RecurrentTransactionFrom RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountFrom")
+  RecurrentTransactionTo   RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountTo")
 }
 
 //
@@ -244,11 +252,6 @@ enum CardNetworkEnum {
   MASTERCARD
   ELO
   SODEXO
-}
-
-enum CardPayAtEnum {
-  DUE
-  STATEMENT
 }
 
 // Contains the record of all the existant cards
@@ -460,10 +463,10 @@ model RecurrentTransaction {
   // Transaction type=IN,OUT
   Category                 Category?                @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   Card                     Card?                    @relation(fields: [cardId], references: [id], onDelete: Restrict)
-  BankAccount              BankAccount?             @relation(name: "TransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
+  BankAccount              BankAccount?             @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
-  BankAccountFrom          BankAccount?             @relation(name: "TransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
-  BankAccountTo            BankAccount?             @relation(name: "TransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
+  BankAccountFrom          BankAccount?             @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
+  BankAccountTo            BankAccount?             @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
 }
 
 // Contains the recurrent transactions rules to be executed

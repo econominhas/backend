@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - "*.dbml"
+      - '*.prisma'
 
 jobs:
   build:
@@ -13,8 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install dbdocs
-        run: sudo npm install -g dbdocs
+      - name: Install prisma && dbdocs
+        run: npm install dbdocs prisma prisma-dbml-generator
+
+      - name: Generate schema.dbml
+        run: npx prisma generate --generator dbml
 
       - name: Validate dbdocs
-        run: dbdocs validate ./database.dbml
+        run: npx dbdocs validate ./prisma/schema.dbml
