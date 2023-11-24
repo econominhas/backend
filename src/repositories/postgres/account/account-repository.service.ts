@@ -52,7 +52,7 @@ export class AccountRepositoryService extends AccountRepository {
 				data: {
 					...baseAccount,
 					email: iAsGoogle.email,
-					SignInProvider: {
+					signInProviders: {
 						create: {
 							provider: SignInProviderEnum.GOOGLE,
 							providerId: iAsGoogle.google.id,
@@ -101,7 +101,7 @@ export class AccountRepositoryService extends AccountRepository {
 	}: GetByIdInput): Promise<undefined | GetByIdWithProvidersOutput> {
 		return this.accountRepository.findFirst({
 			include: {
-				SignInProvider: true,
+				signInProviders: true,
 			},
 			where: {
 				id,
@@ -131,7 +131,7 @@ export class AccountRepositoryService extends AccountRepository {
 	}: GetByProviderInput): Promise<undefined | Account> {
 		return this.accountRepository.findFirst({
 			where: {
-				SignInProvider: {
+				signInProviders: {
 					every: {
 						provider,
 						providerId,
@@ -148,7 +148,7 @@ export class AccountRepositoryService extends AccountRepository {
 	}: GetManyByProviderInput): Promise<GetManyByProviderOutput> {
 		return this.accountRepository.findMany({
 			include: {
-				SignInProvider: true,
+				signInProviders: true,
 			},
 			where: {
 				OR: [

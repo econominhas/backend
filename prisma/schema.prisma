@@ -6,11 +6,12 @@ generator client {
 }
 
 generator dbml {
-  provider            = "prisma-dbml-generator"
-  output              = "."
-  projectName         = "Econominhas"
-  projectDatabaseType = "PostgreSQL"
-  projectNote         = "The best way to manage your finances"
+  provider              = "prisma-dbml-generator"
+  output                = "."
+  projectName           = "Econominhas"
+  projectDatabaseType   = "PostgreSQL"
+  projectNote           = "The best way to manage your finances"
+  includeRelationFields = false
 }
 
 datasource db {
@@ -25,95 +26,107 @@ datasource db {
 //
 
 enum TimezoneEnum {
-  AmericaAraguaina    @map("America/Araguaina") // '-03:00'
-  AmericaBahia        @map("America/Bahia") // '-03:00'
-  AmericaBelem        @map("America/Belem") // '-03:00'
-  AmericaBoa_Vista    @map("America/Boa_Vista") // '-04:00'
-  AmericaCampo_Grande @map("America/Campo_Grande") // '-04:00'
-  AmericaCuiaba       @map("America/Cuiaba") // '-04:00'
-  AmericaEirunepe     @map("America/Eirunepe") // '-05:00'
-  AmericaFortaleza    @map("America/Fortaleza") // '-03:00'
-  AmericaMaceio       @map("America/Maceio") // '-03:00'
-  AmericaManaus       @map("America/Manaus") // '-04:00'
-  AmericaNoronha      @map("America/Noronha") // '-02:00'
-  AmericaPorto_Velho  @map("America/Porto_Velho") // '-04:00'
-  AmericaRecife       @map("America/Recife") // '-03:00'
-  AmericaRio_Branco   @map("America/Rio_Branco") // '-05:00'
-  AmericaSantarem     @map("America/Santarem") // '-03:00'
-  AmericaSao_Paulo    @map("America/Sao_Paulo") // '-03:00'
+  AmericaAraguaina    @map("America/Araguaina") /// '-03:00'
+  AmericaBahia        @map("America/Bahia") /// '-03:00'
+  AmericaBelem        @map("America/Belem") /// '-03:00'
+  AmericaBoa_Vista    @map("America/Boa_Vista") /// '-04:00'
+  AmericaCampo_Grande @map("America/Campo_Grande") /// '-04:00'
+  AmericaCuiaba       @map("America/Cuiaba") /// '-04:00'
+  AmericaEirunepe     @map("America/Eirunepe") /// '-05:00'
+  AmericaFortaleza    @map("America/Fortaleza") /// '-03:00'
+  AmericaMaceio       @map("America/Maceio") /// '-03:00'
+  AmericaManaus       @map("America/Manaus") /// '-04:00'
+  AmericaNoronha      @map("America/Noronha") /// '-02:00'
+  AmericaPorto_Velho  @map("America/Porto_Velho") /// '-04:00'
+  AmericaRecife       @map("America/Recife") /// '-03:00'
+  AmericaRio_Branco   @map("America/Rio_Branco") /// '-05:00'
+  AmericaSantarem     @map("America/Santarem") /// '-03:00'
+  AmericaSao_Paulo    @map("America/Sao_Paulo") /// '-03:00'
+
+  @@map("timezone_enum")
 }
 
 enum SignInProviderEnum {
   GOOGLE
+
+  @@map("sign_in_provider_enum")
 }
 
-// Contains user's sign in information
+/// Contains user's sign in information
 model Account {
   id        String   @id @db.Char(16)
   email     String?  @unique @db.VarChar(150)
   phone     String?  @unique @db.VarChar(25)
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
-  Config                   Config                     @relation(fields: [id], references: [accountId], map: "Config_id_fkey", onDelete: Restrict)
-  MagicLinkCode            MagicLinkCode?             @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
-  SignInProvider           SignInProvider[]
-  RefreshToken             RefreshToken[]
-  UserSubscription         UserSubscription[]
-  TermsAndPoliciesAccepted TermsAndPoliciesAccepted[]
-  BankAccount              BankAccount[]
-  Card                     Card[]
-  Category                 Category[]
-  Budget                   Budget[]
-  Transaction              Transaction[]
-  RecurrentTransaction     RecurrentTransaction[]
+  config                    Config                     @relation(fields: [id], references: [accountId], map: "Config_id_fkey", onDelete: Restrict)
+  magicLinkCode             MagicLinkCode?             @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
+  signInProviders           SignInProvider[]
+  refreshTokens             RefreshToken[]
+  userSubscriptions         UserSubscription[]
+  termsAndPoliciesAccepteds TermsAndPoliciesAccepted[]
+  bankAccounts              BankAccount[]
+  cards                     Card[]
+  categories                Category[]
+  budgets                   Budget[]
+  transactions              Transaction[]
+  recurrentTransactions     RecurrentTransaction[]
+
+  @@map("accounts")
 }
 
-// Contains user's link to sign in providers, like google, discord, etc
+/// Contains user's link to sign in providers, like google, discord, etc
 model SignInProvider {
-  accountId    String             @db.Char(16)
+  accountId    String             @map("account_id") @db.Char(16)
   provider     SignInProviderEnum
-  providerId   String             @db.VarChar(50)
-  accessToken  String             @db.VarChar(150)
-  refreshToken String             @db.VarChar(150)
-  expiresAt    DateTime
+  providerId   String             @map("provider_id") @db.VarChar(50)
+  accessToken  String             @map("access_token") @db.VarChar(150)
+  refreshToken String             @map("refresh_token") @db.VarChar(150)
+  expiresAt    DateTime           @map("expires_at")
 
-  Account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@id([accountId, provider, providerId])
+  @@map("sign_in_providers")
 }
 
-// Contains user's account config
+/// Contains user's account config
 model Config {
-  accountId       String       @id @db.Char(16)
+  accountId       String       @id @map("account_id") @db.Char(16)
   name            String?      @db.VarChar(20)
   timezone        TimezoneEnum
-  currentBudgetId String?      @unique @db.Char(16)
-  salaryId        String?      @unique @db.Char(16)
+  currentBudgetId String?      @unique @map("current_budget_id") @db.Char(16)
+  salaryId        String?      @unique @map("salary_id") @db.Char(16)
 
-  Account       Account?
-  BurrentBudget Budget?               @relation(fields: [currentBudgetId], references: [id])
-  Salary        RecurrentTransaction? @relation(fields: [salaryId], references: [id])
+  account       Account?
+  burrentBudget Budget?               @relation(fields: [currentBudgetId], references: [id])
+  salary        RecurrentTransaction? @relation(fields: [salaryId], references: [id])
+
+  @@map("configs")
 }
 
-// Contains codes to be used by the users to login
+/// Contains codes to be used by the users to login
 model MagicLinkCode {
-  accountId     String   @id @db.Char(16)
+  accountId     String   @id @map("account_id") @db.Char(16)
   code          String   @db.Char(32)
-  isFirstAccess Boolean
-  createdAt     DateTime @default(now())
+  isFirstAccess Boolean  @map("is_first_access")
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  Account Account?
+  account Account?
+
+  @@map("magic_link_codes")
 }
 
-// Contains codes to be used to refresh the access token
+/// Contains codes to be used to refresh the access token
 model RefreshToken {
-  accountId    String   @db.Char(16)
-  refreshToken String   @db.Char(64)
-  createdAt    DateTime @default(now())
+  accountId    String   @map("account_id") @db.Char(16)
+  refreshToken String   @map("refresh_token") @db.Char(64)
+  createdAt    DateTime @default(now()) @map("created_at")
 
-  Account Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@id([accountId, refreshToken])
+  @@map("refresh_tokens")
 }
 
 //
@@ -122,45 +135,49 @@ model RefreshToken {
 //
 //
 
-// Contains information about the subscriptions
+/// Contains information about the subscriptions
 model Subscription {
   id                    String  @id @db.Char(16)
   name                  String  @db.VarChar(30)
   icon                  String  @db.VarChar(50)
   color                 String  @db.Char(7)
-  iconColor             String  @db.Char(7)
-  monthlyPrice          Int     @db.SmallInt
-  yearlyPrice           Int     @db.SmallInt
+  iconColor             String  @map("icon_color") @db.Char(7)
+  monthlyPrice          Int     @map("monthly_price") @db.SmallInt
+  yearlyPrice           Int     @map("yearly_price") @db.SmallInt
   // Number limits
-  bankAccounts          Int     @db.SmallInt // -1 = Infinite
-  postpaidCard          Int     @db.SmallInt // -1 = Infinite
-  prepaidCard           Int     @db.SmallInt // -1 = Infinite
-  categories            Int     @db.SmallInt // -1 = Infinite
-  transactionsPerMonth  Int     @db.SmallInt // -1 = Infinite
-  recurrentTransactions Int     @db.SmallInt // -1 = Infinite
-  reports               Int     @db.SmallInt // -1 = Infinite
-  tags                  Int     @db.SmallInt // -1 = Infinite
-  reminders             Int     @db.SmallInt // -1 = Infinite
-  bankIntegrations      Int     @db.SmallInt // -1 = Infinite
-  budgets               Int     @db.SmallInt // -1 = Infinite
+  bankAccounts          Int     @map("bank_accounts") @db.SmallInt /// -1 = Infinite
+  postpaidCard          Int     @map("postpaid_card") @db.SmallInt /// -1 = Infinite
+  prepaidCard           Int     @map("prepaid_card") @db.SmallInt /// -1 = Infinite
+  categories            Int     @db.SmallInt /// -1 = Infinite
+  transactionsPerMonth  Int     @map("transactions_per_month") @db.SmallInt /// -1 = Infinite
+  recurrentTransactions Int     @map("recurrent_transactions") @db.SmallInt /// -1 = Infinite
+  reports               Int     @db.SmallInt /// -1 = Infinite
+  tags                  Int     @db.SmallInt /// -1 = Infinite
+  reminders             Int     @db.SmallInt /// -1 = Infinite
+  bankIntegrations      Int     @map("bank_integrations") @db.SmallInt /// -1 = Infinite
+  budgets               Int     @db.SmallInt /// -1 = Infinite
   // Boolean limits
-  web                   Boolean // If the user has access to the web version
-  ctl_bpm               Boolean // Control budget per month: If allows the user to have a more precisa control over his budget, allowing him to edit each months budget, or he can only defines 1 value for all months of the year
+  web                   Boolean /// If the user has access to the web version
+  ctlBpm                Boolean @map("ctl_bpm") /// Control budget per month: If allows the user to have a more precisa control over his budget, allowing him to edit each months budget, or he can only defines 1 value for all months of the year
 
-  UserSubscription UserSubscription[]
+  userSubscriptions UserSubscription[]
+
+  @@map("subscriptions")
 }
 
-// Contains the user's subscription
+/// Contains the user's subscription
 model UserSubscription {
   id             String    @id @db.Char(16)
-  accountId      String    @db.Char(16)
-  subscriptionId String    @db.Char(16)
-  startedAt      DateTime  @default(now())
-  lastRenewalAt  DateTime?
-  cancelledAt    DateTime? // The base subscription will never have a cancelled_at, it will ALWAYS be active
+  accountId      String    @map("account_id") @db.Char(16)
+  subscriptionId String    @map("subscription_id") @db.Char(16)
+  startedAt      DateTime  @default(now()) @map("started_at")
+  lastRenewalAt  DateTime? @map("last_renewal_at")
+  cancelledAt    DateTime? @map("cancelled_at") /// The base subscription will never have a cancelled_at, it will ALWAYS be active
 
-  Account      Account      @relation(fields: [accountId], references: [id], onDelete: Restrict)
-  Subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Restrict)
+  account      Account      @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Restrict)
+
+  @@map("user_subscriptions")
 }
 
 //
@@ -169,28 +186,28 @@ model UserSubscription {
 //
 //
 
-// Contains the terms of use and privacy policy
+/// Contains the terms of use and privacy policy
 model TermsAndPolicies {
-  semVer        String    @id @db.Char(5)
-  termsOfUse    String    @db.VarChar(10000)
-  privacyPolicy String    @db.VarChar(10000)
-  liveAt        DateTime?
-  createdAt     DateTime  @default(now())
+  semVer        String    @id @map("sem_ver") @db.Char(5)
+  termsOfUse    String    @map("terms_of_use") @db.VarChar(10000)
+  privacyPolicy String    @map("privacy_policy") @db.VarChar(10000)
+  liveAt        DateTime? @map("live_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
 
-  TermsAndPoliciesAccepted TermsAndPoliciesAccepted[]
+  termsAndPoliciesAccepted TermsAndPoliciesAccepted[]
 
   @@map("terms_and_policies")
 }
 
-// Contains the record of all the terms accepted by the user
+/// Contains the record of all the terms accepted by the user
 model TermsAndPoliciesAccepted {
   id         String   @id @db.Char(16)
-  accountId  String   @db.Char(16)
-  tpId       String   @db.Char(16) // Terms and policies ID
-  acceptedAt DateTime @default(now())
+  accountId  String   @map("account_id") @db.Char(16)
+  tpId       String   @map("tp_id") @db.Char(16) /// Terms and policies ID
+  acceptedAt DateTime @default(now()) @map("accepted_at")
 
-  Account          Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  TermsAndPolicies TermsAndPolicies @relation(fields: [tpId], references: [semVer], onDelete: Restrict)
+  account          Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  termsAndPolicies TermsAndPolicies @relation(fields: [tpId], references: [semVer], onDelete: Restrict)
 
   @@map("terms_and_policies_accepted")
 }
@@ -201,37 +218,41 @@ model TermsAndPoliciesAccepted {
 //
 //
 
-// Contains the record of all the existant banks
+/// Contains the record of all the existant banks
 model BankProvider {
   id      String @id @db.Char(16)
   name    String @db.VarChar(30)
   code    String @db.Char(3)
-  iconUrl String @db.VarChar(200)
+  iconUrl String @map("icon_url") @db.VarChar(200)
   color   String @db.Char(7)
 
-  BankAccount  BankAccount[]
-  CardProvider CardProvider[]
+  bankAccounts  BankAccount[]
+  cardProviders CardProvider[]
+
+  @@map("bank_providers")
 }
 
-// Contains the record of all the user's banks accounts
+/// Contains the record of all the user's banks accounts
 model BankAccount {
   id             String   @id @db.Char(16)
-  accountId      String   @db.Char(16)
-  bankProviderId String   @map("bankId") @db.Char(16)
+  accountId      String   @map("account_id") @db.Char(16)
+  bankProviderId String   @map("bank_provider_id") @db.Char(16)
   name           String   @db.VarChar(30)
-  accountNumber  String   @db.Char(6)
+  accountNumber  String   @map("account_number") @db.Char(6)
   branch         String   @db.Char(4)
   balance        Int
-  createdAt      DateTime @default(now())
+  createdAt      DateTime @default(now()) @map("created_at")
 
-  Account                  Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  BankProvider             BankProvider           @relation(fields: [bankProviderId], references: [id], onDelete: Restrict)
-  Transaction              Transaction[]          @relation(name: "TransactionBankAccount")
-  TransactionFrom          Transaction[]          @relation(name: "TransactionBankAccountFrom")
-  TransactionTo            Transaction[]          @relation(name: "TransactionBankAccountTo")
-  RecurrentTransaction     RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccount")
-  RecurrentTransactionFrom RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountFrom")
-  RecurrentTransactionTo   RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountTo")
+  account                   Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  bankProvider              BankProvider           @relation(fields: [bankProviderId], references: [id], onDelete: Restrict)
+  transactions              Transaction[]          @relation(name: "TransactionBankAccount")
+  transactionFroms          Transaction[]          @relation(name: "TransactionBankAccountFrom")
+  transactionTos            Transaction[]          @relation(name: "TransactionBankAccountTo")
+  recurrentTransactions     RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccount")
+  recurrentTransactionFroms RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountFrom")
+  recurrentTransactionTos   RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountTo")
+
+  @@map("bank_accounts")
 }
 
 //
@@ -245,6 +266,8 @@ enum CardTypeEnum {
   VA
   VR
   VT
+
+  @@map("card_type_enum")
 }
 
 enum CardNetworkEnum {
@@ -252,40 +275,46 @@ enum CardNetworkEnum {
   MASTERCARD
   ELO
   SODEXO
+
+  @@map("card_network_enum")
 }
 
-// Contains the record of all the existant cards
+/// Contains the record of all the existant cards
 model CardProvider {
   id             String          @id @db.Char(16)
-  bankProviderId String          @map("bankId") @db.Char(16)
+  bankProviderId String          @map("bank_provider_id") @db.Char(16)
   name           String          @db.VarChar(30)
-  iconUrl        String          @db.VarChar(200)
+  iconUrl        String          @map("icon_url") @db.VarChar(200)
   color          String          @db.Char(7)
   type           CardTypeEnum
   network        CardNetworkEnum
-  statementDays  Int             @db.SmallInt // Only postpaid cards have this column
+  statementDays  Int             @map("statement_days") @db.SmallInt /// Only postpaid cards have this column
 
-  BankProvider BankProvider @relation(fields: [bankProviderId], references: [id], onDelete: Restrict)
-  Card         Card[]
+  bankProvider BankProvider @relation(fields: [bankProviderId], references: [id], onDelete: Restrict)
+  cards        Card[]
+
+  @@map("card_providers")
 }
 
-// Contains the record of all the user's cards
+/// Contains the record of all the user's cards
 model Card {
   id             String @id @db.Char(16)
-  accountId      String @db.Char(16)
-  cardProviderId String @db.Char(16)
+  accountId      String @map("account_id") @db.Char(16)
+  cardProviderId String @map("card_provider_id") @db.Char(16)
   name           String @db.VarChar(30)
-  lastFourDigits String @db.Char(4)
+  lastFourDigits String @map("last_four_digits") @db.Char(4)
   // Postpaid cards
-  dueDay         Int?   @db.SmallInt // Only postpaid cards have this column
-  limit          Int? // Only postpaid cards have this column
+  dueDay         Int?   @map("due_day") @db.SmallInt /// Only postpaid cards have this column
+  limit          Int? /// Only postpaid cards have this column
   // Prepaid cards
-  balance        Int? // Only prepaid cards have this column
+  balance        Int? /// Only prepaid cards have this column
 
-  Account              Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  CardProvider         CardProvider           @relation(fields: [cardProviderId], references: [id], onDelete: Restrict)
-  Transaction          Transaction[]
-  RecurrentTransaction RecurrentTransaction[]
+  account               Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  cardProvider          CardProvider           @relation(fields: [cardProviderId], references: [id], onDelete: Restrict)
+  transactions          Transaction[]
+  recurrentTransactions RecurrentTransaction[]
+
+  @@map("cards")
 }
 
 //
@@ -294,20 +323,20 @@ model Card {
 //
 //
 
-// Contains all the user's categories
+/// Contains all the user's categories
 model Category {
   id          String  @id @db.Char(16)
-  accountId   String  @db.Char(16)
+  accountId   String  @map("account_id") @db.Char(16)
   name        String  @db.VarChar(30)
   description String  @db.VarChar(300)
-  iconUrl     String  @db.VarChar(200)
+  iconUrl     String  @map("icon_url") @db.VarChar(200)
   color       String  @db.Char(7)
   active      Boolean
 
-  Account              Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  BudgetItem           BudgetItem[]
-  Transaction          Transaction[]
-  RecurrentTransaction RecurrentTransaction[]
+  account               Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budgetItems           BudgetItem[]
+  transactions          Transaction[]
+  recurrentTransactions RecurrentTransaction[]
 
   @@map("categories")
 }
@@ -318,34 +347,37 @@ model Category {
 //
 //
 
-// Contains the user's budget information
+/// Contains the user's budget information
 model Budget {
   id          String @id @db.Char(16)
-  accountId   String @db.Char(16)
+  accountId   String @map("account_id") @db.Char(16)
   name        String @db.VarChar(30)
   description String @db.VarChar(300)
 
-  Account              Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  BudgetItem           BudgetItem[]
-  RecurrentTransaction RecurrentTransaction[]
-  Config               Config?
+  account               Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budgetItems           BudgetItem[]
+  recurrentTransactions RecurrentTransaction[]
+  config                Config?
+
+  @@map("budgets")
 }
 
-// Contains the user's budgets by category, month and year
+/// Contains the user's budgets by category, month and year
 model BudgetItem {
   id         String @id @db.Char(16)
-  budgetId   String @db.Char(16)
-  categoryId String @db.Char(16)
+  budgetId   String @map("budget_id") @db.Char(16)
+  categoryId String @map("category_id") @db.Char(16)
   month      Int    @db.SmallInt
   year       Int    @db.SmallInt
-  budget     Int
+  amount     Int
 
-  Budget               Budget                 @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  Category             Category               @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  Transaction          Transaction[]
-  RecurrentTransaction RecurrentTransaction[]
+  budget                Budget                 @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category              Category               @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  transactions          Transaction[]
+  recurrentTransactions RecurrentTransaction[]
 
   @@index([budgetId, categoryId, month, year])
+  @@map("budget_items")
 }
 
 //
@@ -358,125 +390,140 @@ enum TransactionTypeEnum {
   IN
   OUT
   TRANSFER
+
+  @@map("transaction_type_enum")
 }
 
 enum PaymentMethodEnum {
   CARD
   BANK_ACCOUNT
+
+  @@map("payment_method_enum")
 }
 
 enum RecurrentTransactionFrequencyEnum {
-  DAILY // Every day
-  WEEKLY // Every week
-  CUSTOM_WEEKLY // Every week, on the days defined by the user
-  MONTHLY // Once a month
-  BI_MONTHLY // Twice a month
-  SEMI_MONTHLY // One month yes, another month no
-  QUARTERLY // Once every 3 months
-  ANNUALY // Once a year
-  SEMI_ANNUALY // Once every 6 months
+  DAILY /// Every day
+  WEEKLY /// Every week
+  CUSTOM_WEEKLY /// Every week, on the days defined by the user
+  MONTHLY /// Once a month
+  BI_MONTHLY /// Twice a month
+  SEMI_MONTHLY /// One month yes, another month no
+  QUARTERLY /// Once every 3 months
+  ANNUALY /// Once a year
+  SEMI_ANNUALY /// Once every 6 months
+
+  @@map("recurrent_transaction_frequency_enum")
 }
 
 enum RecurrentTransactionRuleEnum {
   EXACT_AMOUNT
-  MBWOPM // MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the amount is multiplied by the amount of weeks of the previous month
-  MBDOPM // MULTIPLY_BY_DAYS_OF_PREV_MONTH, the amount is multiplied by the amount of days of the previous month
+  MBWOPM /// MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the amount is multiplied by the amount of weeks of the previous month
+  MBDOPM /// MULTIPLY_BY_DAYS_OF_PREV_MONTH, the amount is multiplied by the amount of days of the previous month
+
+  @@map("recurrent_transaction_rule_enum")
 }
 
-// Contains all the user's transactions
+/// Contains all the user's transactions
 model Transaction {
   id                     String              @id @db.Char(16)
-  accountId              String              @db.Char(16)
+  accountId              String              @map("account_id") @db.Char(16)
   type                   TransactionTypeEnum
   name                   String              @db.VarChar(30)
   description            String              @db.VarChar(300)
   amount                 Int
-  budgetItemId           String              @db.Char(16)
-  createdAt              DateTime            @default(now())
-  isSystemManaged        Boolean // Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
-  recurrentTransactionId String?             @db.Char(16)
+  budgetItemId           String              @map("budget_item_id") @db.Char(16)
+  createdAt              DateTime            @default(now()) @map("created_at")
+  isSystemManaged        Boolean             @map("is_system_managed") /// Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
+  recurrentTransactionId String?             @map("recurrent_transaction_id") @db.Char(16)
   // Transaction type=IN,OUT
-  paymentMethod          PaymentMethodEnum? // Only type=IN,OUT transactions have this column
-  categoryId             String?             @db.Char(16) // Only type=IN,OUT transactions have this column
-  cardId                 String?             @db.Char(16) // Only type=IN,OUT transactions have this column
-  bankAccountId          String?             @db.Char(16) // Only type=IN,OUT transactions have this column
+  paymentMethod          PaymentMethodEnum?  @map("payment_method") /// Only type=IN,OUT transactions have this column
+  categoryId             String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  cardId                 String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  bankAccountId          String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
   // Transaction type=TRANSFER
-  bankAccountFromId      String?             @db.Char(16) // Only type=TRANSFER transactions have this column
-  bankAccountToId        String?             @db.Char(16) // Only type=TRANSFER transactions have this column
+  bankAccountFromId      String?             @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
+  bankAccountToId        String?             @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
 
-  Account         Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  BudgetItem      BudgetItem   @relation(fields: [budgetItemId], references: [id], onDelete: Restrict)
+  account         Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budgetItem      BudgetItem   @relation(fields: [budgetItemId], references: [id], onDelete: Restrict)
   // Transaction type=IN,OUT
-  Category        Category?    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  Card            Card?        @relation(fields: [cardId], references: [id], onDelete: Restrict)
-  BankAccount     BankAccount? @relation(name: "TransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
+  category        Category?    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  card            Card?        @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  bankAccount     BankAccount? @relation(name: "TransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
-  BankAccountFrom BankAccount? @relation(name: "TransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
-  BankAccountTo   BankAccount? @relation(name: "TransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
+  bankAccountFrom BankAccount? @relation(name: "TransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
+  bankAccountTo   BankAccount? @relation(name: "TransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
 
-  Installment Installment? @relation(fields: [id], references: [transactionId], onDelete: Restrict)
+  installment Installment? @relation(fields: [id], references: [transactionId], onDelete: Restrict)
+
+  @@map("transactions")
 }
 
-// Contains the installment data of an transactions
+/// Contains the installment data of an transactions
 model Installment {
-  transactionId String   @id @db.Char(16)
+  transactionId String   @id @map("transaction_id") @db.Char(16)
   total         Int      @db.SmallInt
   current       Int      @db.SmallInt
-  createdAt     DateTime @default(now())
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  Transaction Transaction?
+  transaction Transaction?
+
+  @@map("installments")
 }
 
-// Contains all the user's recurrent transactions.
-//
-// The recurrent transactions are linked to the budget, this way the user can have a better control of which transactions he wants to execute.
+/// Contains all the user's recurrent transactions.
+/// The recurrent transactions are linked to the budget, this way the user can have a better control of which transactions he wants to execute.
 model RecurrentTransaction {
   id                     String                            @id @db.Char(16)
-  accountId              String                            @db.Char(16)
-  budgetId               String                            @db.Char(16)
+  accountId              String                            @map("account_id") @db.Char(16)
+  budgetId               String                            @map("budget_id") @db.Char(16)
   frequency              RecurrentTransactionFrequencyEnum
-  isSystemManaged        Boolean // Define if the recurrent transaction is automatic controlled by the system, or if it\'s created and controled by the user
+  isSystemManaged        Boolean                           @map("is_system_managed") /// Define if the recurrent transaction is automatic controlled by the system, or if it\'s created and controled by the user
   // Data to create the transaction
   type                   TransactionTypeEnum
   name                   String                            @db.VarChar(30)
   description            String                            @db.VarChar(300)
   amount                 Int
-  budgetItemId           String                            @db.Char(16)
-  createdAt              DateTime                          @default(now())
-  isSystemManagedT       Boolean // Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
-  recurrentTransactionId String?                           @db.Char(16)
+  budgetItemId           String                            @map("budget_item_id") @db.Char(16)
+  createdAt              DateTime                          @default(now()) @map("created_at")
+  isSystemManagedT       Boolean                           @map("is_system_managed_t") /// Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
+  recurrentTransactionId String?                           @map("recurrent_transaction_id") @db.Char(16)
   // Transaction type=IN,OUT
-  paymentMethod          PaymentMethodEnum? // Only type=IN,OUT transactions have this column
-  categoryId             String?                           @db.Char(16) // Only type=IN,OUT transactions have this column
-  cardId                 String?                           @db.Char(16) // Only type=IN,OUT transactions have this column
-  bankAccountId          String?                           @db.Char(16) // Only type=IN,OUT transactions have this column
+  paymentMethod          PaymentMethodEnum?                @map("payment_method") /// Only type=IN,OUT transactions have this column
+  categoryId             String?                           @map("category_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  cardId                 String?                           @map("card_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  bankAccountId          String?                           @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
   // Transaction type=TRANSFER
-  bankAccountFromId      String?                           @db.Char(16) // Only type=TRANSFER transactions have this column
-  bankAccountToId        String?                           @db.Char(16) // Only type=TRANSFER transactions have this column
+  bankAccountFromId      String?                           @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
+  bankAccountToId        String?                           @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
 
-  Account                  Account                  @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  Budget                   Budget                   @relation(fields: [budgetId], references: [id], onDelete: Restrict)
-  RecurrentTransactionRule RecurrentTransactionRule @relation(fields: [id], references: [recurrentTransactionId])
-  Config                   Config?
+  account                  Account                  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budget                   Budget                   @relation(fields: [budgetId], references: [id], onDelete: Restrict)
+  recurrentTransactionRule RecurrentTransactionRule @relation(fields: [id], references: [recurrentTransactionId])
+  config                   Config?
   // Data to create the transaction
-  BudgetItem               BudgetItem               @relation(fields: [budgetItemId], references: [id], onDelete: Restrict)
+  budgetItem               BudgetItem               @relation(fields: [budgetItemId], references: [id], onDelete: Restrict)
   // Transaction type=IN,OUT
-  Category                 Category?                @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  Card                     Card?                    @relation(fields: [cardId], references: [id], onDelete: Restrict)
-  BankAccount              BankAccount?             @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
+  category                 Category?                @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  card                     Card?                    @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  bankAccount              BankAccount?             @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
-  BankAccountFrom          BankAccount?             @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
-  BankAccountTo            BankAccount?             @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
+  bankAccountFrom          BankAccount?             @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
+  bankAccountTo            BankAccount?             @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
+
+  @@map("recurrent_transactions")
 }
 
-// Contains the recurrent transactions rules to be executed
+/// Contains the recurrent transactions rules to be executed
 model RecurrentTransactionRule {
-  recurrentTransactionId String                       @id @db.Char(16)
+  recurrentTransactionId String                       @id @map("recurrent_transaction_id") @db.Char(16)
   rule                   RecurrentTransactionRuleEnum
   weekday                Int                          @db.SmallInt
   weekdays               Int[]
-  dayOfTheMonth          Int                          @db.SmallInt
+  dayOfTheMonth          Int                          @map("day_of_the_month") @db.SmallInt
   month                  Int                          @db.SmallInt
 
-  RecurrentTransaction RecurrentTransaction?
+  recurrentTransaction RecurrentTransaction?
+
+  @@map("recurrent_transaction_rules")
 }

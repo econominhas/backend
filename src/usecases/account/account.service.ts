@@ -80,7 +80,7 @@ export class AccountService implements AccountUseCase {
 
 		if (relatedAccounts.length > 0) {
 			const sameProviderId = relatedAccounts.find(
-				(a) => a.SignInProvider[0].providerId === providerData.id,
+				(a) => a.signInProviders[0].providerId === providerData.id,
 			);
 			const sameEmail = relatedAccounts.find(
 				(a) => a.email === providerData.email,
@@ -92,9 +92,9 @@ export class AccountService implements AccountUseCase {
 			if (
 				sameEmail &&
 				!sameProviderId &&
-				(!sameEmail.SignInProvider[0].providerId ||
-					sameEmail.SignInProvider[0].providerId ===
-						sameProviderId.SignInProvider[0].providerId)
+				(!sameEmail.signInProviders[0].providerId ||
+					sameEmail.signInProviders[0].providerId ===
+						sameProviderId.signInProviders[0].providerId)
 			) {
 				account = sameEmail;
 			}
@@ -277,7 +277,7 @@ export class AccountService implements AccountUseCase {
 			throw new UnauthorizedException('User not found');
 		}
 
-		const google = account.SignInProvider.find(
+		const google = account.signInProviders.find(
 			(p) => p.provider === SignInProviderEnum.GOOGLE,
 		);
 

@@ -39,7 +39,7 @@ export interface GetByIdInput {
 }
 
 export type GetByIdWithProvidersOutput = Account & {
-	SignInProvider: Array<SignInProvider>;
+	signInProviders: Array<SignInProvider>;
 };
 
 export interface GetByEmailInput {
@@ -63,7 +63,7 @@ export interface GetManyByProviderInput {
 
 export type GetManyByProviderOutput = Array<
 	Account & {
-		SignInProvider: Array<SignInProvider>;
+		signInProviders: Array<SignInProvider>;
 	}
 >;
 
