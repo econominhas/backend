@@ -1,36 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/postgresql';
 import {
 	CreateInput,
 	GetByTokenInput,
-	RefreshTokenEntity,
 	RefreshTokenRepository,
 } from 'src/models/refresh-token';
 import { TokenAdapter } from 'src/adapters/implementations/token.service';
+import { InjectRepository, Repository } from '..';
+import { RefreshToken } from '@prisma/client';
 
 @Injectable()
 export class RefreshTokenRepositoryService extends RefreshTokenRepository {
 	constructor(
-		@InjectRepository(RefreshTokenEntity)
-		private readonly refreshTokenRepository: EntityRepository<RefreshTokenEntity>,
+		@InjectRepository('refreshToken')
+		private readonly refreshTokenRepository: Repository<'refreshToken'>,
 		private readonly tokenAdapter: TokenAdapter,
 	) {
 		super();
 	}
 
-	async create({ accountId }: CreateInput): Promise<RefreshTokenEntity> {
+	async create({ accountId }: CreateInput): Promise<RefreshToken> {
 		const { refreshToken } = this.tokenAdapter.genRefresh();
 
 		return this.refreshTokenRepository.create({
-			accountId,
-			refreshToken,
+			data: {
+				accountId,
+				refreshToken,
+			},
 		});
 	}
 
-	get({ refreshToken }: GetByTokenInput): Promise<RefreshTokenEntity> {
-		return this.refreshTokenRepository.findOne({
-			refreshToken,
+	get({ refreshToken }: GetByTokenInput): Promise<RefreshToken> {
+		return this.refreshTokenRepository.findFirst({
+			where: {
+				refreshToken,
+			},
 		});
 	}
 }

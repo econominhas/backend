@@ -47,7 +47,7 @@ model Account {
   createdAt DateTime @default(now())
 
   Config                   Config                     @relation(fields: [id], references: [accountId], map: "Config_id_fkey", onDelete: Restrict)
-  MagicLinkCode            MagicLinkCode              @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
+  MagicLinkCode            MagicLinkCode?             @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
   SignInProvider           SignInProvider[]
   RefreshToken             RefreshToken[]
   UserSubscription         UserSubscription[]
@@ -77,7 +77,7 @@ model SignInProvider {
 // Contains user's account config
 model Config {
   accountId       String       @id @db.Char(16)
-  name            String       @db.VarChar(20)
+  name            String?      @db.VarChar(20)
   timezone        TimezoneEnum
   currentBudgetId String?      @db.Char(16)
   salaryId        String?      @db.Char(16)

@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { TokenAdapter } from 'src/adapters/implementations/token.service';
 import {
-	AccountEntity,
 	AccountUseCase,
 	AuthOutput,
 	CreateWith3rdPartyProviderInput,
@@ -21,21 +20,15 @@ import {
 	RefreshOutput,
 	RefreshTokenInput,
 } from 'src/models/account';
-import { SignInProviderEnum } from 'src/types/enums/sign-in-provider';
 import { SESAdapter } from 'src/adapters/implementations/ses.service';
 import { MagicLinkCodeRepositoryService } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.service';
 import { RefreshTokenRepositoryService } from 'src/repositories/postgres/refresh-token/refresh-token-repository.service';
 import { GoogleAdapter } from 'src/adapters/implementations/google.service';
+import { Account, SignInProviderEnum } from '@prisma/client';
 
 @Injectable()
 export class AccountService implements AccountUseCase {
-	private readonly requiredGoogleScopes = [
-		'identify',
-		'email',
-		'guilds',
-		'guilds.join',
-		'guilds.members.read',
-	];
+	private readonly requiredGoogleScopes = ['identify', 'email'];
 
 	constructor(
 		@Inject(AccountRepositoryService)
@@ -82,12 +75,12 @@ export class AccountService implements AccountUseCase {
 			provider: SignInProviderEnum.GOOGLE,
 		});
 
-		let account: AccountEntity;
+		let account: Account;
 		let isFirstAccess: true;
 
 		if (relatedAccounts.length > 0) {
 			const sameProviderId = relatedAccounts.find(
-				(a) => a.signInProviders[0].providerId === providerData.id,
+				(a) => a.SignInProvider[0].providerId === providerData.id,
 			);
 			const sameEmail = relatedAccounts.find(
 				(a) => a.email === providerData.email,
@@ -99,9 +92,9 @@ export class AccountService implements AccountUseCase {
 			if (
 				sameEmail &&
 				!sameProviderId &&
-				(!sameEmail.signInProviders[0].providerId ||
-					sameEmail.signInProviders[0].providerId ===
-						sameProviderId.signInProviders[0].providerId)
+				(!sameEmail.SignInProvider[0].providerId ||
+					sameEmail.SignInProvider[0].providerId ===
+						sameProviderId.SignInProvider[0].providerId)
 			) {
 				account = sameEmail;
 			}
@@ -116,7 +109,7 @@ export class AccountService implements AccountUseCase {
 				);
 			}
 
-			await this.accountRepository.updateGoogle({
+			await this.accountRepository.updateProvider({
 				accountId: account.id,
 				provider: SignInProviderEnum.GOOGLE,
 				providerId: providerData.id,
@@ -233,11 +226,11 @@ export class AccountService implements AccountUseCase {
 		}
 
 		const { refreshToken } = await this.refreshTokenRepository.create({
-			accountId: magicLinkCode.account.id,
+			accountId: magicLinkCode.accountId,
 		});
 
 		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
-			id: magicLinkCode.account.id,
+			id: magicLinkCode.accountId,
 		});
 
 		return {
@@ -278,13 +271,13 @@ export class AccountService implements AccountUseCase {
 	}
 
 	async iam({ id }: IamInput): Promise<IamOutput> {
-		const account = await this.accountRepository.getById({ id });
+		const account = await this.accountRepository.getByIdWithProviders({ id });
 
 		if (!account) {
 			throw new UnauthorizedException('User not found');
 		}
 
-		const google = account.signInProviders.find(
+		const google = account.SignInProvider.find(
 			(p) => p.provider === SignInProviderEnum.GOOGLE,
 		);
 

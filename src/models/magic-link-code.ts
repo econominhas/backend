@@ -1,23 +1,4 @@
-import { Entity, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { AccountEntity } from './account';
-
-@Entity()
-export class MagicLinkCodeEntity {
-	@PrimaryKey({ type: 'char(16)' })
-	accountId!: string;
-
-	@Property({ type: 'char(32)' })
-	code!: string;
-
-	@Property()
-	isFirstAccess!: boolean;
-
-	@Property({ type: 'timestamp' })
-	createdAt = new Date();
-
-	@OneToOne()
-	account!: AccountEntity;
-}
+import { MagicLinkCode } from '@prisma/client';
 
 /**
  *
@@ -37,8 +18,10 @@ export interface GetInput {
 	code: string;
 }
 
-export abstract class MagicLinkCodeRepository {
-	abstract upsert(i: UpsertInput): Promise<MagicLinkCodeEntity>;
+export type GetOutput = MagicLinkCode;
 
-	abstract get(i: GetInput): Promise<MagicLinkCodeEntity | undefined>;
+export abstract class MagicLinkCodeRepository {
+	abstract upsert(i: UpsertInput): Promise<MagicLinkCode>;
+
+	abstract get(i: GetInput): Promise<GetOutput | undefined>;
 }

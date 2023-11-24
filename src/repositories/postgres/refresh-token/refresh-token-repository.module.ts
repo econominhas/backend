@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PostgresTable } from '..';
+import { PostgresModule } from '..';
 import { RefreshTokenRepositoryService } from './refresh-token-repository.service';
-import { RefreshTokenEntity } from 'src/models/refresh-token';
 import { TokenAdapter } from 'src/adapters/implementations/token.service';
 
 @Module({
-	imports: [PostgresTable([RefreshTokenEntity])],
+	imports: [PostgresModule.forFeature(['refreshToken'])],
 	providers: [RefreshTokenRepositoryService, TokenAdapter],
 	exports: [RefreshTokenRepositoryService],
 })

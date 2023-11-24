@@ -1,16 +1,4 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
-
-@Entity()
-export class RefreshTokenEntity {
-	@PrimaryKey({ type: 'char(16)' })
-	accountId!: string;
-
-	@Property({ type: 'char(64)' })
-	refreshToken!: string;
-
-	@Property({ type: 'timestamp' })
-	createdAt = new Date();
-}
+import { RefreshToken } from '@prisma/client';
 
 /**
  *
@@ -29,7 +17,7 @@ export interface GetByTokenInput {
 }
 
 export abstract class RefreshTokenRepository {
-	abstract create(i: CreateInput): Promise<RefreshTokenEntity>;
+	abstract create(i: CreateInput): Promise<RefreshToken>;
 
-	abstract get(i: GetByTokenInput): Promise<RefreshTokenEntity | undefined>;
+	abstract get(i: GetByTokenInput): Promise<RefreshToken | undefined>;
 }

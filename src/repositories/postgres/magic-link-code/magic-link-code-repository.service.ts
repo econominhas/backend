@@ -1,39 +1,50 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/postgresql';
 import {
 	UpsertInput,
 	GetInput,
-	MagicLinkCodeEntity,
 	MagicLinkCodeRepository,
+	GetOutput,
 } from 'src/models/magic-link-code';
 import { UIDSecretAdapter } from 'src/adapters/implementations/uid-secret.service';
+import { InjectRepository, Repository } from '..';
+import { MagicLinkCode } from '@prisma/client';
 
 @Injectable()
 export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
 	constructor(
-		@InjectRepository(MagicLinkCodeEntity)
-		private readonly magicLinkCodeRepository: EntityRepository<MagicLinkCodeEntity>,
+		@InjectRepository('magicLinkCode')
+		private readonly magicLinkCodeRepository: Repository<'magicLinkCode'>,
 		private readonly secretAdapter: UIDSecretAdapter,
 	) {
 		super();
 	}
 
-	upsert({
-		accountId,
-		isFirstAccess,
-	}: UpsertInput): Promise<MagicLinkCodeEntity> {
+	upsert({ accountId, isFirstAccess }: UpsertInput): Promise<MagicLinkCode> {
 		return this.magicLinkCodeRepository.upsert({
-			accountId,
-			isFirstAccess: isFirstAccess ?? false,
-			code: this.secretAdapter.gen(),
+			where: {
+				accountId,
+			},
+			create: {
+				accountId,
+				isFirstAccess: isFirstAccess ?? false,
+				code: this.secretAdapter.gen(),
+				createdAt: new Date(),
+			},
+			update: {
+				accountId,
+				isFirstAccess: isFirstAccess ?? false,
+				code: this.secretAdapter.gen(),
+				createdAt: new Date(),
+			},
 		});
 	}
 
-	get({ accountId, code }: GetInput): Promise<MagicLinkCodeEntity> {
-		return this.magicLinkCodeRepository.findOne({
-			accountId,
-			code,
+	get({ accountId, code }: GetInput): Promise<GetOutput> {
+		return this.magicLinkCodeRepository.findFirst({
+			where: {
+				accountId,
+				code,
+			},
 		});
 	}
 }

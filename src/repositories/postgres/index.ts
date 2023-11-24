@@ -1,19 +1,54 @@
-import { EntityName, MikroOrmModule } from '@mikro-orm/nestjs';
-import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
-import { CustomNamingStrategy } from './naming-strategy';
-import { AnyEntity } from '@mikro-orm/core';
+import type { DynamicModule } from '@nestjs/common';
+import { Inject, Module } from '@nestjs/common';
+import { PostgresCoreModule } from './core';
+import { POSTGRES_CONNECTION_NAME } from './core';
+import { PrismaClient } from '@prisma/client';
 
-export const PostgresModule = MikroOrmModule.forRoot({
-	entities: ['./dist/models'], // path to our JS entities (dist), relative to `baseDir`
-	entitiesTs: ['./src/models'], // path to our TS entities (src), relative to `baseDir`
-	dbName: process.env['DB_NAME'],
-	user: process.env['DB_USER'],
-	password: process.env['DB_PASSWORD'],
-	type: 'postgresql',
-	metadataProvider: TsMorphMetadataProvider,
-	namingStrategy: CustomNamingStrategy,
-	ignoreUndefinedInQuery: true,
-});
+type AllTables = Omit<
+	PrismaClient,
+	| '$connect'
+	| '$disconnect'
+	| '$executeRaw'
+	| '$executeRawUnsafe'
+	| '$extends'
+	| '$on'
+	| '$queryRaw'
+	| '$queryRawUnsafe'
+	| '$transaction'
+	| '$use'
+>;
 
-export const PostgresTable = (entities: EntityName<AnyEntity>[]) =>
-	MikroOrmModule.forFeature(entities);
+type TablesNames = keyof AllTables;
+
+@Module({})
+export class PostgresModule {
+	static forRoot(): DynamicModule {
+		return {
+			module: PostgresModule,
+			imports: [PostgresCoreModule.forRoot()],
+		};
+	}
+
+	static forFeature(tableNames: Array<TablesNames> = []): DynamicModule {
+		const providers = tableNames.map((tableName) => ({
+			provide: PostgresModule.getRepositoryToken(tableName),
+			useFactory: (connection: PrismaClient) => connection[tableName],
+			inject: [POSTGRES_CONNECTION_NAME],
+		}));
+
+		return {
+			module: PostgresModule,
+			providers,
+			exports: providers,
+		};
+	}
+
+	static getRepositoryToken(table: TablesNames) {
+		return `POSTGRES_${(table as string).toUpperCase()}_REPOSITORY`;
+	}
+}
+
+export const InjectRepository = (tableName: TablesNames) =>
+	Inject(PostgresModule.getRepositoryToken(tableName));
+
+export type Repository<T extends TablesNames> = AllTables[T];

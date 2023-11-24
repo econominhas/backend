@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AccountRepositoryService } from './account-repository.service';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
-import { AccountEntity } from 'src/models/account';
-import { PostgresTable } from '..';
+import { PostgresModule } from '..';
 
 @Module({
-	imports: [PostgresTable([AccountEntity])],
+	imports: [PostgresModule.forFeature(['account'])],
 	providers: [AccountRepositoryService, UIDAdapter],
 	exports: [AccountRepositoryService],
 })

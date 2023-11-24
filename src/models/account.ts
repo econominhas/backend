@@ -1,36 +1,9 @@
 import {
-	Collection,
-	Entity,
-	OneToMany,
-	OneToOne,
-	PrimaryKey,
-	Property,
-} from '@mikro-orm/core';
-import { SignInProviderEnum } from 'src/types/enums/sign-in-provider';
-import { TimezoneEnum } from 'src/types/enums/timezone';
-import { ConfigEntity } from './config';
-import { SignInProviderEntity } from './sign-in-provider';
-
-@Entity()
-export class AccountEntity {
-	@PrimaryKey({ type: 'char(16)' })
-	id!: string;
-
-	@Property({ type: 'varchar(150)' })
-	email!: string;
-
-	@Property({ type: 'varchar(25)' })
-	phone!: string;
-
-	@Property({ type: 'timestamp' })
-	createdAt = new Date();
-
-	@OneToOne()
-	config!: ConfigEntity;
-
-	@OneToMany({ mappedBy: 'accountId' })
-	signInProviders = new Collection<SignInProviderEntity>(this);
-}
+	Account,
+	SignInProvider,
+	SignInProviderEnum,
+	TimezoneEnum,
+} from '@prisma/client';
 
 /**
  *
@@ -65,6 +38,10 @@ export interface GetByIdInput {
 	id: string;
 }
 
+export type GetByIdWithProvidersOutput = Account & {
+	SignInProvider: Array<SignInProvider>;
+};
+
 export interface GetByEmailInput {
 	email: string;
 }
@@ -84,6 +61,12 @@ export interface GetManyByProviderInput {
 	email?: string;
 }
 
+export type GetManyByProviderOutput = Array<
+	Account & {
+		SignInProvider: Array<SignInProvider>;
+	}
+>;
+
 export interface UpdateProviderInput {
 	accountId: string;
 	provider: SignInProviderEnum;
@@ -94,24 +77,26 @@ export interface UpdateProviderInput {
 }
 
 export abstract class AccountRepository {
-	abstract create(i: CreateInput): Promise<AccountEntity>;
+	abstract create(i: CreateInput): Promise<Account>;
 
-	abstract getById(i: GetByIdInput): Promise<AccountEntity | undefined>;
+	abstract getById(i: GetByIdInput): Promise<Account | undefined>;
 
-	abstract getByEmail(i: GetByEmailInput): Promise<AccountEntity | undefined>;
+	abstract getByIdWithProviders(
+		i: GetByIdInput,
+	): Promise<GetByIdWithProvidersOutput | undefined>;
 
-	abstract getByPhone(i: GetByPhoneInput): Promise<AccountEntity | undefined>;
+	abstract getByEmail(i: GetByEmailInput): Promise<Account | undefined>;
 
-	abstract getByProvider(
-		i: GetByProviderInput,
-	): Promise<AccountEntity | undefined>;
+	abstract getByPhone(i: GetByPhoneInput): Promise<Account | undefined>;
+
+	abstract getByProvider(i: GetByProviderInput): Promise<Account | undefined>;
 
 	// Get by provider information (id or email)
 	abstract getManyByProvider(
 		i: GetManyByProviderInput,
-	): Promise<Array<AccountEntity>>;
+	): Promise<GetManyByProviderOutput>;
 
-	abstract updateGoogle(i: UpdateProviderInput): Promise<void>;
+	abstract updateProvider(i: UpdateProviderInput): Promise<void>;
 }
 
 /**
