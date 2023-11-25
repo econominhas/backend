@@ -209,7 +209,7 @@ model TermsAndPoliciesAccepted {
   termsAndPolicies TermsAndPolicies @relation(fields: [semVer], references: [semVer], onDelete: Restrict)
 
   @@id([accountId, semVer])
-  @@map("terms_and_policies_accepted")
+  @@map("terms_and_policies_accepteds")
 }
 
 //

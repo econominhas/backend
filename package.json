@@ -64,7 +64,7 @@
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
 		"lint": "eslint \"src/**/*.ts\" --fix --quiet",
-		"lint:prisma": "prisma-case-format --file prisma/schema.prisma --map-table-case snake --map-field-case snake --map-enum-case snake",
+		"lint:prisma": "prisma-case-format --file prisma/schema.prisma --map-table-case snake,plural --map-field-case snake --map-enum-case snake",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",

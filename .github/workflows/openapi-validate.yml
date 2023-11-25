@@ -8,7 +8,7 @@ on:
       - 'openapi/*'
 
 jobs:
-  build:
+  openapi-validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

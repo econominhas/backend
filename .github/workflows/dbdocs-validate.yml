@@ -8,7 +8,7 @@ on:
       - '*.prisma'
 
 jobs:
-  build:
+  dbdocs-validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
