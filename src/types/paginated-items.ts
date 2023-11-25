@@ -3,6 +3,11 @@ export interface Paginated {
 	limit?: number;
 }
 
+export interface PaginatedRepository {
+	limit: number;
+	offset: number;
+}
+
 export interface PaginatedItems<T> {
 	paging: {
 		curPage: number;

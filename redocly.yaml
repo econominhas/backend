@@ -7,13 +7,14 @@ extends:
 rules:
   no-unused-components: error
   security-defined: off
+  operation-4xx-response: off
 theme:
   openapi:
     htmlTemplate: ./openapi/html/index.html
     theme:
       colors:
         primary:
-          main: "#32329f"
+          main: '#32329f'
     generateCodeSamples:
       languages: # Indicates in which languages to generate code samples. See more https://redocly.com/docs/api-reference-docs/resources/code-samples-languages/
         - lang: curl

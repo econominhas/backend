@@ -54,7 +54,6 @@
 		"db:docs": "prisma generate --generator dbml && dbdocs build ./prisma/schema.dbml",
 		"openapi:serve": "redocly preview-docs",
 		"openapi:build": "redocly bundle -o dist/bundle.yaml",
-		"openapi:lint": "redocly lint",
 		"prepare": "husky install",
 		"build": "nest build",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -63,13 +62,15 @@
 		"start:dev": "env-cmd nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
-		"lint": "eslint \"src/**/*.ts\" --fix --quiet",
+		"lint:ts": "tsc",
+		"lint:code": "eslint \"src/**/*.ts\" --fix --quiet",
 		"lint:prisma": "prisma-case-format --file prisma/schema.prisma --map-table-case snake,plural --map-field-case snake --map-enum-case snake",
+		"lint:openapi": "redocly lint",
+		"lint:all": "yarn lint:ts && yarn lint:code && yarn lint:prisma && yarn lint:openapi",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-		"test:e2e": "jest --config ./test/jest-e2e.json",
-		"husky:pre-commit": "tsc && yarn lint && yarn lint:prisma && yarn openapi:lint"
+		"test:e2e": "jest --config ./test/jest-e2e.json"
 	}
 }

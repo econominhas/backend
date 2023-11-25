@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TermsAndPoliciesService } from './terms-and-policies.service';
-import { AuthController } from 'src/delivery/auth.controller';
 import { TermsAndPoliciesRepositoryModule } from 'src/repositories/postgres/terms-and-policies/terms-and-policies-repository.module';
+import { TermsAndPoliciesController } from 'src/delivery/terms-and-policies.controller';
 
 @Module({
-	controllers: [AuthController],
+	controllers: [TermsAndPoliciesController],
 	imports: [TermsAndPoliciesRepositoryModule],
 	providers: [TermsAndPoliciesService],
 })
