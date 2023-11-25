@@ -1,8 +1,8 @@
-import { AccountEntity } from 'src/models/account';
+import { Account } from '@prisma/client';
 
 export interface SendInput {
 	to: string;
-	account: AccountEntity;
+	account: Account;
 	templateId: keyof typeof EMAIL_TEMPLATES;
 	placeholders: Record<string, string | number>;
 }
