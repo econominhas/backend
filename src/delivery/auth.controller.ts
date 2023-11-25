@@ -92,7 +92,7 @@ export class AuthController {
 	}
 
 	@Get('/accounts/iam')
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	iam(
 		@UserData()
 		userData: UserDataDto,
@@ -104,7 +104,7 @@ export class AuthController {
 
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Patch('/accounts/name')
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	name(
 		@UserData()
 		userData: UserDataDto,

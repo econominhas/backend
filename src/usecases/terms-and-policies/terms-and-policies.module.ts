@@ -7,5 +7,6 @@ import { TermsAndPoliciesController } from 'src/delivery/terms-and-policies.cont
 	controllers: [TermsAndPoliciesController],
 	imports: [TermsAndPoliciesRepositoryModule],
 	providers: [TermsAndPoliciesService],
+	exports: [TermsAndPoliciesService],
 })
 export class TermsAndPoliciesModule {}

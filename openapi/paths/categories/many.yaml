@@ -37,7 +37,7 @@ post:
   responses:
     '201':
       description: |
-        Category created
+        Categories created
     '400':
       $ref: ../../components/responses/bad-request.yaml
     '401':

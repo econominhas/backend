@@ -1,6 +1,6 @@
 import { Account } from '@prisma/client';
 
-export const EMAIL_TEMPLATES = {
+export const SMS_TEMPLATES = {
 	MAGIC_LINK_LOGIN: {
 		from: '',
 		title: '',
@@ -11,10 +11,10 @@ export const EMAIL_TEMPLATES = {
 export interface SendInput {
 	to: string;
 	account: Account;
-	templateId: keyof typeof EMAIL_TEMPLATES;
+	templateId: keyof typeof SMS_TEMPLATES;
 	placeholders: Record<string, string | number>;
 }
 
-export interface EmailAdapter {
+export interface SmsAdapter {
 	send: (i: SendInput) => Promise<void>;
 }

@@ -52,7 +52,7 @@ export class AccountService extends AccountUseCase {
 		private readonly googleAdapter: GoogleAdapter,
 		private readonly tokenAdapter: TokenAdapter,
 		private readonly emailAdapter: SESAdapter,
-		private readonly smsAdapter: any,
+		private readonly smsAdapter: SESAdapter,
 	) {
 		super();
 	}

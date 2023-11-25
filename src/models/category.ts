@@ -1,4 +1,4 @@
-import { DefaultCategory } from '@prisma/client';
+import { DefaultCategory, IconEnum } from '@prisma/client';
 import {
 	Paginated,
 	PaginatedItems,
@@ -13,8 +13,20 @@ import {
  *
  */
 
+export interface CreateManyInput {
+	accountId: string;
+	categories: Array<{
+		name: string;
+		description: string;
+		icon: IconEnum;
+		color: string;
+	}>;
+}
+
 export abstract class CategoryRepository {
 	abstract getDefault(i: PaginatedRepository): Promise<Array<DefaultCategory>>;
+
+	abstract createMany(i: CreateManyInput): Promise<void>;
 }
 
 /**
@@ -27,4 +39,6 @@ export abstract class CategoryRepository {
 
 export abstract class CategoryUseCase {
 	abstract getDefault(i: Paginated): Promise<PaginatedItems<DefaultCategory>>;
+
+	abstract createMany(i: CreateManyInput): Promise<void>;
 }

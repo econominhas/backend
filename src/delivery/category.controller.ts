@@ -1,10 +1,12 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from './guards/auth.guard';
 import { CategoryService } from 'src/usecases/category/category.service';
-import { PaginatedDto } from './dtos';
+import { PaginatedDto, UserDataDto } from './dtos';
+import { UserData } from './decorators/user-data';
+import { CreateManyDto } from './dtos/category';
 
 @Controller('categories')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
 
@@ -14,5 +16,18 @@ export class CategoryController {
 		pagination: PaginatedDto,
 	) {
 		return this.categoryService.getDefault(pagination);
+	}
+
+	@Post('/many')
+	createMany(
+		@UserData()
+		userData: UserDataDto,
+		@Body()
+		body: CreateManyDto,
+	) {
+		return this.categoryService.createMany({
+			...body,
+			accountId: userData.accountId,
+		});
 	}
 }

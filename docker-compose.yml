@@ -4,6 +4,7 @@ services:
   localstack:
     # https://medium.com/@muthomititus/a-guide-to-localstack-with-docker-compose-e1487e3a776f
     image: localstack/localstack:1.0.4
+    container_name: econominhas-localstack
     ports:
       - '4566:4566'
     environment:
@@ -14,44 +15,45 @@ services:
     volumes:
       - './localstack/buckets.sh:/docker-entrypoint-initaws.d/buckets.sh'
     networks:
-      - monetizzer-api_network
+      - econominhas-api_network
 
-  mongodb:
-    image: 'mongo:latest'
+  postgres:
+    image: 'postgres:latest'
+    container_name: econominhas-postgres
     ports:
-      - '27017:27017'
+      - 5432:5432
     environment:
-      - MONGO_INITDB_DATABASE=database
-      - MONGODB_DATA_DIR=/data/db
-      - MONDODB_LOG_DIR=/dev/null
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
     volumes:
-      - 'mongo:/data/db'
+      - 'postgres:/var/lib/postgresql/data/'
     networks:
-      - monetizzer-api_network
+      - econominhas-api_network
 
   api:
     build:
       context: '.'
       dockerfile: Dockerfile.dev
-    container_name: monetizzer_api
+    container_name: econominhas-api
     command: yarn start:docker
     depends_on:
-      - mongodb
+      - postgres
       - localstack
     ports:
       - 3000:3000
     env_file:
-      - .env.docker
+      - .env
     volumes:
       - ./:/app/
     networks:
-      - monetizzer-api_network
+      - econominhas-api_network
 
 volumes:
-  mongo:
+  postgres:
 
 networks:
-  monetizzer-api_network:
+  econominhas-api_network:
     driver: bridge
     ipam:
       config:

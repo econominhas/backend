@@ -1,15 +1,4 @@
 {
-	"cSpell.words": [
-		"dbdocs",
-		"dbml",
-		"dtos",
-		"Econominhas",
-		"nestjs",
-		"openapi",
-		"redocly",
-		"usecases"
-	],
-
 	// Add a vertical line on the 80 characters limit
 	"editor.rulers": [80],
 
@@ -26,5 +15,47 @@
 	"[yaml]": {
 		"editor.detectIndentation": true,
 		"editor.insertSpaces": true
-	}
+	},
+
+	// ======================= Extentions ===========================
+
+	// Material Icon Theme
+	"material-icon-theme.folders.associations": {
+		"types": "typescript",
+		"interfaces": "typescript",
+		"modules": "generator",
+		"entities": "class",
+		"entity": "class",
+		"migrations": "database",
+		"dist-lint": "dist"
+	},
+	"material-icon-theme.files.associations": {
+		"*.controller.ts": "nest-controller",
+		"*.module.ts": "nest-module",
+		"*.service.ts": "nest-service",
+		"*.middleware.ts": "nest-middleware",
+		"*.filter.ts": "nest-filter",
+		"*.pipe.ts": "nest-pipe",
+		"*.gateway.ts": "nest-gateway",
+		"*.decorator.ts": "nest-decorator",
+		"*.guard.ts": "nest-guard",
+		"*.interceptor.ts": "nest-guard",
+		"tsconfig.lint.json": "tsconfig"
+	},
+	"material-icon-theme.languages.associations": {
+		"env": "tune"
+	},
+
+	// Code Spell Checker
+	"cSpell.words": [
+		"dbdocs",
+		"dbml",
+		"dtos",
+		"Econominhas",
+		"nestjs",
+		"openapi",
+		"redocly",
+		"Usecase",
+		"usecases"
+	]
 }
