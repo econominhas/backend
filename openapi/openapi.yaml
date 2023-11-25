@@ -95,6 +95,8 @@ paths:
 
   /categories:
     $ref: paths/categories/index.yaml
+  /categories/default:
+    $ref: paths/categories/default.yaml
 
   /terms/accept:
     $ref: paths/terms/accept.yaml

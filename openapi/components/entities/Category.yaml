@@ -18,9 +18,9 @@ properties:
     type: string
     format: uuid
   name:
-    $ref: ../../components/fields/name.yaml
+    $ref: ../fields/name.yaml
   description:
-    $ref: ../../components/fields/description.yaml
+    $ref: ../fields/description.yaml
   icon:
     $ref: ../fields/icon.yaml
   color:

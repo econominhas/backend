@@ -323,14 +323,73 @@ model Card {
 //
 //
 
+enum IconEnum {
+  house
+  shopping_cart @map("shopping-cart")
+  baby
+  tv
+  medkit
+  kiss
+  suitcase
+  beach
+  question
+  upload
+  download
+  transfer
+  ad
+  crown
+  pencil
+  logout
+  trashcan
+  pluscircle
+  google
+  email
+  phone
+  invoice
+  plus
+  wallet
+  gear
+  arrow_left    @map("arrow-left")
+  less_than     @map("less-than")
+  more_than     @map("more-than")
+  triangle_down @map("triangle-down")
+  info
+  bank
+  card
+  ticket
+  category
+  pdf
+  tag
+  bell
+  connect
+  profile
+  eye_slash     @map("eye-slash")
+  clock
+  computer
+  calendar
+  money_bag     @map("money-bag")
+
+  @@map("icon_enum")
+}
+
+/// Contains the default categories suggested to the user on the account creation
+model DefaultCategory {
+  name        String   @id @db.VarChar(30)
+  description String   @db.VarChar(300)
+  icon        IconEnum
+  color       String   @db.Char(7)
+
+  @@map("default_categories")
+}
+
 /// Contains all the user's categories
 model Category {
-  id          String  @id @db.Char(16)
-  accountId   String  @map("account_id") @db.Char(16)
-  name        String  @db.VarChar(30)
-  description String  @db.VarChar(300)
-  iconUrl     String  @map("icon_url") @db.VarChar(200)
-  color       String  @db.Char(7)
+  id          String   @id @db.Char(16)
+  accountId   String   @map("account_id") @db.Char(16)
+  name        String   @db.VarChar(30)
+  description String   @db.VarChar(300)
+  icon        IconEnum
+  color       String   @db.Char(7)
   active      Boolean
 
   account               Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)

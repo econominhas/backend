@@ -27,13 +27,13 @@ properties:
     type: string
     format: uuid
   name:
-    $ref: ../../components/fields/name.yaml
+    $ref: ../fields/name.yaml
   icon:
-    $ref: ../../components/fields/icon.yaml
+    $ref: ../fields/icon.yaml
   color:
-    $ref: ../../components/fields/color.yaml
+    $ref: ../fields/color.yaml
   iconColor:
-    $ref: ../../components/fields/color.yaml
+    $ref: ../fields/color.yaml
   monthlyPrice:
     description: Price if paid per month
     type: integer

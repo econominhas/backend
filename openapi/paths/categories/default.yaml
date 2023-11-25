@@ -1,0 +1,43 @@
+get:
+  tags:
+    - Category
+  summary: Get a list of default categories
+  description: |
+    Get a list of default categories
+  operationId: category-default
+  security:
+    - bearer: []
+  responses:
+    '200':
+      description: |
+        List of default categories
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - paging
+              - data
+            properties:
+              paging:
+                $ref: ../../components/schemas/paging.yaml
+              data:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - name
+                    - description
+                    - icon
+                    - color
+                  properties:
+                    name:
+                      $ref: ../../components/fields/name.yaml
+                    description:
+                      $ref: ../../components/fields/description.yaml
+                    icon:
+                      $ref: ../../components/fields/icon.yaml
+                    color:
+                      $ref: ../../components/fields/color.yaml
+    '401':
+      $ref: ../../components/responses/unauthorized.yaml
