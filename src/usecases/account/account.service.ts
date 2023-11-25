@@ -17,6 +17,7 @@ import {
 	ExchangeCodeInput,
 	IamInput,
 	IamOutput,
+	UpdateNameInput,
 	RefreshOutput,
 	RefreshTokenInput,
 } from 'src/models/account';
@@ -262,8 +263,10 @@ export class AccountService extends AccountUseCase {
 		return authOutput;
 	}
 
-	async iam({ id }: IamInput): Promise<IamOutput> {
-		const account = await this.accountRepository.getByIdWithProviders({ id });
+	async iam({ accountId }: IamInput): Promise<IamOutput> {
+		const account = await this.accountRepository.getByIdWithProviders({
+			id: accountId,
+		});
 
 		if (!account) {
 			throw new UnauthorizedException('User not found');
@@ -274,9 +277,13 @@ export class AccountService extends AccountUseCase {
 		);
 
 		return {
-			id,
+			id: accountId,
 			googleId: google.providerId,
 		};
+	}
+
+	async updateName(i: UpdateNameInput): Promise<void> {
+		await this.accountRepository.updateName(i);
 	}
 
 	// Private

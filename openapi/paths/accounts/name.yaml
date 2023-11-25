@@ -1,0 +1,33 @@
+patch:
+  tags:
+    - Account
+  summary: Update user's name
+  description: |
+    Update user's name
+  operationId: account-name
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Update user's name
+          required:
+            - name
+          properties:
+            name:
+              $ref: ../../components/fields/name.yaml
+    required: true
+  responses:
+    '204':
+      description: |
+        Name updated
+
+    '400':
+      description: |
+        Invalid name
+
+    '401':
+      description: |
+        Unauthorized

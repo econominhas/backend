@@ -4,6 +4,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Patch,
 	Post,
 	Res,
 	UseGuards,
@@ -17,6 +18,7 @@ import {
 	CreateFromGoogleProviderDto,
 	CreateFromPhoneProviderDto,
 	ExchangeCodeDto,
+	NameDto,
 	RefreshTokenDto,
 } from './dtos/auth';
 import { UserDataDto } from './dtos';
@@ -96,7 +98,22 @@ export class AuthController {
 		userData: UserDataDto,
 	) {
 		return this.accountService.iam({
-			id: userData.accountId,
+			accountId: userData.accountId,
+		});
+	}
+
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Patch('/accounts/name')
+	@UseGuards(AuthGuard)
+	name(
+		@UserData()
+		userData: UserDataDto,
+		@Body()
+		body: NameDto,
+	) {
+		return this.accountService.updateName({
+			accountId: userData.accountId,
+			name: body.name,
 		});
 	}
 }

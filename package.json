@@ -50,11 +50,11 @@
 		"typescript": "^5.3.2"
 	},
 	"scripts": {
-		"docs:db": "prisma generate --generator dbml && dbdocs build ./prisma/schema.dbml",
-		"docs:serve": "redocly preview-docs",
-		"docs:build": "redocly bundle -o dist/bundle.yaml",
-		"docs:lint": "redocly lint",
-		"prisma": "prisma generate",
+		"db:prisma": "prisma generate",
+		"db:docs": "prisma generate --generator dbml && dbdocs build ./prisma/schema.dbml",
+		"openapi:serve": "redocly preview-docs",
+		"openapi:build": "redocly bundle -o dist/bundle.yaml",
+		"openapi:lint": "redocly lint",
 		"prepare": "husky install",
 		"build": "nest build",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -70,6 +70,6 @@
 		"test:cov": "jest --coverage",
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./test/jest-e2e.json",
-		"husky:pre-commit": "tsc && yarn lint && yarn lint:prisma"
+		"husky:pre-commit": "tsc && yarn lint && yarn lint:prisma && yarn openapi:lint"
 	}
 }

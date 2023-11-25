@@ -67,6 +67,11 @@ export type GetManyByProviderOutput = Array<
 	}
 >;
 
+export interface UpdateNameInput {
+	accountId: string;
+	name: string;
+}
+
 export interface UpdateProviderInput {
 	accountId: string;
 	provider: SignInProviderEnum;
@@ -97,6 +102,8 @@ export abstract class AccountRepository {
 	): Promise<GetManyByProviderOutput>;
 
 	abstract updateProvider(i: UpdateProviderInput): Promise<void>;
+
+	abstract updateName(i: UpdateNameInput): Promise<void>;
 }
 
 /**
@@ -141,7 +148,7 @@ export interface ExchangeCodeInput {
 }
 
 export interface IamInput {
-	id?: string;
+	accountId: string;
 }
 
 export interface RefreshTokenInput {
@@ -169,6 +176,8 @@ export abstract class AccountUseCase {
 	abstract exchangeCode(i: ExchangeCodeInput): Promise<AuthOutput>;
 
 	abstract refreshToken(i: RefreshTokenInput): Promise<RefreshOutput>;
+
+	abstract updateName(i: UpdateNameInput): Promise<void>;
 
 	abstract iam(i: IamInput): Promise<IamOutput>;
 }

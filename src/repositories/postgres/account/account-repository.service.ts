@@ -13,6 +13,7 @@ import {
 	UpdateProviderInput,
 	GetManyByProviderOutput,
 	GetByIdWithProvidersOutput,
+	UpdateNameInput,
 } from 'src/models/account';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import { InjectRepository, Repository } from '..';
@@ -25,6 +26,8 @@ export class AccountRepositoryService extends AccountRepository {
 		private readonly accountRepository: Repository<'account'>,
 		@InjectRepository('signInProvider')
 		private readonly signInProviderRepository: Repository<'signInProvider'>,
+		@InjectRepository('config')
+		private readonly configRepository: Repository<'config'>,
 
 		private readonly idAdapter: UIDAdapter,
 	) {
@@ -201,6 +204,17 @@ export class AccountRepositoryService extends AccountRepository {
 				accessToken,
 				refreshToken,
 				expiresAt,
+			},
+		});
+	}
+
+	async updateName({ accountId, name }: UpdateNameInput): Promise<void> {
+		await this.configRepository.update({
+			where: {
+				accountId,
+			},
+			data: {
+				name,
 			},
 		});
 	}
