@@ -1,7 +1,7 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
 import { IsID, IsSecretCode } from '../validators/internal';
 import { IsPhone, IsURL } from '../validators/miscellaneous';
-import { TimezoneEnum } from 'src/types/enums/timezone';
+import { TimezoneEnum } from '@prisma/client';
 
 export class CreateFromGoogleProviderDto {
 	@IsNotEmpty()
@@ -41,10 +41,4 @@ export class ExchangeCodeDto {
 export class RefreshTokenDto {
 	@IsSecretCode()
 	refreshToken: string;
-}
-
-export class IamUserDataDto {
-	@IsOptional()
-	@IsID()
-	accountId?: string;
 }

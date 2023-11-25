@@ -59,18 +59,18 @@ model Account {
   phone     String?  @unique @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
 
-  config                    Config                     @relation(fields: [id], references: [accountId], map: "Config_id_fkey", onDelete: Restrict)
-  magicLinkCode             MagicLinkCode?             @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
-  signInProviders           SignInProvider[]
-  refreshTokens             RefreshToken[]
-  userSubscriptions         UserSubscription[]
-  termsAndPoliciesAccepteds TermsAndPoliciesAccepted[]
-  bankAccounts              BankAccount[]
-  cards                     Card[]
-  categories                Category[]
-  budgets                   Budget[]
-  transactions              Transaction[]
-  recurrentTransactions     RecurrentTransaction[]
+  config                   Config                     @relation(fields: [id], references: [accountId], map: "Config_id_fkey", onDelete: Restrict)
+  magicLinkCode            MagicLinkCode?             @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
+  signInProviders          SignInProvider[]
+  refreshTokens            RefreshToken[]
+  userSubscriptions        UserSubscription[]
+  termsAndPoliciesAccepted TermsAndPoliciesAccepted[]
+  bankAccounts             BankAccount[]
+  cards                    Card[]
+  categories               Category[]
+  budgets                  Budget[]
+  transactions             Transaction[]
+  recurrentTransactions    RecurrentTransaction[]
 
   @@map("accounts")
 }
@@ -120,7 +120,7 @@ model MagicLinkCode {
 /// Contains codes to be used to refresh the access token
 model RefreshToken {
   accountId    String   @map("account_id") @db.Char(16)
-  refreshToken String   @map("refresh_token") @db.Char(64)
+  refreshToken String   @unique @map("refresh_token") @db.Char(64)
   createdAt    DateTime @default(now()) @map("created_at")
 
   account Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
@@ -201,14 +201,14 @@ model TermsAndPolicies {
 
 /// Contains the record of all the terms accepted by the user
 model TermsAndPoliciesAccepted {
-  id         String   @id @db.Char(16)
   accountId  String   @map("account_id") @db.Char(16)
-  tpId       String   @map("tp_id") @db.Char(16) /// Terms and policies ID
+  semVer     String   @map("sem_ver") @db.Char(5) /// Terms and policies ID
   acceptedAt DateTime @default(now()) @map("accepted_at")
 
   account          Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  termsAndPolicies TermsAndPolicies @relation(fields: [tpId], references: [semVer], onDelete: Restrict)
+  termsAndPolicies TermsAndPolicies @relation(fields: [semVer], references: [semVer], onDelete: Restrict)
 
+  @@id([accountId, semVer])
   @@map("terms_and_policies_accepted")
 }
 

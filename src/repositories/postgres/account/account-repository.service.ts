@@ -24,7 +24,7 @@ export class AccountRepositoryService extends AccountRepository {
 		@InjectRepository('account')
 		private readonly accountRepository: Repository<'account'>,
 		@InjectRepository('signInProvider')
-		private readonly providerRepository: Repository<'signInProvider'>,
+		private readonly signInProviderRepository: Repository<'signInProvider'>,
 
 		private readonly idAdapter: UIDAdapter,
 	) {
@@ -89,7 +89,7 @@ export class AccountRepositoryService extends AccountRepository {
 	}
 
 	async getById({ id }: GetByIdInput): Promise<undefined | Account> {
-		return this.accountRepository.findFirst({
+		return this.accountRepository.findUnique({
 			where: {
 				id,
 			},
@@ -99,7 +99,7 @@ export class AccountRepositoryService extends AccountRepository {
 	async getByIdWithProviders({
 		id,
 	}: GetByIdInput): Promise<undefined | GetByIdWithProvidersOutput> {
-		return this.accountRepository.findFirst({
+		return this.accountRepository.findUnique({
 			include: {
 				signInProviders: true,
 			},
@@ -110,7 +110,7 @@ export class AccountRepositoryService extends AccountRepository {
 	}
 
 	async getByEmail({ email }: GetByEmailInput): Promise<undefined | Account> {
-		return this.accountRepository.findFirst({
+		return this.accountRepository.findUnique({
 			where: {
 				email,
 			},
@@ -118,7 +118,7 @@ export class AccountRepositoryService extends AccountRepository {
 	}
 
 	async getByPhone({ phone }: GetByPhoneInput): Promise<undefined | Account> {
-		return this.accountRepository.findFirst({
+		return this.accountRepository.findUnique({
 			where: {
 				phone,
 			},
@@ -178,7 +178,7 @@ export class AccountRepositoryService extends AccountRepository {
 		refreshToken,
 		expiresAt,
 	}: UpdateProviderInput): Promise<void> {
-		await this.providerRepository.upsert({
+		await this.signInProviderRepository.upsert({
 			where: {
 				accountId_provider_providerId: {
 					accountId,

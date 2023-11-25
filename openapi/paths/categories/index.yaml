@@ -29,12 +29,12 @@ post:
               $ref: ../../components/fields/color.yaml
     required: true
   responses:
-    "201":
+    '201':
       description: |
         Category created
-    "400":
+    '400':
       $ref: ../../components/responses/bad-request.yaml
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml
 
 patch:
@@ -69,12 +69,12 @@ patch:
               $ref: ../../components/fields/color.yaml
     required: true
   responses:
-    "204":
+    '204':
       description: |
         Category updated
-    "400":
+    '400':
       $ref: ../../components/responses/bad-request.yaml
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml
 
 get:
@@ -87,7 +87,7 @@ get:
   security:
     - bearer: []
   responses:
-    "200":
+    '200':
       description: |
         Data returned
       content:
@@ -104,7 +104,7 @@ get:
                 type: array
                 items:
                   $ref: ../../components/entities/Category.yaml
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml
 
 delete:
@@ -131,8 +131,8 @@ delete:
               format: uuid
     required: true
   responses:
-    "204":
+    '204':
       description: |
         Category deleted
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml

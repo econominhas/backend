@@ -1,13 +1,16 @@
 export interface TokenPayload {
 	sub: string; // Account ID
+	terms: boolean; // Tells if the user accepted the latest terms and policies
 }
 
 export interface UserData {
 	accountId: string;
+	hasAcceptedLatestTerms: boolean;
 }
 
 export interface GenAccessInput {
-	id: string;
+	accountId: string;
+	hasAcceptedLatestTerms: boolean;
 }
 
 export interface GenAccessOutput {

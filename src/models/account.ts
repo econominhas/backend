@@ -111,7 +111,7 @@ export interface AuthOutput {
 	refreshToken: string;
 	accessToken: string;
 	expiresAt: string;
-	isFirstAccess?: true;
+	isFirstAccess: boolean;
 }
 
 export interface RefreshOutput {
@@ -153,18 +153,22 @@ export interface IamOutput {
 	googleId?: string;
 }
 
-export interface AccountUseCase {
-	createFromGoogleProvider: (
+export abstract class AccountUseCase {
+	abstract createFromGoogleProvider(
 		i: CreateWith3rdPartyProviderInput,
-	) => Promise<AuthOutput>;
+	): Promise<AuthOutput>;
 
-	createFromEmailProvider: (i: CreateWithEmailProviderInput) => Promise<void>;
+	abstract createFromEmailProvider(
+		i: CreateWithEmailProviderInput,
+	): Promise<void>;
 
-	createFromPhoneProvider: (i: CreateWithPhoneProviderInput) => Promise<void>;
+	abstract createFromPhoneProvider(
+		i: CreateWithPhoneProviderInput,
+	): Promise<void>;
 
-	exchangeCode: (i: ExchangeCodeInput) => Promise<AuthOutput>;
+	abstract exchangeCode(i: ExchangeCodeInput): Promise<AuthOutput>;
 
-	refreshToken: (i: RefreshTokenInput) => Promise<RefreshOutput>;
+	abstract refreshToken(i: RefreshTokenInput): Promise<RefreshOutput>;
 
-	iam: (i: IamInput) => Promise<IamOutput>;
+	abstract iam(i: IamInput): Promise<IamOutput>;
 }

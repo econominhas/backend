@@ -40,7 +40,7 @@ export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
 	}
 
 	get({ accountId, code }: GetInput): Promise<GetOutput> {
-		return this.magicLinkCodeRepository.findFirst({
+		return this.magicLinkCodeRepository.findUnique({
 			where: {
 				accountId,
 				code,

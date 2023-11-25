@@ -1,7 +1,16 @@
 import { CanActivate, ExecutionContext, Type, mixin } from '@nestjs/common';
 import { verify } from 'jsonwebtoken';
+import { TokenPayload } from 'src/adapters/token';
 
-const MakeAuthGuard = (): Type<CanActivate> => {
+interface AuthGuardInput {
+	ignoreTermsCheck: boolean;
+}
+
+export const AuthGuard = (
+	i: AuthGuardInput = {
+		ignoreTermsCheck: true,
+	},
+): Type<CanActivate> => {
 	class AuthGuardMixin implements CanActivate {
 		async canActivate(context: ExecutionContext): Promise<boolean> {
 			const request = context.switchToHttp().getRequest();
@@ -13,7 +22,14 @@ const MakeAuthGuard = (): Type<CanActivate> => {
 			}
 
 			try {
-				verify(token, process.env['JWT_SECRET']!);
+				const payload = verify(
+					token,
+					process.env['JWT_SECRET']!,
+				) as TokenPayload;
+
+				if (!i.ignoreTermsCheck && !payload.terms) {
+					return false;
+				}
 			} catch {
 				return false;
 			}
@@ -25,5 +41,3 @@ const MakeAuthGuard = (): Type<CanActivate> => {
 	const guard = mixin(AuthGuardMixin);
 	return guard;
 };
-
-export const AuthGuard = MakeAuthGuard();

@@ -6,7 +6,7 @@ get:
     Get latest terms and policies
   operationId: terms-latest
   responses:
-    "200":
+    '200':
       description: |
         Returns latest terms data
       content:

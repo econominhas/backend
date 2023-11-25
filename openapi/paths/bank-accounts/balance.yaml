@@ -25,11 +25,11 @@ patch:
               $ref: ../../components/fields/balance.yaml
     required: true
   responses:
-    "204":
+    '204':
       description: |
         Balance updated
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml
-    "404":
+    '404':
       description: |
         Bank account doesn't exists

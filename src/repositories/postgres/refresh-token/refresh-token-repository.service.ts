@@ -30,7 +30,7 @@ export class RefreshTokenRepositoryService extends RefreshTokenRepository {
 	}
 
 	get({ refreshToken }: GetByTokenInput): Promise<RefreshToken> {
-		return this.refreshTokenRepository.findFirst({
+		return this.refreshTokenRepository.findUnique({
 			where: {
 				refreshToken,
 			},

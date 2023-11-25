@@ -11,8 +11,8 @@ properties:
     type: string
     format: semVer
     examples:
-      - "1.0.0"
-      - "1.0.2"
+      - '1.0.0'
+      - '1.0.2'
   termsOfUse:
     description: Terms of use markdown
     type: string

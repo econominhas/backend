@@ -3,4 +3,4 @@ description: |
 type: string
 format: url
 examples:
-  - "https://example.com/foo.jpg"
+  - 'https://example.com/foo.jpg'

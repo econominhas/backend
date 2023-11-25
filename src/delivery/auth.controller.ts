@@ -17,9 +17,9 @@ import {
 	CreateFromGoogleProviderDto,
 	CreateFromPhoneProviderDto,
 	ExchangeCodeDto,
-	IamUserDataDto,
 	RefreshTokenDto,
 } from './dtos/auth';
+import { UserDataDto } from './dtos';
 
 @Controller('')
 export class AuthController {
@@ -93,7 +93,7 @@ export class AuthController {
 	@UseGuards(AuthGuard)
 	iam(
 		@UserData()
-		userData: IamUserDataDto,
+		userData: UserDataDto,
 	) {
 		return this.accountService.iam({
 			id: userData.accountId,

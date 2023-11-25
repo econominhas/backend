@@ -25,9 +25,16 @@ import { MagicLinkCodeRepositoryService } from 'src/repositories/postgres/magic-
 import { RefreshTokenRepositoryService } from 'src/repositories/postgres/refresh-token/refresh-token-repository.service';
 import { GoogleAdapter } from 'src/adapters/implementations/google.service';
 import { Account, SignInProviderEnum } from '@prisma/client';
+import { TermsAndPoliciesService } from '../terms-and-policies/terms-and-policies.service';
+
+interface GenTokensInput {
+	accountId: string;
+	isFirstAccess: boolean;
+	refresh?: boolean;
+}
 
 @Injectable()
-export class AccountService implements AccountUseCase {
+export class AccountService extends AccountUseCase {
 	private readonly requiredGoogleScopes = ['identify', 'email'];
 
 	constructor(
@@ -38,11 +45,16 @@ export class AccountService implements AccountUseCase {
 		@Inject(RefreshTokenRepositoryService)
 		private readonly refreshTokenRepository: RefreshTokenRepositoryService,
 
+		@Inject(TermsAndPoliciesService)
+		private readonly termsAndPoliciesService: TermsAndPoliciesService,
+
 		private readonly googleAdapter: GoogleAdapter,
 		private readonly tokenAdapter: TokenAdapter,
 		private readonly emailAdapter: SESAdapter,
 		private readonly smsAdapter: any,
-	) {}
+	) {
+		super();
+	}
 
 	async createFromGoogleProvider({
 		code,
@@ -132,20 +144,11 @@ export class AccountService implements AccountUseCase {
 			isFirstAccess = true;
 		}
 
-		const { refreshToken } = await this.refreshTokenRepository.create({
+		return this.genAuthOutput({
 			accountId: account.id,
-		});
-
-		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
-			id: account.id,
-		});
-
-		return {
-			accessToken,
-			expiresAt,
-			refreshToken,
 			isFirstAccess,
-		};
+			refresh: true,
+		});
 	}
 
 	async createFromEmailProvider(
@@ -225,20 +228,11 @@ export class AccountService implements AccountUseCase {
 			throw new NotFoundException('Invalid code');
 		}
 
-		const { refreshToken } = await this.refreshTokenRepository.create({
+		return this.genAuthOutput({
 			accountId: magicLinkCode.accountId,
+			isFirstAccess: magicLinkCode.isFirstAccess,
+			refresh: true,
 		});
-
-		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
-			id: magicLinkCode.accountId,
-		});
-
-		return {
-			refreshToken,
-			accessToken,
-			expiresAt,
-			isFirstAccess: magicLinkCode.isFirstAccess || undefined,
-		};
 	}
 
 	async refreshToken({
@@ -260,14 +254,12 @@ export class AccountService implements AccountUseCase {
 			throw new NotFoundException('User not found');
 		}
 
-		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
-			id: refreshTokenData.accountId,
+		const { isFirstAccess: _, ...authOutput } = await this.genAuthOutput({
+			accountId: refreshTokenData.accountId,
+			isFirstAccess: false,
 		});
 
-		return {
-			accessToken,
-			expiresAt,
-		};
+		return authOutput;
 	}
 
 	async iam({ id }: IamInput): Promise<IamOutput> {
@@ -284,6 +276,49 @@ export class AccountService implements AccountUseCase {
 		return {
 			id,
 			googleId: google.providerId,
+		};
+	}
+
+	// Private
+
+	private async genAuthOutput({
+		accountId,
+		isFirstAccess,
+		refresh,
+	}: GenTokensInput): Promise<AuthOutput> {
+		const promises = [];
+
+		if (refresh) {
+			promises.push(
+				this.refreshTokenRepository.create({
+					accountId: accountId,
+				}),
+			);
+		} else {
+			promises.push({ refreshToken: '' });
+		}
+		if (!isFirstAccess) {
+			this.termsAndPoliciesService.hasAcceptedLatest({
+				accountId: accountId,
+			});
+		} else {
+			promises.push(false);
+		}
+
+		const [{ refreshToken }, hasAcceptedLatestTerms] = (await Promise.all(
+			promises,
+		)) as [{ refreshToken: string }, boolean];
+
+		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
+			accountId: accountId,
+			hasAcceptedLatestTerms,
+		});
+
+		return {
+			accessToken,
+			expiresAt,
+			refreshToken,
+			isFirstAccess,
 		};
 	}
 }

@@ -3,4 +3,4 @@ description: |
 type: string
 format: hex
 examples:
-  - "#ffffff"
+  - '#ffffff'

@@ -54,6 +54,7 @@
 		"docs:serve": "redocly preview-docs",
 		"docs:build": "redocly bundle -o dist/bundle.yaml",
 		"docs:lint": "redocly lint",
+		"prisma": "prisma generate",
 		"prepare": "husky install",
 		"build": "nest build",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

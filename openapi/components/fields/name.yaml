@@ -4,4 +4,4 @@ type: string
 minLength: 1
 maxLength: 20
 examples:
-  - "Foo"
+  - 'Foo'

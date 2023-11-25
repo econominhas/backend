@@ -34,14 +34,14 @@ post:
               $ref: ../../components/fields/balance.yaml
     required: true
   responses:
-    "201":
+    '201':
       description: |
         Card created
-    "400":
+    '400':
       $ref: ../../components/responses/bad-request.yaml
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml
-    "404":
+    '404':
       description: |
         Card provider doesn't exists
 
@@ -55,7 +55,7 @@ get:
   security:
     - bearer: []
   responses:
-    "200":
+    '200':
       description: |
         Data returned
       content:
@@ -72,5 +72,5 @@ get:
                 type: array
                 items:
                   $ref: ../../components/entities/Card.yaml
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml

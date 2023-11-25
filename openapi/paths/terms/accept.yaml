@@ -14,24 +14,26 @@ post:
           type: object
           title: Accept terms and policies
           required:
-            - id
+            - semVer
           properties:
-            id:
+            semVer:
               description: Terms and policies ID
               type: string
-              format: uuid
+              format: semver
+              examples:
+                - '1.0.0'
     required: true
   responses:
-    "201":
+    '201':
       description: |
         Terms accepted
-    "400":
+    '400':
       description: |
         Possible causes:
         - Version is previous than the one that he already has accepted
         - Version is not live yet
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml
-    "404":
+    '404':
       description: |
         Terms and policies doesn't exists

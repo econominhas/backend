@@ -8,7 +8,7 @@ get:
   security:
     - bearer: []
   responses:
-    "200":
+    '200':
       description: |
         List of bank providers
       content:
@@ -25,5 +25,5 @@ get:
                 type: array
                 items:
                   $ref: ../../components/entities/BankProvider.yaml
-    "401":
+    '401':
       $ref: ../../components/responses/unauthorized.yaml
