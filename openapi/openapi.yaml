@@ -93,6 +93,8 @@ paths:
   /cards/providers:
     $ref: paths/cards/providers.yaml
 
+  /categories/many:
+    $ref: paths/categories/many.yaml
   /categories:
     $ref: paths/categories/index.yaml
   /categories/default:
