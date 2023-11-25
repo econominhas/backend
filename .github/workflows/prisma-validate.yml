@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - '*.prisma'
+      - '**/*.prisma'
 
 jobs:
   prisma-validate:
@@ -17,4 +17,6 @@ jobs:
         run: yarn add -D prisma
 
       - name: Validate prisma
-        run: prisma validate
+        env:
+          DATABASE_URL: postgresql://user:password@host:port/database?schema=public
+        run: npx prisma validate
