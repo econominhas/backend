@@ -42,9 +42,7 @@ tags:
   - name: Account
     description: User account config.
   - name: Bank
-    description: To manage bank providers.
-  - name: Bank Account
-    description: To manage bank accounts.
+    description: To manage bank providers and accounts.
   - name: Budget
     description: To manage bank budgets.
   - name: Card
@@ -82,11 +80,10 @@ paths:
 
   /banks/providers:
     $ref: paths/banks/providers.yaml
-
-  /bank-accounts:
-    $ref: paths/bank-accounts/index.yaml
-  /bank-accounts/balance:
-    $ref: paths/bank-accounts/balance.yaml
+  /bank/accounts:
+    $ref: paths/banks/accounts/index.yaml
+  /bank/accounts/balance:
+    $ref: paths/banks/accounts/balance.yaml
 
   /cards:
     $ref: paths/cards/index.yaml

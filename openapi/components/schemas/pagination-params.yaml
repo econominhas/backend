@@ -1,0 +1,12 @@
+- in: query
+  name: page
+  schema:
+    type: integer
+    default: 1
+  description: Page for the pagination
+- in: query
+  name: limit
+  schema:
+    type: integer
+    default: 10
+  description: Limit of items to bring per page

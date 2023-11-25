@@ -4,9 +4,11 @@ get:
   summary: Get a list of bank providers
   description: |
     Get a list of bank providers
-  operationId: banks-providers
+  operationId: bank-providers
   security:
     - bearer: []
+  parameters:
+    $ref: ../../components/schemas/pagination-params.yaml
   responses:
     '200':
       description: |

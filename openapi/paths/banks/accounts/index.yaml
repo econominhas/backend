@@ -1,6 +1,6 @@
 post:
   tags:
-    - Bank Account
+    - Bank
   summary: Create bank account
   description: |
     Create bank account
@@ -24,27 +24,27 @@ post:
               type: string
               format: uuid
             accountNumber:
-              $ref: ../../components/fields/account-number.yaml
+              $ref: ../../../components/fields/account-number.yaml
             branch:
-              $ref: ../../components/fields/branch.yaml
+              $ref: ../../../components/fields/branch.yaml
             balance:
-              $ref: ../../components/fields/balance.yaml
+              $ref: ../../../components/fields/balance.yaml
     required: true
   responses:
     '201':
       description: |
         Bank account created
     '400':
-      $ref: ../../components/responses/bad-request.yaml
+      $ref: ../../../components/responses/bad-request.yaml
     '401':
-      $ref: ../../components/responses/unauthorized.yaml
+      $ref: ../../../components/responses/unauthorized.yaml
     '404':
       description: |
         Bank provider doesn't exists
 
 get:
   tags:
-    - Bank Account
+    - Bank
   summary: Get a list of user's bank accounts
   description: |
     Get user's bank accounts
@@ -64,10 +64,10 @@ get:
               - data
             properties:
               paging:
-                $ref: ../../components/schemas/paging.yaml
+                $ref: ../../../components/schemas/paging.yaml
               data:
                 type: array
                 items:
-                  $ref: ../../components/entities/BankAccount.yaml
+                  $ref: ../../../components/entities/BankAccount.yaml
     '401':
-      $ref: ../../components/responses/unauthorized.yaml
+      $ref: ../../../components/responses/unauthorized.yaml

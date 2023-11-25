@@ -7,6 +7,8 @@ get:
   operationId: category-default
   security:
     - bearer: []
+  parameters:
+    $ref: ../../components/schemas/pagination-params.yaml
   responses:
     '200':
       description: |
