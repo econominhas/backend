@@ -85,10 +85,10 @@ paths:
   /bank/accounts/balance:
     $ref: paths/banks/accounts/balance.yaml
 
-  /cards:
-    $ref: paths/cards/index.yaml
   /cards/providers:
     $ref: paths/cards/providers.yaml
+  /cards:
+    $ref: paths/cards/index.yaml
 
   /categories/many:
     $ref: paths/categories/many.yaml
