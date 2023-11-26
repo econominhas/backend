@@ -1,10 +1,15 @@
 import { IconEnum } from '@prisma/client';
+import { Type } from 'class-transformer';
 import {
+	ArrayMaxSize,
+	ArrayMinSize,
+	IsArray,
 	IsEnum,
 	IsHexColor,
 	IsString,
 	MaxLength,
 	MinLength,
+	ValidateNested,
 } from 'class-validator';
 
 class CreateCategoryDto {
@@ -25,5 +30,10 @@ class CreateCategoryDto {
 }
 
 export class CreateManyDto {
+	@IsArray()
+	@ValidateNested({ each: true })
+	@ArrayMinSize(1)
+	@ArrayMaxSize(50)
+	@Type(() => CreateCategoryDto)
 	categories: Array<CreateCategoryDto>;
 }

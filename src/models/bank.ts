@@ -1,3 +1,10 @@
+import { BankAccount, BankProvider } from '@prisma/client';
+import {
+	Paginated,
+	PaginatedItems,
+	PaginatedRepository,
+} from 'src/types/paginated-items';
+
 /**
  *
  *
@@ -6,15 +13,19 @@
  *
  */
 
-import { BankProvider } from '@prisma/client';
-import {
-	Paginated,
-	PaginatedItems,
-	PaginatedRepository,
-} from 'src/types/paginated-items';
+export interface CreateInput {
+	accountId: string;
+	bankProviderId: string;
+	name: string;
+	accountNumber: string;
+	branch: string;
+	balance: number;
+}
 
 export abstract class BankRepository {
 	abstract getProviders(i: PaginatedRepository): Promise<Array<BankProvider>>;
+
+	abstract create(i: CreateInput): Promise<BankAccount>;
 }
 
 /**
@@ -27,4 +38,6 @@ export abstract class BankRepository {
 
 export abstract class BankUseCase {
 	abstract getProviders(i: Paginated): Promise<PaginatedItems<BankProvider>>;
+
+	abstract create(i: CreateInput): Promise<void>;
 }

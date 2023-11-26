@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	Inject,
-	Injectable,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { TermsAndPolicies } from '@prisma/client';
 import {
@@ -42,18 +37,10 @@ export class TermsAndPoliciesService extends TermsAndPoliciesUseCase {
 			throw new BadRequestException('User already accepted terms');
 		}
 
-		await this.termsAndPoliciesRepository
-			.accept({
-				accountId,
-				semVer,
-			})
-			.catch((e) => {
-				if (e.message === "Version doesn't exists") {
-					throw new NotFoundException(e.message);
-				}
-
-				throw e;
-			});
+		await this.termsAndPoliciesRepository.accept({
+			accountId,
+			semVer,
+		});
 	}
 
 	async hasAcceptedLatest({

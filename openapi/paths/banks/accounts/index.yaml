@@ -19,6 +19,8 @@ post:
             - branch
             - balance
           properties:
+            name:
+              $ref: ../../../components/fields/name.yaml
             bankProviderId:
               description: ID of bank provider
               type: string
@@ -41,6 +43,9 @@ post:
     '404':
       description: |
         Bank provider doesn't exists
+    '409':
+      description: |
+        Bank account already registered
 
 get:
   tags:

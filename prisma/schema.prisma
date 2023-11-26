@@ -252,6 +252,7 @@ model BankAccount {
   recurrentTransactionFroms RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountFrom")
   recurrentTransactionTos   RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountTo")
 
+  @@unique([accountId, bankProviderId, accountNumber])
   @@map("bank_accounts")
 }
 

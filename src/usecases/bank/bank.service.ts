@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BankProvider } from '@prisma/client';
 import { UtilsAdapter } from 'src/adapters/implementations/utils.service';
-import { BankUseCase } from 'src/models/bank';
+import { BankUseCase, CreateInput } from 'src/models/bank';
 
 import { BankRepositoryService } from 'src/repositories/postgres/bank/bank-repository.service';
 import { Paginated, PaginatedItems } from 'src/types/paginated-items';
@@ -26,5 +26,9 @@ export class BankService extends BankUseCase {
 			paging,
 			data,
 		};
+	}
+
+	async create(i: CreateInput): Promise<void> {
+		await this.bankRepository.create(i);
 	}
 }

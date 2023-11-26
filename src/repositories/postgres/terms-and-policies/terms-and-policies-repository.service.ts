@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+	ConflictException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import {
 	AcceptInput,
@@ -29,18 +34,26 @@ export class TermsAndPoliciesRepositoryService extends TermsAndPoliciesRepositor
 		} catch (err) {
 			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2003
 			if (err.code === 'P2003') {
-				throw new Error("Version doesn't exists");
+				throw new NotFoundException("Version doesn't exists");
 			}
+			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2004
 			if (err.code === 'P2004') {
-				throw new Error('Version already accepted');
+				throw new ConflictException('Version already accepted');
 			}
 
-			throw new Error(`Fail to accept version: ${err.message}`);
+			throw new InternalServerErrorException(
+				`Fail to accept version: ${err.message}`,
+			);
 		}
 	}
 
 	getLatest(): Promise<TermsAndPolicies | undefined> {
 		return this.termsAndPoliciesRepository.findFirst({
+			where: {
+				liveAt: {
+					lte: new Date(),
+				},
+			},
 			orderBy: {
 				liveAt: 'desc',
 			},
