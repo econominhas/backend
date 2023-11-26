@@ -8,14 +8,12 @@ import {
 	IsHexColor,
 	IsString,
 	MaxLength,
-	MinLength,
 	ValidateNested,
 } from 'class-validator';
+import { IsName } from '../validators/internal';
 
 class CreateCategoryDto {
-	@IsString()
-	@MinLength(1)
-	@MaxLength(20)
+	@IsName()
 	name: string;
 
 	@IsString()

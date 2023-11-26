@@ -1,18 +1,15 @@
 import {
 	IsInt,
 	IsNumberString,
-	IsString,
 	Max,
 	MaxLength,
 	Min,
 	MinLength,
 } from 'class-validator';
-import { IsID } from '../validators/internal';
+import { IsID, IsName } from '../validators/internal';
 
 export class CreateDto {
-	@IsString()
-	@MinLength(1)
-	@MaxLength(20)
+	@IsName()
 	name: string;
 
 	@IsID()

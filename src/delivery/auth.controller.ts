@@ -1,27 +1,20 @@
 import {
 	Body,
 	Controller,
-	Get,
 	HttpCode,
 	HttpStatus,
-	Patch,
 	Post,
 	Res,
-	UseGuards,
 } from '@nestjs/common';
 import { AccountService } from 'src/usecases/account/account.service';
-import { AuthGuard } from './guards/auth.guard';
-import { UserData } from './decorators/user-data';
 import { Response } from 'express';
 import {
 	CreateFromEmailProviderDto,
 	CreateFromGoogleProviderDto,
 	CreateFromPhoneProviderDto,
 	ExchangeCodeDto,
-	NameDto,
 	RefreshTokenDto,
 } from './dtos/auth';
-import { UserDataDto } from './dtos';
 
 @Controller('')
 export class AuthController {
@@ -89,31 +82,5 @@ export class AuthController {
 		body: RefreshTokenDto,
 	) {
 		return this.accountService.refreshToken(body);
-	}
-
-	@Get('/accounts/iam')
-	@UseGuards(AuthGuard())
-	iam(
-		@UserData()
-		userData: UserDataDto,
-	) {
-		return this.accountService.iam({
-			accountId: userData.accountId,
-		});
-	}
-
-	@HttpCode(HttpStatus.NO_CONTENT)
-	@Patch('/accounts/name')
-	@UseGuards(AuthGuard())
-	name(
-		@UserData()
-		userData: UserDataDto,
-		@Body()
-		body: NameDto,
-	) {
-		return this.accountService.updateName({
-			accountId: userData.accountId,
-			name: body.name,
-		});
 	}
 }

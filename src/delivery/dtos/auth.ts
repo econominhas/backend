@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
-import { IsID, IsName, IsSecretCode } from '../validators/internal';
+import { IsID, IsSecretCode } from '../validators/internal';
 import { IsPhone, IsURL } from '../validators/miscellaneous';
 import { TimezoneEnum } from '@prisma/client';
 
@@ -41,9 +41,4 @@ export class ExchangeCodeDto {
 export class RefreshTokenDto {
 	@IsSecretCode()
 	refreshToken: string;
-}
-
-export class NameDto {
-	@IsName()
-	name: string;
 }
