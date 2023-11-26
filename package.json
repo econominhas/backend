@@ -59,7 +59,7 @@
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"start": "nest start",
 		"start:docker": "nest start --watch",
-		"start:dev": "docker compose up --build",
+		"start:dev": "docker compose up",
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
 		"clean:docker": "docker container rm econominhas_api && docker image rm backend-api",
