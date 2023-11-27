@@ -6,7 +6,7 @@ required:
   - privacyPolicy
   - liveAt
 properties:
-  id:
+  semVer:
     description: Terms and policies ID
     type: string
     format: semVer
