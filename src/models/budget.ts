@@ -46,6 +46,19 @@ export interface CreateInput {
 	}>;
 }
 
+export interface CreateBasicInput {
+	accountId: string;
+	name: string;
+	description: string;
+	year: number;
+	items: Array<{
+		categoryId: string;
+		amount: number;
+	}>;
+}
+
 export abstract class BudgetUseCase {
 	abstract create(i: CreateInput): Promise<void>;
+
+	abstract createBasic(i: CreateBasicInput): Promise<void>;
 }

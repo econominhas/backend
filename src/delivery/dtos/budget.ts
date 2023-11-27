@@ -44,3 +44,28 @@ export class CreateDto {
 	@Type(() => CreateItem)
 	items: Array<CreateItem>;
 }
+
+class CreateBasicItem {
+	@IsID()
+	categoryId: string;
+
+	@IsAmount()
+	amount: number;
+}
+
+export class CreateBasicDto {
+	@IsName()
+	name: string;
+
+	@IsDescription()
+	description: string;
+
+	@IsYear()
+	year: number;
+
+	@IsArray()
+	@ValidateNested({ each: true })
+	@ArrayMinSize(1)
+	@Type(() => CreateBasicItem)
+	items: Array<CreateBasicItem>;
+}
