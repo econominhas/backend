@@ -14,7 +14,7 @@ import { NameDto } from './dtos/account';
 import { UserDataDto } from './dtos';
 
 @Controller('accounts')
-export class AccountsController {
+export class AccountController {
 	constructor(private readonly accountService: AccountService) {}
 
 	@Get('/iam')

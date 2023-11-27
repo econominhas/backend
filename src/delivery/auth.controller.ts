@@ -6,7 +6,6 @@ import {
 	Post,
 	Res,
 } from '@nestjs/common';
-import { AccountService } from 'src/usecases/account/account.service';
 import { Response } from 'express';
 import {
 	CreateFromEmailProviderDto,
@@ -15,10 +14,11 @@ import {
 	ExchangeCodeDto,
 	RefreshTokenDto,
 } from './dtos/auth';
+import { AuthService } from 'src/usecases/auth/auth.service';
 
 @Controller('')
 export class AuthController {
-	constructor(private readonly accountService: AccountService) {}
+	constructor(private readonly authService: AuthService) {}
 
 	@Post('/auth/google')
 	async createFromGoogleProvider(
@@ -28,7 +28,7 @@ export class AuthController {
 		res: Response,
 	) {
 		const { isFirstAccess, ...data } =
-			await this.accountService.createFromGoogleProvider(body);
+			await this.authService.createFromGoogleProvider(body);
 
 		if (isFirstAccess) {
 			res.status(HttpStatus.CREATED);
@@ -45,7 +45,7 @@ export class AuthController {
 		@Body()
 		body: CreateFromEmailProviderDto,
 	) {
-		return this.accountService.createFromEmailProvider(body);
+		return this.authService.createFromEmailProvider(body);
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -54,7 +54,7 @@ export class AuthController {
 		@Body()
 		body: CreateFromPhoneProviderDto,
 	) {
-		return this.accountService.createFromPhoneProvider(body);
+		return this.authService.createFromPhoneProvider(body);
 	}
 
 	@Post('/auth/code')
@@ -65,7 +65,7 @@ export class AuthController {
 		res: Response,
 	) {
 		const { isFirstAccess, ...data } =
-			await this.accountService.exchangeCode(body);
+			await this.authService.exchangeCode(body);
 
 		if (isFirstAccess) {
 			res.status(HttpStatus.CREATED);
@@ -81,6 +81,6 @@ export class AuthController {
 		@Body()
 		body: RefreshTokenDto,
 	) {
-		return this.accountService.refreshToken(body);
+		return this.authService.refreshToken(body);
 	}
 }

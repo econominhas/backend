@@ -1,24 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { AccountRepositoryModule } from 'src/repositories/postgres/account/account-repository.module';
-import { TokenAdapter } from 'src/adapters/implementations/token.service';
-import { AuthController } from 'src/delivery/auth.controller';
-import { GoogleAdapter } from 'src/adapters/implementations/google.service';
-import { SESAdapter } from 'src/adapters/implementations/ses.service';
-import { TermsAndPoliciesModule } from '../terms-and-policies/terms-and-policies.module';
-import { MagicLinkCodeRepositoryModule } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.module';
-import { RefreshTokenRepositoryModule } from 'src/repositories/postgres/refresh-token/refresh-token-repository.module';
-import { AccountsController } from 'src/delivery/accounts.controller';
+import { AccountController } from 'src/delivery/account.controller';
 
 @Module({
-	controllers: [AuthController, AccountsController],
-	imports: [
-		AccountRepositoryModule,
-		MagicLinkCodeRepositoryModule,
-		RefreshTokenRepositoryModule,
-
-		TermsAndPoliciesModule,
-	],
-	providers: [AccountService, GoogleAdapter, TokenAdapter, SESAdapter],
+	controllers: [AccountController],
+	imports: [AccountRepositoryModule],
+	providers: [AccountService],
 })
 export class AccountModule {}
