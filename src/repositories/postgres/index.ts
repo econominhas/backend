@@ -2,7 +2,7 @@ import type { DynamicModule } from '@nestjs/common';
 import { Inject, Module } from '@nestjs/common';
 import { PostgresCoreModule } from './core';
 import { POSTGRES_CONNECTION_NAME } from './core';
-import { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@prisma/client';
 
 type AllTables = Omit<
 	PrismaClient,

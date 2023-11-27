@@ -1,4 +1,4 @@
-import { Account } from '@prisma/client';
+import type { Account } from '@prisma/client';
 
 export const EMAIL_TEMPLATES = {
 	MAGIC_LINK_LOGIN: {

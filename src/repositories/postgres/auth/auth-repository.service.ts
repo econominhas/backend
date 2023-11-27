@@ -1,5 +1,9 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+} from '@nestjs/common';
+import type {
 	CreateInput,
 	GetManyByProviderInput,
 	GetByEmailInput,
@@ -13,8 +17,10 @@ import {
 } from 'src/models/auth';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import { InjectRepository, Repository } from '..';
-import { Account, Prisma, SignInProviderEnum } from '@prisma/client';
+import type { Account, Prisma } from '@prisma/client';
+import { SignInProviderEnum } from '@prisma/client';
 import { AuthRepository } from 'src/models/auth';
+import { IdAdapter } from 'src/adapters/id';
 
 @Injectable()
 export class AuthRepositoryService extends AuthRepository {
@@ -24,7 +30,8 @@ export class AuthRepositoryService extends AuthRepository {
 		@InjectRepository('signInProvider')
 		private readonly signInProviderRepository: Repository<'signInProvider'>,
 
-		private readonly idAdapter: UIDAdapter,
+		@Inject(UIDAdapter)
+		private readonly idAdapter: IdAdapter,
 	) {
 		super();
 	}

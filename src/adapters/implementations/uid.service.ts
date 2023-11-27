@@ -1,6 +1,6 @@
 import { uid } from 'uid/secure';
 import { Injectable } from '@nestjs/common';
-import { IdAdapter } from '../id';
+import type { IdAdapter } from '../id';
 
 @Injectable()
 export class UIDAdapter implements IdAdapter {

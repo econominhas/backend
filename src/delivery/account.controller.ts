@@ -4,6 +4,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Inject,
 	Patch,
 } from '@nestjs/common';
 import { AccountService } from 'src/usecases/account/account.service';
@@ -11,10 +12,14 @@ import { IgnoreTermsCheck } from './guards/auth.guard';
 import { UserData } from './decorators/user-data';
 import { NameDto } from './dtos/account';
 import { UserDataDto } from './dtos';
+import { AccountUseCase } from 'src/models/account';
 
 @Controller('accounts')
 export class AccountController {
-	constructor(private readonly accountService: AccountService) {}
+	constructor(
+		@Inject(AccountService)
+		private readonly accountService: AccountUseCase,
+	) {}
 
 	@Get('/iam')
 	@IgnoreTermsCheck()

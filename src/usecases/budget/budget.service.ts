@@ -1,20 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-	BudgetUseCase,
-	CreateBasicInput,
-	CreateInput,
-} from 'src/models/budget';
+import type { CreateBasicInput, CreateInput } from 'src/models/budget';
+import { BudgetRepository, BudgetUseCase } from 'src/models/budget';
 import { BudgetRepositoryService } from 'src/repositories/postgres/budget/budget-repository.service';
 import { AccountService } from '../account/account.service';
-import { Budget } from '@prisma/client';
+import type { Budget } from '@prisma/client';
+import { AccountUseCase } from 'src/models/account';
 
 @Injectable()
 export class BudgetService extends BudgetUseCase {
 	constructor(
 		@Inject(BudgetRepositoryService)
-		private readonly budgetRepository: BudgetRepositoryService,
+		private readonly budgetRepository: BudgetRepository,
 
-		private readonly accountService: AccountService,
+		@Inject(AccountService)
+		private readonly accountService: AccountUseCase,
 	) {
 		super();
 	}

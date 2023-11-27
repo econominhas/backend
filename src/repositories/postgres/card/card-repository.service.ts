@@ -1,14 +1,17 @@
 import {
 	ConflictException,
+	Inject,
 	Injectable,
 	InternalServerErrorException,
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
-import { PaginatedRepository } from 'src/types/paginated-items';
-import { CardRepository, CreateInput, GetProviderInput } from 'src/models/card';
-import { Card, CardProvider } from '@prisma/client';
+import type { PaginatedRepository } from 'src/types/paginated-items';
+import type { CreateInput, GetProviderInput } from 'src/models/card';
+import { CardRepository } from 'src/models/card';
+import type { Card, CardProvider } from '@prisma/client';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
+import { IdAdapter } from 'src/adapters/id';
 
 @Injectable()
 export class CardRepositoryService extends CardRepository {
@@ -18,7 +21,8 @@ export class CardRepositoryService extends CardRepository {
 		@InjectRepository('card')
 		private readonly cardRepository: Repository<'card'>,
 
-		private readonly idAdapter: UIDAdapter,
+		@Inject(UIDAdapter)
+		private readonly idAdapter: IdAdapter,
 	) {
 		super();
 	}

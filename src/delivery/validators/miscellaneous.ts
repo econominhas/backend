@@ -1,4 +1,5 @@
-import { registerDecorator, ValidationArguments } from 'class-validator';
+import type { ValidationArguments } from 'class-validator';
+import { registerDecorator } from 'class-validator';
 import { isDateYMD } from '@techmmunity/utils';
 
 export function IsDateYYYYMMDD() {

@@ -1,4 +1,4 @@
-import { Budget } from '@prisma/client';
+import type { Budget } from '@prisma/client';
 
 /**
  *

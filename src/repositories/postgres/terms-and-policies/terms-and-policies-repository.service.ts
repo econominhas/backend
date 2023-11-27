@@ -5,12 +5,15 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
-import {
+import type {
 	AcceptInput,
 	GetLatestAcceptedInput,
-	TermsAndPoliciesRepository,
 } from 'src/models/terms-and-policies';
-import { TermsAndPolicies, TermsAndPoliciesAccepted } from '@prisma/client';
+import { TermsAndPoliciesRepository } from 'src/models/terms-and-policies';
+import type {
+	TermsAndPolicies,
+	TermsAndPoliciesAccepted,
+} from '@prisma/client';
 
 @Injectable()
 export class TermsAndPoliciesRepositoryService extends TermsAndPoliciesRepository {

@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
-import { DefaultCategory } from '@prisma/client';
-import { CategoryRepository, CreateManyInput } from 'src/models/category';
-import { PaginatedRepository } from 'src/types/paginated-items';
+import type { DefaultCategory } from '@prisma/client';
+import type { CreateManyInput } from 'src/models/category';
+import { CategoryRepository } from 'src/models/category';
+import type { PaginatedRepository } from 'src/types/paginated-items';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
+import { IdAdapter } from 'src/adapters/id';
 
 @Injectable()
 export class CategoryRepositoryService extends CategoryRepository {
@@ -13,7 +15,8 @@ export class CategoryRepositoryService extends CategoryRepository {
 		@InjectRepository('category')
 		private readonly categoryRepository: Repository<'category'>,
 
-		private readonly idAdapter: UIDAdapter,
+		@Inject(UIDAdapter)
+		private readonly idAdapter: IdAdapter,
 	) {
 		super();
 	}

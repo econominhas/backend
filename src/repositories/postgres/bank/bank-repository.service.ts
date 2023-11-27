@@ -1,14 +1,17 @@
 import {
 	ConflictException,
+	Inject,
 	Injectable,
 	InternalServerErrorException,
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
-import { BankAccount, BankProvider } from '@prisma/client';
-import { PaginatedRepository } from 'src/types/paginated-items';
-import { BankRepository, CreateInput } from 'src/models/bank';
+import type { BankAccount, BankProvider } from '@prisma/client';
+import type { PaginatedRepository } from 'src/types/paginated-items';
+import type { CreateInput } from 'src/models/bank';
+import { BankRepository } from 'src/models/bank';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
+import { IdAdapter } from 'src/adapters/id';
 
 @Injectable()
 export class BankRepositoryService extends BankRepository {
@@ -18,7 +21,8 @@ export class BankRepositoryService extends BankRepository {
 		@InjectRepository('bankAccount')
 		private readonly bankAccountRepository: Repository<'bankAccount'>,
 
-		private readonly idAdapter: UIDAdapter,
+		@Inject(UIDAdapter)
+		private readonly idAdapter: IdAdapter,
 	) {
 		super();
 	}

@@ -1,12 +1,16 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { PaginatedDto, UserDataDto } from './dtos';
 import { CardService } from 'src/usecases/card/card.service';
 import { UserData } from './decorators/user-data';
 import { CreateDto } from './dtos/card';
+import { CardUseCase } from 'src/models/card';
 
 @Controller('cards')
 export class CardController {
-	constructor(private readonly cardService: CardService) {}
+	constructor(
+		@Inject(CardService)
+		private readonly cardService: CardUseCase,
+	) {}
 
 	@Get('/providers')
 	getDefault(

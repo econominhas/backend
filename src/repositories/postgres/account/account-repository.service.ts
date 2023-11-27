@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import {
-	AccountRepository,
+import type {
 	GetByIdInput,
 	GetByIdWithProvidersInput,
 	GetByIdWithProvidersOutput,
 	UpdateConfigInput,
 } from 'src/models/account';
+import { AccountRepository } from 'src/models/account';
 import { InjectRepository, Repository } from '..';
-import { Account } from '@prisma/client';
+import type { Account } from '@prisma/client';
 
 @Injectable()
 export class AccountRepositoryService extends AccountRepository {

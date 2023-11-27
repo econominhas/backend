@@ -1,7 +1,8 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import type { CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { verify } from 'jsonwebtoken';
-import { TokenPayload } from 'src/adapters/token';
+import type { TokenPayload } from 'src/adapters/token';
 import { SetMetadata } from '@nestjs/common';
 
 @Injectable()

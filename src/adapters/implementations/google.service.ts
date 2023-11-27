@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import {
+import type {
 	ExchangeCodeInput,
 	ExchangeCodeOutput,
 	GetAuthenticatedUserDataOutput,
-	GoogleAdapter as GoogleAdapterType,
 } from '../google';
+import { GoogleAdapter } from '../google';
 
 interface ExchangeCodeAPIOutput {
 	access_token: string;
@@ -22,7 +22,7 @@ interface GetUserDataAPIOutput {
 }
 
 @Injectable()
-export class GoogleAdapter extends GoogleAdapterType {
+export class FetchGoogleAdapter extends GoogleAdapter {
 	public constructor() {
 		super();
 	}

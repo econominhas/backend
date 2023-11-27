@@ -1,5 +1,5 @@
-import { BankAccount, BankProvider } from '@prisma/client';
-import {
+import type { BankAccount, BankProvider } from '@prisma/client';
+import type {
 	Paginated,
 	PaginatedItems,
 	PaginatedRepository,

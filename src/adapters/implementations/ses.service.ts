@@ -1,6 +1,7 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { Injectable } from '@nestjs/common';
-import { EMAIL_TEMPLATES, EmailAdapter, SendInput } from '../email';
+import type { EmailAdapter, SendInput } from '../email';
+import { EMAIL_TEMPLATES } from '../email';
 
 @Injectable()
 export class SESAdapter implements EmailAdapter {

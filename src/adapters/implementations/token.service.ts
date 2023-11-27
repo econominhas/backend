@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import {
+import type {
 	GenAccessInput,
 	GenAccessOutput,
 	GenRefreshOutput,
-	TokenAdapter as TokenAdapterType,
 	TokenPayload,
 } from '../token';
+import { AuthTokensAdapter } from '../token';
 import { sign } from 'jsonwebtoken';
 import { uid } from 'uid/single';
 
 @Injectable()
-export class TokenAdapter extends TokenAdapterType {
+export class JwtUidTokenAdapter extends AuthTokensAdapter {
 	genAccess({
 		accountId,
 		hasAcceptedLatestTerms,

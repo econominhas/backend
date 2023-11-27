@@ -22,7 +22,7 @@ export interface GenRefreshOutput {
 	refreshToken: string;
 }
 
-export abstract class TokenAdapter {
+export abstract class AuthTokensAdapter {
 	abstract genAccess(i: GenAccessInput): GenAccessOutput;
 
 	abstract genRefresh(): GenRefreshOutput;

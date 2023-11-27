@@ -1,9 +1,12 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
-import { TermsAndPolicies } from '@prisma/client';
-import {
+import type { TermsAndPolicies } from '@prisma/client';
+import type {
 	AcceptInput,
 	HasAcceptedLatestInput,
+} from 'src/models/terms-and-policies';
+import {
+	TermsAndPoliciesRepository,
 	TermsAndPoliciesUseCase,
 } from 'src/models/terms-and-policies';
 import { TermsAndPoliciesRepositoryService } from 'src/repositories/postgres/terms-and-policies/terms-and-policies-repository.service';
@@ -12,7 +15,7 @@ import { TermsAndPoliciesRepositoryService } from 'src/repositories/postgres/ter
 export class TermsAndPoliciesService extends TermsAndPoliciesUseCase {
 	constructor(
 		@Inject(TermsAndPoliciesRepositoryService)
-		private readonly termsAndPoliciesRepository: TermsAndPoliciesRepositoryService,
+		private readonly termsAndPoliciesRepository: TermsAndPoliciesRepository,
 	) {
 		super();
 	}

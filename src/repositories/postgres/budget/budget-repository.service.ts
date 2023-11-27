@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
-import { BudgetRepository, CreateWithItemsInput } from 'src/models/budget';
-import { Budget } from '@prisma/client';
+import type { CreateWithItemsInput } from 'src/models/budget';
+import { BudgetRepository } from 'src/models/budget';
+import type { Budget } from '@prisma/client';
+import { IdAdapter } from 'src/adapters/id';
 
 @Injectable()
 export class BudgetRepositoryService extends BudgetRepository {
@@ -10,7 +12,8 @@ export class BudgetRepositoryService extends BudgetRepository {
 		@InjectRepository('budget')
 		private readonly budgetRepository: Repository<'budget'>,
 
-		private readonly idAdapter: UIDAdapter,
+		@Inject(UIDAdapter)
+		private readonly idAdapter: IdAdapter,
 	) {
 		super();
 	}

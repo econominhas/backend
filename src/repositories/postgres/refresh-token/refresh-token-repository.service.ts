@@ -1,19 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import {
-	CreateInput,
-	GetByTokenInput,
-	RefreshTokenRepository,
-} from 'src/models/refresh-token';
-import { TokenAdapter } from 'src/adapters/implementations/token.service';
+import { Inject, Injectable } from '@nestjs/common';
+import type { CreateInput, GetByTokenInput } from 'src/models/refresh-token';
+import { RefreshTokenRepository } from 'src/models/refresh-token';
+import { JwtUidTokenAdapter } from 'src/adapters/implementations/token.service';
 import { InjectRepository, Repository } from '..';
-import { RefreshToken } from '@prisma/client';
+import type { RefreshToken } from '@prisma/client';
+import { AuthTokensAdapter } from 'src/adapters/token';
 
 @Injectable()
 export class RefreshTokenRepositoryService extends RefreshTokenRepository {
 	constructor(
 		@InjectRepository('refreshToken')
 		private readonly refreshTokenRepository: Repository<'refreshToken'>,
-		private readonly tokenAdapter: TokenAdapter,
+
+		@Inject(JwtUidTokenAdapter)
+		private readonly tokenAdapter: AuthTokensAdapter,
 	) {
 		super();
 	}

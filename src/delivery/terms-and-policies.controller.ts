@@ -4,6 +4,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Inject,
 	Post,
 } from '@nestjs/common';
 import { IgnoreTermsCheck, Public } from './guards/auth.guard';
@@ -11,11 +12,13 @@ import { UserData } from './decorators/user-data';
 import { TermsAndPoliciesService } from 'src/usecases/terms-and-policies/terms-and-policies.service';
 import { AcceptDto } from './dtos/terms-and-policies';
 import { UserDataDto } from './dtos';
+import { TermsAndPoliciesUseCase } from 'src/models/terms-and-policies';
 
 @Controller('terms')
 export class TermsAndPoliciesController {
 	constructor(
-		private readonly termsAndPoliciesService: TermsAndPoliciesService,
+		@Inject(TermsAndPoliciesService)
+		private readonly termsAndPoliciesService: TermsAndPoliciesUseCase,
 	) {}
 
 	@HttpCode(HttpStatus.CREATED)

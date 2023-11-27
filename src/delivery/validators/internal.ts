@@ -1,4 +1,5 @@
-import { registerDecorator, ValidationArguments } from 'class-validator';
+import type { ValidationArguments } from 'class-validator';
+import { registerDecorator } from 'class-validator';
 
 export function IsID() {
 	// eslint-disable-next-line @typescript-eslint/ban-types

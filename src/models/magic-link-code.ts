@@ -1,4 +1,4 @@
-import { MagicLinkCode } from '@prisma/client';
+import type { MagicLinkCode } from '@prisma/client';
 
 /**
  *

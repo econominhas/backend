@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { FileAdapter, GetInput, SaveInput } from '../file';
+import type { FileAdapter, GetInput, SaveInput } from '../file';
 import {
 	GetObjectCommand,
 	PutObjectCommand,
 	S3Client,
 } from '@aws-sdk/client-s3';
-import { Readable } from 'stream';
+import type { Readable } from 'stream';
 
 @Injectable()
 export class S3Adapter implements FileAdapter {

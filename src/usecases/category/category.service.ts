@@ -1,17 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DefaultCategory } from '@prisma/client';
-import { UtilsAdapter } from 'src/adapters/implementations/utils.service';
+import type { DefaultCategory } from '@prisma/client';
+import { UtilsAdapter } from 'src/adapters/utils';
+import { UtilsAdapterImplementation as UtilsAdapterImplementation } from 'src/adapters/implementations/utils.service';
 
-import { CategoryUseCase, CreateManyInput } from 'src/models/category';
+import type { CreateManyInput } from 'src/models/category';
+import { CategoryRepository, CategoryUseCase } from 'src/models/category';
 import { CategoryRepositoryService } from 'src/repositories/postgres/category/category-repository.service';
-import { Paginated, PaginatedItems } from 'src/types/paginated-items';
+import type { Paginated, PaginatedItems } from 'src/types/paginated-items';
 
 @Injectable()
 export class CategoryService extends CategoryUseCase {
 	constructor(
 		@Inject(CategoryRepositoryService)
-		private readonly categoryRepository: CategoryRepositoryService,
+		private readonly categoryRepository: CategoryRepository,
 
+		@Inject(UtilsAdapterImplementation)
 		private readonly utilsAdapter: UtilsAdapter,
 	) {
 		super();

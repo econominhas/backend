@@ -3,6 +3,7 @@ import {
 	Controller,
 	HttpCode,
 	HttpStatus,
+	Inject,
 	Post,
 	Res,
 } from '@nestjs/common';
@@ -16,10 +17,14 @@ import {
 } from './dtos/auth';
 import { AuthService } from 'src/usecases/auth/auth.service';
 import { Public } from './guards/auth.guard';
+import { AuthUseCase } from 'src/models/auth';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	constructor(
+		@Inject(AuthService)
+		private readonly authService: AuthUseCase,
+	) {}
 
 	@Post('/google')
 	@Public()

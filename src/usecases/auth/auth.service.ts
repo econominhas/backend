@@ -5,8 +5,8 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import { TokenAdapter } from 'src/adapters/implementations/token.service';
-import {
+import { JwtUidTokenAdapter } from 'src/adapters/implementations/token.service';
+import type {
 	AuthOutput,
 	CreateWith3rdPartyProviderInput,
 	CreateWithEmailProviderInput,
@@ -15,15 +15,25 @@ import {
 	RefreshOutput,
 	RefreshTokenInput,
 } from 'src/models/auth';
+import { AuthRepository } from 'src/models/auth';
 import { SESAdapter } from 'src/adapters/implementations/ses.service';
 import { MagicLinkCodeRepositoryService } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.service';
 import { RefreshTokenRepositoryService } from 'src/repositories/postgres/refresh-token/refresh-token-repository.service';
-import { GoogleAdapter } from 'src/adapters/implementations/google.service';
-import { Account, SignInProviderEnum } from '@prisma/client';
+import { FetchGoogleAdapter } from 'src/adapters/implementations/google.service';
+import type { Account } from '@prisma/client';
+import { SignInProviderEnum } from '@prisma/client';
 import { TermsAndPoliciesService } from '../terms-and-policies/terms-and-policies.service';
 import { AuthUseCase } from 'src/models/auth';
 import { AuthRepositoryService } from 'src/repositories/postgres/auth/auth-repository.service';
 import { AccountRepositoryService } from 'src/repositories/postgres/account/account-repository.service';
+import { TermsAndPoliciesUseCase } from 'src/models/terms-and-policies';
+import { AccountRepository } from 'src/models/account';
+import { MagicLinkCodeRepository } from 'src/models/magic-link-code';
+import { RefreshTokenRepository } from 'src/models/refresh-token';
+import { GoogleAdapter } from 'src/adapters/google';
+import { AuthTokensAdapter } from 'src/adapters/token';
+import { EmailAdapter } from 'src/adapters/email';
+import { SmsAdapter } from 'src/adapters/sms';
 
 interface GenTokensInput {
 	accountId: string;
@@ -37,21 +47,25 @@ export class AuthService extends AuthUseCase {
 
 	constructor(
 		@Inject(AuthRepositoryService)
-		private readonly authRepository: AuthRepositoryService,
+		private readonly authRepository: AuthRepository,
 		@Inject(AccountRepositoryService)
-		private readonly accountRepository: AccountRepositoryService,
+		private readonly accountRepository: AccountRepository,
 		@Inject(MagicLinkCodeRepositoryService)
-		private readonly magicLinkCodeRepository: MagicLinkCodeRepositoryService,
+		private readonly magicLinkCodeRepository: MagicLinkCodeRepository,
 		@Inject(RefreshTokenRepositoryService)
-		private readonly refreshTokenRepository: RefreshTokenRepositoryService,
+		private readonly refreshTokenRepository: RefreshTokenRepository,
 
 		@Inject(TermsAndPoliciesService)
-		private readonly termsAndPoliciesService: TermsAndPoliciesService,
+		private readonly termsAndPoliciesService: TermsAndPoliciesUseCase,
 
+		@Inject(FetchGoogleAdapter)
 		private readonly googleAdapter: GoogleAdapter,
-		private readonly tokenAdapter: TokenAdapter,
-		private readonly emailAdapter: SESAdapter,
-		private readonly smsAdapter: SESAdapter,
+		@Inject(JwtUidTokenAdapter)
+		private readonly tokenAdapter: AuthTokensAdapter,
+		@Inject(SESAdapter)
+		private readonly emailAdapter: EmailAdapter,
+		@Inject(SESAdapter)
+		private readonly smsAdapter: SmsAdapter,
 	) {
 		super();
 	}
