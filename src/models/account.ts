@@ -24,6 +24,7 @@ export interface UpdateConfigInput {
 	accountId: string;
 	name?: string;
 	currentBudgetId?: string;
+	salaryId?: string;
 }
 
 export abstract class AccountRepository {
@@ -63,10 +64,17 @@ export interface SetBudgetInput {
 	budgetId: string;
 }
 
+export interface SetSalaryInput {
+	accountId: string;
+	salaryId: string;
+}
+
 export abstract class AccountUseCase {
 	abstract iam(i: IamInput): Promise<IamOutput>;
 
 	abstract updateName(i: UpdateNameInput): Promise<void>;
 
 	abstract setBudget(i: SetBudgetInput): Promise<void>;
+
+	abstract setSalary(i: SetSalaryInput): Promise<void>;
 }

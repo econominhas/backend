@@ -47,6 +47,7 @@ export class AccountRepositoryService extends AccountRepository {
 		accountId,
 		name,
 		currentBudgetId,
+		salaryId,
 	}: UpdateConfigInput): Promise<void> {
 		await this.configRepository.update({
 			where: {
@@ -55,6 +56,7 @@ export class AccountRepositoryService extends AccountRepository {
 			data: {
 				name,
 				currentBudgetId,
+				salaryId,
 			},
 		});
 	}

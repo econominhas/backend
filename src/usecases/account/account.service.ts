@@ -5,6 +5,7 @@ import {
 	IamInput,
 	IamOutput,
 	SetBudgetInput,
+	SetSalaryInput,
 	UpdateNameInput,
 } from 'src/models/account';
 import { SignInProviderEnum } from '@prisma/client';
@@ -45,6 +46,13 @@ export class AccountService extends AccountUseCase {
 		await this.accountRepository.updateConfig({
 			accountId,
 			currentBudgetId: budgetId,
+		});
+	}
+
+	async setSalary({ accountId, salaryId }: SetSalaryInput): Promise<void> {
+		await this.accountRepository.updateConfig({
+			accountId,
+			salaryId,
 		});
 	}
 }
