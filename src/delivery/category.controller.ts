@@ -1,12 +1,10 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from './guards/auth.guard';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CategoryService } from 'src/usecases/category/category.service';
 import { PaginatedDto, UserDataDto } from './dtos';
 import { UserData } from './decorators/user-data';
 import { CreateManyDto } from './dtos/category';
 
 @Controller('categories')
-@UseGuards(AuthGuard())
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
 

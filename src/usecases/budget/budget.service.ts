@@ -5,12 +5,15 @@ import {
 	CreateInput,
 } from 'src/models/budget';
 import { BudgetRepositoryService } from 'src/repositories/postgres/budget/budget-repository.service';
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class BudgetService extends BudgetUseCase {
 	constructor(
 		@Inject(BudgetRepositoryService)
 		private readonly budgetRepository: BudgetRepositoryService,
+
+		private readonly accountService: AccountService,
 	) {
 		super();
 	}
@@ -33,11 +36,16 @@ export class BudgetService extends BudgetUseCase {
 			)
 			.flat();
 
-		await this.budgetRepository.createWithItems({
+		const budget = await this.budgetRepository.createWithItems({
 			accountId,
 			name,
 			description,
 			items: itemsFormatted,
+		});
+
+		await this.accountService.setBudget({
+			accountId,
+			budgetId: budget.id,
 		});
 	}
 
@@ -59,11 +67,16 @@ export class BudgetService extends BudgetUseCase {
 			)
 			.flat();
 
-		await this.budgetRepository.createWithItems({
+		const budget = await this.budgetRepository.createWithItems({
 			accountId,
 			name,
 			description,
 			items: itemsFormatted,
+		});
+
+		await this.accountService.setBudget({
+			accountId,
+			budgetId: budget.id,
 		});
 	}
 }

@@ -7,5 +7,6 @@ import { AccountController } from 'src/delivery/account.controller';
 	controllers: [AccountController],
 	imports: [AccountRepositoryModule],
 	providers: [AccountService],
+	exports: [AccountService],
 })
 export class AccountModule {}

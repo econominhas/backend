@@ -15,12 +15,14 @@ import {
 	RefreshTokenDto,
 } from './dtos/auth';
 import { AuthService } from 'src/usecases/auth/auth.service';
+import { Public } from './guards/auth.guard';
 
-@Controller('')
+@Controller('auth')
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
-	@Post('/auth/google')
+	@Post('/google')
+	@Public()
 	async createFromGoogleProvider(
 		@Body()
 		body: CreateFromGoogleProviderDto,
@@ -40,7 +42,8 @@ export class AuthController {
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Post('/auth/email')
+	@Post('/email')
+	@Public()
 	createFromEmailProvider(
 		@Body()
 		body: CreateFromEmailProviderDto,
@@ -49,7 +52,8 @@ export class AuthController {
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Post('/auth/phone')
+	@Post('/phone')
+	@Public()
 	createFromPhoneProvider(
 		@Body()
 		body: CreateFromPhoneProviderDto,
@@ -57,7 +61,8 @@ export class AuthController {
 		return this.authService.createFromPhoneProvider(body);
 	}
 
-	@Post('/auth/code')
+	@Post('/code')
+	@Public()
 	async exchangeCode(
 		@Body()
 		body: ExchangeCodeDto,
@@ -76,7 +81,8 @@ export class AuthController {
 		return data;
 	}
 
-	@Post('/auth/refresh')
+	@Post('/refresh')
+	@Public()
 	refreshToken(
 		@Body()
 		body: RefreshTokenDto,

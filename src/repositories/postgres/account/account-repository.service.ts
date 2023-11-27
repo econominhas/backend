@@ -4,7 +4,7 @@ import {
 	GetByIdInput,
 	GetByIdWithProvidersInput,
 	GetByIdWithProvidersOutput,
-	UpdateNameInput,
+	UpdateConfigInput,
 } from 'src/models/account';
 import { InjectRepository, Repository } from '..';
 import { Account } from '@prisma/client';
@@ -43,13 +43,18 @@ export class AccountRepositoryService extends AccountRepository {
 		});
 	}
 
-	async updateName({ accountId, name }: UpdateNameInput): Promise<void> {
+	async updateConfig({
+		accountId,
+		name,
+		currentBudgetId,
+	}: UpdateConfigInput): Promise<void> {
 		await this.configRepository.update({
 			where: {
 				accountId,
 			},
 			data: {
 				name,
+				currentBudgetId,
 			},
 		});
 	}

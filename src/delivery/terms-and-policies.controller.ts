@@ -5,9 +5,8 @@ import {
 	HttpCode,
 	HttpStatus,
 	Post,
-	UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from './guards/auth.guard';
+import { IgnoreTermsCheck, Public } from './guards/auth.guard';
 import { UserData } from './decorators/user-data';
 import { TermsAndPoliciesService } from 'src/usecases/terms-and-policies/terms-and-policies.service';
 import { AcceptDto } from './dtos/terms-and-policies';
@@ -21,7 +20,7 @@ export class TermsAndPoliciesController {
 
 	@HttpCode(HttpStatus.CREATED)
 	@Post('/accept')
-	@UseGuards(AuthGuard({ ignoreTermsCheck: true }))
+	@IgnoreTermsCheck()
 	async accept(
 		@UserData()
 		userData: UserDataDto,
@@ -35,6 +34,7 @@ export class TermsAndPoliciesController {
 	}
 
 	@Get('/latest')
+	@Public()
 	latest() {
 		return this.termsAndPoliciesService.getLatest();
 	}

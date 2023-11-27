@@ -1,12 +1,10 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from './guards/auth.guard';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { PaginatedDto, UserDataDto } from './dtos';
 import { BankService } from 'src/usecases/bank/bank.service';
 import { UserData } from './decorators/user-data';
 import { CreateDto } from './dtos/bank';
 
 @Controller('banks')
-@UseGuards(AuthGuard())
 export class BankController {
 	constructor(private readonly bankService: BankService) {}
 

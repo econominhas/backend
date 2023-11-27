@@ -5,10 +5,9 @@ import {
 	HttpCode,
 	HttpStatus,
 	Patch,
-	UseGuards,
 } from '@nestjs/common';
 import { AccountService } from 'src/usecases/account/account.service';
-import { AuthGuard } from './guards/auth.guard';
+import { IgnoreTermsCheck } from './guards/auth.guard';
 import { UserData } from './decorators/user-data';
 import { NameDto } from './dtos/account';
 import { UserDataDto } from './dtos';
@@ -18,7 +17,7 @@ export class AccountController {
 	constructor(private readonly accountService: AccountService) {}
 
 	@Get('/iam')
-	@UseGuards(AuthGuard({ ignoreTermsCheck: true }))
+	@IgnoreTermsCheck()
 	iam(
 		@UserData()
 		userData: UserDataDto,
@@ -30,7 +29,6 @@ export class AccountController {
 
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Patch('/name')
-	@UseGuards(AuthGuard())
 	name(
 		@UserData()
 		userData: UserDataDto,

@@ -20,9 +20,10 @@ export type GetByIdWithProvidersOutput = Account & {
 	signInProviders: Array<SignInProvider>;
 };
 
-export interface UpdateNameInput {
+export interface UpdateConfigInput {
 	accountId: string;
-	name: string;
+	name?: string;
+	currentBudgetId?: string;
 }
 
 export abstract class AccountRepository {
@@ -32,7 +33,7 @@ export abstract class AccountRepository {
 		i: GetByIdWithProvidersInput,
 	): Promise<GetByIdWithProvidersOutput | undefined>;
 
-	abstract updateName(i: UpdateNameInput): Promise<void>;
+	abstract updateConfig(i: UpdateConfigInput): Promise<void>;
 }
 
 /**
@@ -52,8 +53,20 @@ export interface IamOutput {
 	googleId?: string;
 }
 
+export interface UpdateNameInput {
+	accountId: string;
+	name: string;
+}
+
+export interface SetBudgetInput {
+	accountId: string;
+	budgetId: string;
+}
+
 export abstract class AccountUseCase {
+	abstract iam(i: IamInput): Promise<IamOutput>;
+
 	abstract updateName(i: UpdateNameInput): Promise<void>;
 
-	abstract iam(i: IamInput): Promise<IamOutput>;
+	abstract setBudget(i: SetBudgetInput): Promise<void>;
 }

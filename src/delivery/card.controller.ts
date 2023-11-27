@@ -1,12 +1,10 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from './guards/auth.guard';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { PaginatedDto, UserDataDto } from './dtos';
 import { CardService } from 'src/usecases/card/card.service';
 import { UserData } from './decorators/user-data';
 import { CreateDto } from './dtos/card';
 
 @Controller('cards')
-@UseGuards(AuthGuard())
 export class CardController {
 	constructor(private readonly cardService: CardService) {}
 

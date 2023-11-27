@@ -8,5 +8,6 @@ import { CardController } from 'src/delivery/card.controller';
 	controllers: [CardController],
 	imports: [CardRepositoryModule],
 	providers: [CardService, UtilsAdapter],
+	exports: [CardService],
 })
 export class CardModule {}

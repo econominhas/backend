@@ -8,5 +8,6 @@ import { UtilsAdapter } from 'src/adapters/implementations/utils.service';
 	controllers: [CategoryController],
 	imports: [CategoryRepositoryModule],
 	providers: [CategoryService, UtilsAdapter],
+	exports: [CategoryService],
 })
 export class CategoryModule {}

@@ -8,5 +8,6 @@ import { BankController } from 'src/delivery/bank.controller';
 	controllers: [BankController],
 	imports: [BankRepositoryModule],
 	providers: [BankService, UtilsAdapter],
+	exports: [BankService],
 })
 export class BankModule {}
