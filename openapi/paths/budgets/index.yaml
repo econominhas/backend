@@ -1,0 +1,60 @@
+post:
+  tags:
+    - Budget
+  summary: Create budget
+  description: |
+    Create budget
+  operationId: budget-create
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Create budget
+          required:
+            - name
+            - description
+            - year
+            - items
+          properties:
+            name:
+              $ref: ../../components/fields/name.yaml
+            description:
+              $ref: ../../components/fields/description.yaml
+            year:
+              $ref: ../../components/fields/year.yaml
+            items:
+              type: array
+              items:
+                type: object
+                required:
+                  - categoryId
+                  - items
+                properties:
+                  categoryId:
+                    description: Category ID
+                    type: string
+                    format: uuid
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - month
+                        - amount
+                      properties:
+                        month:
+                          $ref: ../../components/fields/month.yaml
+                        amount:
+                          $ref: ../../components/fields/amount.yaml
+    required: true
+  responses:
+    '204':
+      description: |
+        Budget created
+    '400':
+      $ref: ../../components/responses/bad-request.yaml
+    '401':
+      $ref: ../../components/responses/unauthorized.yaml

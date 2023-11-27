@@ -85,6 +85,11 @@ paths:
   /bank/accounts/balance:
     $ref: paths/banks/accounts/balance.yaml
 
+  /budgets:
+    $ref: paths/budgets/index.yaml
+  /budgets/basic:
+    $ref: paths/budgets/basic.yaml
+
   /cards/providers:
     $ref: paths/cards/providers.yaml
   /cards:

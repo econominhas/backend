@@ -1,0 +1,4 @@
+description: Year
+type: integer
+minimum: 2000
+maximum: 2100

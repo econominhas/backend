@@ -1,7 +1,5 @@
 description: |
   Multiplied by 100, Ex: R$ 10.00 = 1000
-
-  Alert for Card Entities: Only prepaid cards have this field
 type: integer
 minimum: 0
 maximum: 99999999999

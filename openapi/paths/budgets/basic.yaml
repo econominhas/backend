@@ -1,0 +1,50 @@
+post:
+  tags:
+    - Budget
+  summary: Create basic budget
+  description: |
+    Create basic budget
+  operationId: budget-basic-create
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Create basic budget
+          required:
+            - name
+            - description
+            - year
+            - items
+          properties:
+            name:
+              $ref: ../../components/fields/name.yaml
+            description:
+              $ref: ../../components/fields/description.yaml
+            year:
+              $ref: ../../components/fields/year.yaml
+            items:
+              type: array
+              items:
+                type: object
+                required:
+                  - categoryId
+                  - amount
+                properties:
+                  categoryId:
+                    description: Category ID
+                    type: string
+                    format: uuid
+                  amount:
+                    $ref: ../../components/fields/amount.yaml
+    required: true
+  responses:
+    '204':
+      description: |
+        Budget created
+    '400':
+      $ref: ../../components/responses/bad-request.yaml
+    '401':
+      $ref: ../../components/responses/unauthorized.yaml
