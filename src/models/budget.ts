@@ -58,7 +58,7 @@ export interface CreateBasicInput {
 }
 
 export abstract class BudgetUseCase {
-	abstract create(i: CreateInput): Promise<void>;
+	abstract create(i: CreateInput): Promise<Budget>;
 
-	abstract createBasic(i: CreateBasicInput): Promise<void>;
+	abstract createBasic(i: CreateBasicInput): Promise<Budget>;
 }

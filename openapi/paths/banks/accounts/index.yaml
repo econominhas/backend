@@ -33,9 +33,13 @@ post:
               $ref: ../../../components/fields/balance.yaml
     required: true
   responses:
-    '201':
+    '200':
       description: |
         Bank account created
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/entities/BankAccount.yaml
     '400':
       $ref: ../../../components/responses/bad-request.yaml
     '401':

@@ -46,6 +46,24 @@
 		"env": "tune"
 	},
 
+	// TodoTree
+	"todo-tree.highlights.customHighlight": {
+		"ALERT": {
+			"icon": "check",
+			"type": "line"
+		}
+	},
+	"todo-tree.general.tags": [
+		"BUG",
+		"HACK",
+		"FIXME",
+		"TODO",
+		"ALERT",
+		"XXX",
+		"[ ]",
+		"[x]"
+	],
+
 	// Code Spell Checker
 	"cSpell.words": [
 		"dbdocs",

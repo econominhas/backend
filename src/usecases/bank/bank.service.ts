@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { BankProvider } from '@prisma/client';
+import { BankAccount, BankProvider } from '@prisma/client';
 import { UtilsAdapter } from 'src/adapters/implementations/utils.service';
 import { BankUseCase, CreateInput } from 'src/models/bank';
 
@@ -28,7 +28,7 @@ export class BankService extends BankUseCase {
 		};
 	}
 
-	async create(i: CreateInput): Promise<void> {
-		await this.bankRepository.create(i);
+	async create(i: CreateInput): Promise<BankAccount> {
+		return this.bankRepository.create(i);
 	}
 }

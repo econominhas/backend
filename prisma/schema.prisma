@@ -432,10 +432,9 @@ model BudgetItem {
   year       Int    @db.SmallInt
   amount     Int
 
-  budget                Budget                 @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  category              Category               @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  transactions          Transaction[]
-  recurrentTransactions RecurrentTransaction[]
+  budget       Budget        @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  transactions Transaction[]
 
   @@index([budgetId, categoryId, month, year])
   @@map("budget_items")
@@ -460,28 +459,6 @@ enum PaymentMethodEnum {
   BANK_ACCOUNT
 
   @@map("payment_method_enum")
-}
-
-enum RecurrentTransactionFrequencyEnum {
-  DAILY /// Every day
-  WEEKLY /// Every week
-  CUSTOM_WEEKLY /// Every week, on the days defined by the user
-  MONTHLY /// Once a month
-  BI_MONTHLY /// Twice a month
-  SEMI_MONTHLY /// One month yes, another month no
-  QUARTERLY /// Once every 3 months
-  ANNUALY /// Once a year
-  SEMI_ANNUALY /// Once every 6 months
-
-  @@map("recurrent_transaction_frequency_enum")
-}
-
-enum RecurrentTransactionRuleEnum {
-  EXACT_AMOUNT
-  MBWOPM /// MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the amount is multiplied by the amount of weeks of the previous month
-  MBDOPM /// MULTIPLY_BY_DAYS_OF_PREV_MONTH, the amount is multiplied by the amount of days of the previous month
-
-  @@map("recurrent_transaction_rule_enum")
 }
 
 /// Contains all the user's transactions
@@ -532,59 +509,129 @@ model Installment {
   @@map("installments")
 }
 
+//
+//
+// Recurrent Transactions
+//
+//
+
+enum RecurrencyCalculateEnum {
+  EXACT_AMOUNT
+  MBWOPM /// MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the amount is multiplied by the amount of weeks of the previous month
+  MBDOPM /// MULTIPLY_BY_DAYS_OF_PREV_MONTH, the amount is multiplied by the amount of days of the previous month
+
+  @@map("recurrency_calculate_enum")
+}
+
+enum RecurrencyFrequencyEnum {
+  DAILY /// Every day
+  WEEKLY /// Every week
+  CUSTOM_WEEKLY /// Every week, on the days defined by the user
+  MONTHLY /// Once a month
+  BI_MONTHLY /// Twice a month
+  SEMI_MONTHLY /// One month yes, another month no
+  QUARTERLY /// Once every 3 months
+  ANNUALY /// Once a year
+  SEMI_ANNUALY /// Once every 6 months
+
+  @@map("recurrency_frequency_enum")
+}
+
+enum DaysOfWeekEnum {
+  Mon
+  Tue
+  Wed
+  Thu
+  Fri
+  Sat
+  Sun
+
+  @@map("days_of_week_enum")
+}
+
+enum MonthEnum {
+  Jan
+  Feb
+  Mar
+  Apr
+  May
+  Jun
+  Jul
+  Aug
+  Sep
+  Oct
+  Nov
+  Dec
+
+  @@map("month_enum")
+}
+
+enum RecurrencyConditionsEnum {
+  IN_WEEKDAY /// Mon-Fri
+  IN_WEEKEND /// Sat-Sun
+  IS_EVEN_DAY /// Like 2, 4, 6
+  IS_ODD_DAY /// Like 1, 3, 5
+  NOT_HOLIDAY
+
+  @@map("recurrency_conditions_enum")
+}
+
 /// Contains all the user's recurrent transactions.
 /// The recurrent transactions are linked to the budget, this way the user can have a better control of which transactions he wants to execute.
 model RecurrentTransaction {
-  id                     String                            @id @db.Char(16)
-  accountId              String                            @map("account_id") @db.Char(16)
-  budgetId               String                            @map("budget_id") @db.Char(16)
-  frequency              RecurrentTransactionFrequencyEnum
-  isSystemManaged        Boolean                           @map("is_system_managed") /// Define if the recurrent transaction is automatic controlled by the system, or if it\'s created and controled by the user
+  id                String              @id @db.Char(16)
+  accountId         String              @map("account_id") @db.Char(16)
+  budgetId          String              @map("budget_id") @db.Char(16)
+  isSystemManaged   Boolean             @map("is_system_managed") /// Define if the recurrent transaction is automatic controlled by the system, or if it\'s created and controled by the user
   // Data to create the transaction
-  type                   TransactionTypeEnum
-  name                   String                            @db.VarChar(30)
-  description            String                            @db.VarChar(300)
-  amount                 Int
-  budgetItemId           String                            @map("budget_item_id") @db.Char(16)
-  createdAt              DateTime                          @default(now()) @map("created_at")
-  isSystemManagedT       Boolean                           @map("is_system_managed_t") /// Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
-  recurrentTransactionId String?                           @map("recurrent_transaction_id") @db.Char(16)
+  type              TransactionTypeEnum
+  name              String              @db.VarChar(30)
+  description       String              @db.VarChar(300)
+  amount            Int
+  createdAt         DateTime            @default(now()) @map("created_at")
+  isSystemManagedT  Boolean             @map("is_system_managed_t") /// Same as "isSystemManaged". It exists because some RecurrentTransactions may be system managed, but the Trasactions created by this RecurrentTransaction aren't. An example of it it's the salary, we have a specific interface for the user to managed it, and it shouldn't be managed directly by the user like other RecurrentTransactions, but the transactions created by it are normal Transactions, that the user can edit freely.
   // Transaction type=IN,OUT
-  paymentMethod          PaymentMethodEnum?                @map("payment_method") /// Only type=IN,OUT transactions have this column
-  categoryId             String?                           @map("category_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
-  cardId                 String?                           @map("card_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
-  bankAccountId          String?                           @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  paymentMethod     PaymentMethodEnum?  @map("payment_method") /// Only type=IN,OUT transactions have this column
+  categoryId        String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  cardId            String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  bankAccountId     String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
   // Transaction type=TRANSFER
-  bankAccountFromId      String?                           @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
-  bankAccountToId        String?                           @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
+  bankAccountFromId String?             @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
+  bankAccountToId   String?             @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
 
-  account                  Account                  @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  budget                   Budget                   @relation(fields: [budgetId], references: [id], onDelete: Restrict)
-  recurrentTransactionRule RecurrentTransactionRule @relation(fields: [id], references: [recurrentTransactionId])
+  account                  Account                    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budget                   Budget                     @relation(fields: [budgetId], references: [id], onDelete: Restrict)
+  recurrentTransactionRule RecurrentTransactionRule[]
   config                   Config?
-  // Data to create the transaction
-  budgetItem               BudgetItem               @relation(fields: [budgetItemId], references: [id], onDelete: Restrict)
   // Transaction type=IN,OUT
-  category                 Category?                @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  card                     Card?                    @relation(fields: [cardId], references: [id], onDelete: Restrict)
-  bankAccount              BankAccount?             @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
+  category                 Category?                  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  card                     Card?                      @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  bankAccount              BankAccount?               @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
-  bankAccountFrom          BankAccount?             @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
-  bankAccountTo            BankAccount?             @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
+  bankAccountFrom          BankAccount?               @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
+  bankAccountTo            BankAccount?               @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
 
   @@map("recurrent_transactions")
 }
 
 /// Contains the recurrent transactions rules to be executed
 model RecurrentTransactionRule {
-  recurrentTransactionId String                       @id @map("recurrent_transaction_id") @db.Char(16)
-  rule                   RecurrentTransactionRuleEnum
-  weekday                Int                          @db.SmallInt
-  weekdays               Int[]
-  dayOfTheMonth          Int                          @map("day_of_the_month") @db.SmallInt
-  month                  Int                          @db.SmallInt
+  id                     String @id @db.Char(16)
+  recurrentTransactionId String @map("recurrent_transaction_id") @db.Char(16)
 
-  recurrentTransaction RecurrentTransaction?
+  caFormula        RecurrencyCalculateEnum    @map("ca_formula")
+  caDaysOfWeek     DaysOfWeekEnum[]           @map("ca_days_of_week")
+  caDaysOfTheMonth Int[]                      @map("ca_days_of_the_month") // Can be only numbers, 1 to 31
+  caMonths         MonthEnum[]                @map("ca_months")
+  caConditions     RecurrencyConditionsEnum[] @map("ca_conditions") /// Only count if the day is Mon-Fri
+
+  frequency      RecurrencyFrequencyEnum
+  fDaysOfWeek    DaysOfWeekEnum[]           @map("f_days_of_week")
+  fDayOfTheMonth String[]                   @map("f_day_of_the_month") /// Unlike caDaysOfTheMonth, it can be "FIRST", "LAST" and numbers 1 to 31
+  fMonths        MonthEnum[]                @map("f_months")
+  fConditions    RecurrencyConditionsEnum[] @map("f_conditions") /// Only count if the day is Mon-Fri
+
+  recurrentTransaction RecurrentTransaction @relation(fields: [recurrentTransactionId], references: [id])
 
   @@map("recurrent_transaction_rules")
 }

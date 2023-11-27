@@ -1,0 +1,64 @@
+post:
+  tags:
+    - Transaction
+  summary: Create the user's salary
+  description: |
+    Create the user's salary
+  operationId: transaction-salary
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Create the user's salary
+          required:
+            - budgetId
+            - categoryId
+            - bankAccountId
+            - amount
+            - installments
+          properties:
+            budgetId:
+              description: Budget ID
+              type: string
+              format: uuid
+            categoryId:
+              description: Category ID
+              type: string
+              format: uuid
+            bankAccountId:
+              description: Bank Account ID where the salary will be deposited
+              type: string
+              format: uuid
+            amount:
+              $ref: ../../components/fields/amount.yaml
+            installments:
+              type: array
+              items:
+                type: object
+                description: Config of all the salary installments
+                required:
+                  - dayOfTheMonth
+                  - percentage
+                properties:
+                  dayOfTheMonth:
+                    description: Day of the month that this installment of the salary is deposited
+                    type: integer
+                    minimum: 1
+                    maximum: 31
+                  percentage:
+                    description: Percentage of the salary that it's deposited
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+    required: true
+  responses:
+    '201':
+      description: |
+        Salary created
+    '400':
+      $ref: ../../components/responses/bad-request.yaml
+    '401':
+      $ref: ../../components/responses/unauthorized.yaml

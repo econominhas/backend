@@ -1,0 +1,20 @@
+type: object
+title: BudgetEntity
+required:
+  - id
+  - accountId
+  - name
+  - description
+properties:
+  id:
+    description: Budget ID
+    type: string
+    format: uuid
+  accountId:
+    description: User ID
+    type: string
+    format: uuid
+  name:
+    $ref: ../fields/name.yaml
+  description:
+    $ref: ../fields/description.yaml

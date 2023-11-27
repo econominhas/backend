@@ -39,5 +39,5 @@ export abstract class BankRepository {
 export abstract class BankUseCase {
 	abstract getProviders(i: Paginated): Promise<PaginatedItems<BankProvider>>;
 
-	abstract create(i: CreateInput): Promise<void>;
+	abstract create(i: CreateInput): Promise<BankAccount>;
 }

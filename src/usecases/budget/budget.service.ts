@@ -6,6 +6,7 @@ import {
 } from 'src/models/budget';
 import { BudgetRepositoryService } from 'src/repositories/postgres/budget/budget-repository.service';
 import { AccountService } from '../account/account.service';
+import { Budget } from '@prisma/client';
 
 @Injectable()
 export class BudgetService extends BudgetUseCase {
@@ -24,7 +25,7 @@ export class BudgetService extends BudgetUseCase {
 		description,
 		year,
 		items,
-	}: CreateInput): Promise<void> {
+	}: CreateInput): Promise<Budget> {
 		const itemsFormatted = items
 			.map((item) =>
 				item.items.map((categoryItem) => ({
@@ -47,6 +48,8 @@ export class BudgetService extends BudgetUseCase {
 			accountId,
 			budgetId: budget.id,
 		});
+
+		return budget;
 	}
 
 	async createBasic({
@@ -55,7 +58,7 @@ export class BudgetService extends BudgetUseCase {
 		description,
 		year,
 		items,
-	}: CreateBasicInput): Promise<void> {
+	}: CreateBasicInput): Promise<Budget> {
 		const itemsFormatted = items
 			.map(({ categoryId, amount }) =>
 				Array(12).map((_, idx) => ({
@@ -78,5 +81,7 @@ export class BudgetService extends BudgetUseCase {
 			accountId,
 			budgetId: budget.id,
 		});
+
+		return budget;
 	}
 }

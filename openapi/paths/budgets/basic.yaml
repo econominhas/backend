@@ -41,9 +41,13 @@ post:
                     $ref: ../../components/fields/amount.yaml
     required: true
   responses:
-    '204':
+    '200':
       description: |
         Budget created
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/entities/Budget.yaml
     '400':
       $ref: ../../components/responses/bad-request.yaml
     '401':
