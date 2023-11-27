@@ -1,13 +1,7 @@
-import {
-	IsInt,
-	IsNumberString,
-	IsOptional,
-	Max,
-	MaxLength,
-	Min,
-	MinLength,
-} from 'class-validator';
-import { IsID, IsName } from '../validators/internal';
+import { IsOptional } from 'class-validator';
+import { IsAmount, IsID, IsName } from '../validators/internal';
+import { IsDay } from '../validators/date';
+import { IsNumberString } from '../validators/miscellaneous';
 
 export class CreateDto {
 	@IsID()
@@ -16,26 +10,18 @@ export class CreateDto {
 	@IsName()
 	name: string;
 
-	@IsNumberString()
-	@MinLength(4)
-	@MaxLength(4)
+	@IsNumberString(4)
 	lastFourDigits: string;
 
 	@IsOptional()
-	@IsInt()
-	@Min(1)
-	@Max(31)
+	@IsDay()
 	dueDay?: number;
 
 	@IsOptional()
-	@IsInt()
-	@Min(0)
-	@Max(999_999_999_99)
+	@IsAmount()
 	limit?: number;
 
 	@IsOptional()
-	@IsInt()
-	@Min(0)
-	@Max(999_999_999_99)
+	@IsAmount()
 	balance?: number;
 }

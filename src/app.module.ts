@@ -5,6 +5,7 @@ import { TermsAndPoliciesModule } from './usecases/terms-and-policies/terms-and-
 import { CategoryModule } from './usecases/category/category.module';
 import { BankModule } from './usecases/bank/bank.module';
 import { CardModule } from './usecases/card/card.module';
+import { BudgetModule } from './usecases/budget/budget.module';
 
 @Module({
 	imports: [
@@ -14,6 +15,7 @@ import { CardModule } from './usecases/card/card.module';
 		CategoryModule,
 		BankModule,
 		CardModule,
+		BudgetModule,
 	],
 })
 export class AppModule {}

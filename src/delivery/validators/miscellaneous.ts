@@ -1,11 +1,7 @@
-import {
-	registerDecorator,
-	ValidationOptions,
-	ValidationArguments,
-} from 'class-validator';
+import { registerDecorator, ValidationArguments } from 'class-validator';
 import { isDateYMD } from '@techmmunity/utils';
 
-export function IsDateYYYYMMDD(validationOptions: ValidationOptions = {}) {
+export function IsDateYYYYMMDD() {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {
 		registerDecorator({
@@ -15,7 +11,6 @@ export function IsDateYYYYMMDD(validationOptions: ValidationOptions = {}) {
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid birth date`,
-				...validationOptions,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,10 +24,9 @@ export function IsDateYYYYMMDD(validationOptions: ValidationOptions = {}) {
 	};
 }
 
-interface IsURLValidationOptions extends ValidationOptions {
+interface IsURLValidationOptions {
 	acceptLocalhost: boolean;
 }
-
 export function IsURL(validationOptions: IsURLValidationOptions) {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {
@@ -43,7 +37,6 @@ export function IsURL(validationOptions: IsURLValidationOptions) {
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid url`,
-				...validationOptions,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,6 +77,29 @@ export function IsPhone() {
 					if (typeof value !== 'string') return false;
 
 					return /^[+][0-9]{10,20}$/.test(value);
+				},
+			},
+		});
+	};
+}
+
+export function IsNumberString(length: number) {
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	return function (object: Object, propertyName: string) {
+		registerDecorator({
+			name: 'IsNumberString',
+			target: object.constructor,
+			propertyName: propertyName,
+			constraints: [],
+			options: {
+				message: `${propertyName} must be a valid number string with length of ${length}.`,
+			},
+			validator: {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				validate(value: any, _args: ValidationArguments) {
+					if (typeof value !== 'string') return false;
+
+					return /^[0-9]*$/.test(value) && value.length === length;
 				},
 			},
 		});

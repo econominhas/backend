@@ -37,11 +37,11 @@ export class AccountRepositoryService extends AccountRepository {
 	async create(i: CreateInput): Promise<Account> {
 		const accountId = this.idAdapter.gen();
 
-		const baseAccount: Prisma.AccountCreateInput = {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			//@ts-ignore
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		//@ts-ignore
+		const baseAccount: Prisma.AccountCreateArgs['data'] = {
 			id: accountId,
-			Config: {
+			config: {
 				create: {
 					accountId,
 					timezone: i.timezone,

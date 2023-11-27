@@ -52,8 +52,6 @@ export class CardRepositoryService extends CardRepository {
 	}: CreateInput): Promise<Card> {
 		try {
 			const cardAccount = await this.cardRepository.create({
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				//@ts-ignore
 				data: {
 					id: this.idAdapter.gen(),
 					accountId,

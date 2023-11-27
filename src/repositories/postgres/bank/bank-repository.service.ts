@@ -43,8 +43,6 @@ export class BankRepositoryService extends BankRepository {
 	}: CreateInput): Promise<BankAccount> {
 		try {
 			const bankAccount = await this.bankAccountRepository.create({
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				//@ts-ignore
 				data: {
 					id: this.idAdapter.gen(),
 					accountId,

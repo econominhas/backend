@@ -1,12 +1,6 @@
-import {
-	registerDecorator,
-	ValidationOptions,
-	ValidationArguments,
-} from 'class-validator';
+import { registerDecorator, ValidationArguments } from 'class-validator';
 
-export function IsSingInProviderCode(
-	validationOptions: ValidationOptions = {},
-) {
+export function IsSingInProviderCode() {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {
 		registerDecorator({
@@ -16,7 +10,6 @@ export function IsSingInProviderCode(
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid provider code`,
-				...validationOptions,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars

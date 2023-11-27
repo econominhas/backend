@@ -1,10 +1,6 @@
-import {
-	registerDecorator,
-	ValidationOptions,
-	ValidationArguments,
-} from 'class-validator';
+import { registerDecorator, ValidationArguments } from 'class-validator';
 
-export function IsID(validationOptions: ValidationOptions = {}) {
+export function IsID() {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {
 		registerDecorator({
@@ -14,7 +10,6 @@ export function IsID(validationOptions: ValidationOptions = {}) {
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid ID`,
-				...validationOptions,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,7 +21,7 @@ export function IsID(validationOptions: ValidationOptions = {}) {
 	};
 }
 
-export function IsSecretCode(validationOptions: ValidationOptions = {}) {
+export function IsSecretCode() {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {
 		registerDecorator({
@@ -36,7 +31,6 @@ export function IsSecretCode(validationOptions: ValidationOptions = {}) {
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid code`,
-				...validationOptions,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -48,7 +42,7 @@ export function IsSecretCode(validationOptions: ValidationOptions = {}) {
 	};
 }
 
-export function IsName(validationOptions: ValidationOptions = {}) {
+export function IsName() {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {
 		registerDecorator({
@@ -58,7 +52,6 @@ export function IsName(validationOptions: ValidationOptions = {}) {
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid name`,
-				...validationOptions,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -70,7 +63,56 @@ export function IsName(validationOptions: ValidationOptions = {}) {
 	};
 }
 
-export function IsHEXColor(validationOptions: ValidationOptions = {}) {
+export function IsDescription() {
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	return function (object: Object, propertyName: string) {
+		registerDecorator({
+			name: 'IsDescription',
+			target: object.constructor,
+			propertyName: propertyName,
+			constraints: [],
+			options: {
+				message: `${propertyName} must be a valid description`,
+			},
+			validator: {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				validate(value: any, _args: ValidationArguments) {
+					return (
+						typeof value === 'string' && /^[\w\W\d\s]{1,300}$/i.test(value)
+					);
+				},
+			},
+		});
+	};
+}
+
+export function IsAmount() {
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	return function (object: Object, propertyName: string) {
+		registerDecorator({
+			name: 'IsAmount',
+			target: object.constructor,
+			propertyName: propertyName,
+			constraints: [],
+			options: {
+				message: `${propertyName} must be a valid amount`,
+			},
+			validator: {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				validate(value: any, _args: ValidationArguments) {
+					return (
+						typeof value === 'number' &&
+						Number.isInteger(value) &&
+						value >= 0 &&
+						value <= 999_999_999_99
+					);
+				},
+			},
+		});
+	};
+}
+
+export function IsHEXColor() {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {
 		registerDecorator({
@@ -80,7 +122,6 @@ export function IsHEXColor(validationOptions: ValidationOptions = {}) {
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid HEX color`,
-				...validationOptions,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars

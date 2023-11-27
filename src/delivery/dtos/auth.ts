@@ -1,10 +1,11 @@
-import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsEnum } from 'class-validator';
 import { IsID, IsSecretCode } from '../validators/internal';
 import { IsPhone, IsURL } from '../validators/miscellaneous';
 import { TimezoneEnum } from '@prisma/client';
+import { IsSingInProviderCode } from '../validators/sign-in-provider';
 
 export class CreateFromGoogleProviderDto {
-	@IsNotEmpty()
+	@IsSingInProviderCode()
 	code: string;
 
 	@IsURL({ acceptLocalhost: process.env['NODE_ENV'] !== 'production' })

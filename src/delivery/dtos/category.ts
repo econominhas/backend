@@ -6,18 +6,15 @@ import {
 	IsArray,
 	IsEnum,
 	IsHexColor,
-	IsString,
-	MaxLength,
 	ValidateNested,
 } from 'class-validator';
-import { IsName } from '../validators/internal';
+import { IsDescription, IsName } from '../validators/internal';
 
 class CreateCategoryDto {
 	@IsName()
 	name: string;
 
-	@IsString()
-	@MaxLength(300)
+	@IsDescription()
 	description: string;
 
 	@IsEnum(IconEnum)
