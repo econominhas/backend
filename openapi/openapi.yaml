@@ -10,7 +10,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   x-logo:
-    url: https://https://raw.githubusercontent.com/econominhas/backend/master/redocly/html/logo.png
+    url: https://raw.githubusercontent.com/econominhas/backend/master/openapi/html/econominhas.png
   description: >
     # Introduction
 
