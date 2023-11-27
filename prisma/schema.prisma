@@ -315,6 +315,7 @@ model Card {
   transactions          Transaction[]
   recurrentTransactions RecurrentTransaction[]
 
+  @@unique([cardProviderId, lastFourDigits])
   @@map("cards")
 }
 
