@@ -80,7 +80,6 @@
 		"lint:code": "eslint \"src/**/*.ts\" --fix --quiet",
 		"lint:prisma": "prisma-case-format --file prisma/schema.prisma --map-table-case snake,plural --map-field-case snake --map-enum-case snake",
 		"lint:openapi": "redocly lint",
-		"lint:all": "yarn lint:ts && yarn lint:code && yarn lint:prisma && yarn lint:openapi",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",
