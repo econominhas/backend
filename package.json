@@ -1,4 +1,17 @@
 {
+	"name": "backend",
+	"version": "5.2.4",
+	"license": "Apache-2.0",
+	"author": "Econominhas",
+	"description": "Econominhas - A melhor maneira de controlar suas finanças",
+	"homepage": "https://github.com/econominhas/backend#readme",
+	"bugs": {
+		"url": "https://github.com/econominhas/backend/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/econominhas/backend.git"
+	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.456.0",
 		"@aws-sdk/client-ses": "^3.454.0",
