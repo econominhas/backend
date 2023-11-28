@@ -12,11 +12,13 @@ export interface CreateWithItemsInput {
 	accountId: string;
 	name: string;
 	description: string;
-	items: Array<{
-		categoryId: string;
+	months: Array<{
 		month: number;
-		amount: number;
 		year: number;
+		items: Array<{
+			categoryId: string;
+			amount: number;
+		}>;
 	}>;
 }
 
@@ -52,10 +54,10 @@ export interface CreateInput {
 	name: string;
 	description: string;
 	year: number;
-	items: Array<{
-		categoryId: string;
+	months: Array<{
+		month: number;
 		items: Array<{
-			month: number;
+			categoryId: string;
 			amount: number;
 		}>;
 	}>;

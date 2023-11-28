@@ -5,7 +5,7 @@ import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import { DayjsAdapter } from 'src/adapters/implementations/dayjs.service';
 
 @Module({
-	imports: [PostgresModule.forFeature(['budget', 'budgetItem'])],
+	imports: [PostgresModule.forFeature(['budget'])],
 	providers: [BudgetRepositoryService, UIDAdapter, DayjsAdapter],
 	exports: [BudgetRepositoryService],
 })

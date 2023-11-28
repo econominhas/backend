@@ -23,24 +23,17 @@ export class BudgetService extends BudgetUseCase {
 		name,
 		description,
 		year,
-		items,
+		months,
 	}: CreateInput): Promise<Budget> {
-		const itemsFormatted = items
-			.map((item) =>
-				item.items.map((categoryItem) => ({
-					categoryId: item.categoryId,
-					month: categoryItem.month,
-					amount: categoryItem.amount,
-					year,
-				})),
-			)
-			.flat();
-
 		const budget = await this.budgetRepository.createWithItems({
 			accountId,
 			name,
 			description,
-			items: itemsFormatted,
+			months: months.map(({ month, items }) => ({
+				month,
+				year,
+				items,
+			})),
 		});
 
 		await this.accountService.setBudget({
@@ -61,10 +54,14 @@ export class BudgetService extends BudgetUseCase {
 		const itemsFormatted = items
 			.map(({ categoryId, amount }) =>
 				Array(12).map((_, idx) => ({
-					categoryId,
-					amount,
-					year,
 					month: idx + 1,
+					year,
+					items: [
+						{
+							categoryId,
+							amount,
+						},
+					],
 				})),
 			)
 			.flat();
@@ -73,7 +70,7 @@ export class BudgetService extends BudgetUseCase {
 			accountId,
 			name,
 			description,
-			items: itemsFormatted,
+			months: itemsFormatted,
 		});
 
 		await this.accountService.setBudget({

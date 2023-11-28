@@ -416,27 +416,38 @@ model Budget {
   description String @db.VarChar(300)
 
   account               Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  budgetItems           BudgetItem[]
   recurrentTransactions RecurrentTransaction[]
   config                Config?
+  budgetDates           BudgetDate[]
 
   @@map("budgets")
 }
 
-/// Contains the user's budgets by category, month and year
-model BudgetItem {
-  id         String @id @db.Char(16)
-  budgetId   String @map("budget_id") @db.Char(16)
-  categoryId String @map("category_id") @db.Char(16)
-  month      Int    @db.SmallInt
-  year       Int    @db.SmallInt
-  amount     Int
+/// Contains the budgets information by date (month-year)
+model BudgetDate {
+  id       String @id @db.Char(16)
+  budgetId String @map("budget_id") @db.Char(16)
+  month    Int    @db.SmallInt
+  year     Int    @db.SmallInt
 
   budget       Budget        @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  budgetItems  BudgetItem[]
   transactions Transaction[]
 
-  @@index([budgetId, categoryId, month, year])
+  @@unique([budgetId, month, year])
+  @@map("budget_dates")
+}
+
+/// Contains the user's budgets by category, month and year
+model BudgetItem {
+  budgetDateId String @map("budget_date_id") @db.Char(16)
+  categoryId   String @map("category_id") @db.Char(16)
+  amount       Int
+
+  budgetDate BudgetDate @relation(fields: [budgetDateId], references: [id], onDelete: Cascade)
+  category   Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@id([budgetDateId, categoryId])
   @@map("budget_items")
 }
 
@@ -469,7 +480,7 @@ model Transaction {
   name                   String              @db.VarChar(30)
   description            String              @db.VarChar(300)
   amount                 Int
-  budgetItemId           String              @map("budget_item_id") @db.Char(16)
+  budgetDateId           String              @map("budget_date_id") @db.Char(16)
   createdAt              DateTime            @default(now()) @map("created_at")
   isSystemManaged        Boolean             @map("is_system_managed") /// Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
   recurrentTransactionId String?             @map("recurrent_transaction_id") @db.Char(16)
@@ -483,7 +494,7 @@ model Transaction {
   bankAccountToId        String?             @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
 
   account         Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  budgetItem      BudgetItem   @relation(fields: [budgetItemId], references: [id], onDelete: Restrict)
+  budgetDate      BudgetDate?  @relation(fields: [budgetDateId], references: [id])
   // Transaction type=IN,OUT
   category        Category?    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   card            Card?        @relation(fields: [cardId], references: [id], onDelete: Restrict)

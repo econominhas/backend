@@ -8,24 +8,22 @@ import { IsAmount, IsDescription, IsID, IsName } from '../validators/internal';
 import { Type } from 'class-transformer';
 import { IsMonth, IsYear } from '../validators/date';
 
-class CreateItemItem {
-	@IsMonth()
-	month: number;
+class CreateItem {
+	@IsID()
+	categoryId: string;
 
 	@IsAmount()
 	amount: number;
 }
 
-class CreateItem {
-	@IsID()
-	categoryId: string;
+class CreateDate {
+	@IsMonth()
+	month: number;
 
 	@IsArray()
 	@ValidateNested({ each: true })
-	@ArrayMinSize(1)
-	@ArrayMaxSize(12)
-	@Type(() => CreateItemItem)
-	items: Array<CreateItemItem>;
+	@Type(() => CreateItem)
+	items: Array<CreateItem>;
 }
 
 export class CreateDto {
@@ -41,8 +39,9 @@ export class CreateDto {
 	@IsArray()
 	@ValidateNested({ each: true })
 	@ArrayMinSize(1)
-	@Type(() => CreateItem)
-	items: Array<CreateItem>;
+	@ArrayMaxSize(12)
+	@Type(() => CreateDate)
+	months: Array<CreateDate>;
 }
 
 class CreateBasicItem {

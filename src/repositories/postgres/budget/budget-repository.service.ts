@@ -17,8 +17,6 @@ export class BudgetRepositoryService extends BudgetRepository {
 	constructor(
 		@InjectRepository('budget')
 		private readonly budgetRepository: Repository<'budget'>,
-		@InjectRepository('budgetItem')
-		private readonly budgetItemRepository: Repository<'budgetItem'>,
 
 		@Inject(UIDAdapter)
 		private readonly idAdapter: IdAdapter,
@@ -32,22 +30,34 @@ export class BudgetRepositoryService extends BudgetRepository {
 		accountId,
 		name,
 		description,
-		items,
+		months,
 	}: CreateWithItemsInput): Promise<Budget> {
+		const budgetId = this.idAdapter.genId();
+
 		return this.budgetRepository.create({
 			data: {
-				id: this.idAdapter.genId(),
+				id: budgetId,
 				accountId,
 				name,
 				description,
-				budgetItems: {
-					create: items.map(({ categoryId, month, year, amount }) => ({
-						id: this.idAdapter.genId(),
-						categoryId,
-						month,
-						year,
-						amount,
-					})),
+				budgetDates: {
+					create: months.map(({ month, year, items }) => {
+						const budgetDateId = this.idAdapter.genId();
+
+						return {
+							id: budgetDateId,
+							budgetId,
+							month,
+							year,
+							budgetItems: {
+								create: items.map(({ categoryId, amount }) => ({
+									budgetDateId: this.idAdapter.genId(),
+									categoryId,
+									amount,
+								})),
+							},
+						};
+					}),
 				},
 			},
 		});
@@ -62,12 +72,16 @@ export class BudgetRepositoryService extends BudgetRepository {
 
 		const budget = await this.budgetRepository.findUnique({
 			include: {
-				budgetItems: {
-					select: {
-						amount: true,
-					},
+				budgetDates: {
 					include: {
-						category: true,
+						budgetItems: {
+							select: {
+								amount: true,
+							},
+							include: {
+								category: true,
+							},
+						},
 					},
 					where: {
 						month,
@@ -83,6 +97,6 @@ export class BudgetRepositoryService extends BudgetRepository {
 
 		if (!budget) return;
 
-		return budget.budgetItems;
+		return budget.budgetDates.map((bd) => bd.budgetItems).flat();
 	}
 }
