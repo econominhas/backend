@@ -1,4 +1,4 @@
-import type { Budget } from '@prisma/client';
+import type { Budget, Category, TimezoneEnum } from '@prisma/client';
 
 /**
  *
@@ -20,8 +20,23 @@ export interface CreateWithItemsInput {
 	}>;
 }
 
+export interface GetMonthlyBudgetByCategoryInput {
+	accountId: string;
+	budgetId: string;
+	timezone: TimezoneEnum;
+}
+
+export type GetMonthlyBudgetByCategoryOutput = Array<{
+	category: Category;
+	amount: number;
+}>;
+
 export abstract class BudgetRepository {
 	abstract createWithItems(i: CreateWithItemsInput): Promise<Budget>;
+
+	abstract getMonthlyBudgetByCategory(
+		i: GetMonthlyBudgetByCategoryInput,
+	): Promise<GetMonthlyBudgetByCategoryOutput | undefined>;
 }
 
 /**

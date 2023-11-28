@@ -67,3 +67,5 @@ export const InjectRaw = () =>
 	Inject(PostgresCoreModule.getRepositoryToken('RAW'));
 
 export type Repository<T extends TablesNames> = AllTables[T];
+
+export type RawPostgres = PrismaClient['$queryRaw'];
