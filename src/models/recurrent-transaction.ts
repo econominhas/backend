@@ -3,7 +3,7 @@ import type {
 	RecurrentTransaction,
 	RecurrentTransactionFrequencyEnum,
 	TransactionTypeEnum,
-} from '@prisma/client';
+} from "@prisma/client";
 
 /**
  *

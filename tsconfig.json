@@ -19,5 +19,6 @@
 		"forceConsistentCasingInFileNames": false,
 		"noFallthroughCasesInSwitch": false
 	},
-	"exclude": ["dist", "dist-lint"]
+	"exclude": ["dist", "dist-lint"],
+	"include": ["src", ".eslintrc.js"]
 }

@@ -6,27 +6,28 @@ import {
 	Inject,
 	Post,
 	Res,
-} from '@nestjs/common';
-import { Response } from 'express';
+} from "@nestjs/common";
+import { Response } from "express";
+import { AuthUseCase } from "src/models/auth";
+import { AuthService } from "src/usecases/auth/auth.service";
+
 import {
 	CreateFromEmailProviderDto,
 	CreateFromGoogleProviderDto,
 	CreateFromPhoneProviderDto,
 	ExchangeCodeDto,
 	RefreshTokenDto,
-} from './dtos/auth';
-import { AuthService } from 'src/usecases/auth/auth.service';
-import { Public } from './guards/auth.guard';
-import { AuthUseCase } from 'src/models/auth';
+} from "./dtos/auth";
+import { Public } from "./guards/auth.guard";
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
 	constructor(
 		@Inject(AuthService)
 		private readonly authService: AuthUseCase,
 	) {}
 
-	@Post('/google')
+	@Post("/google")
 	@Public()
 	async createFromGoogleProvider(
 		@Body()
@@ -47,7 +48,7 @@ export class AuthController {
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Post('/email')
+	@Post("/email")
 	@Public()
 	createFromEmailProvider(
 		@Body()
@@ -57,7 +58,7 @@ export class AuthController {
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Post('/phone')
+	@Post("/phone")
 	@Public()
 	createFromPhoneProvider(
 		@Body()
@@ -66,7 +67,7 @@ export class AuthController {
 		return this.authService.createFromPhoneProvider(body);
 	}
 
-	@Post('/code')
+	@Post("/code")
 	@Public()
 	async exchangeCode(
 		@Body()
@@ -86,7 +87,7 @@ export class AuthController {
 		return data;
 	}
 
-	@Post('/refresh')
+	@Post("/refresh")
 	@Public()
 	refreshToken(
 		@Body()

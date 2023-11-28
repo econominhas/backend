@@ -4,36 +4,36 @@ import {
 	Inject,
 	Injectable,
 	NotFoundException,
-} from '@nestjs/common';
-import { JwtUidTokenAdapter } from 'src/adapters/implementations/token.service';
-import type {
-	AuthOutput,
-	CreateWith3rdPartyProviderInput,
-	CreateWithEmailProviderInput,
-	CreateWithPhoneProviderInput,
-	ExchangeCodeInput,
-	RefreshOutput,
-	RefreshTokenInput,
-} from 'src/models/auth';
-import { AuthRepository } from 'src/models/auth';
-import { SESAdapter } from 'src/adapters/implementations/ses.service';
-import { MagicLinkCodeRepositoryService } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.service';
-import { RefreshTokenRepositoryService } from 'src/repositories/postgres/refresh-token/refresh-token-repository.service';
-import { FetchGoogleAdapter } from 'src/adapters/implementations/google.service';
-import type { Account } from '@prisma/client';
-import { SignInProviderEnum } from '@prisma/client';
-import { TermsAndPoliciesService } from '../terms-and-policies/terms-and-policies.service';
-import { AuthUseCase } from 'src/models/auth';
-import { AuthRepositoryService } from 'src/repositories/postgres/auth/auth-repository.service';
-import { AccountRepositoryService } from 'src/repositories/postgres/account/account-repository.service';
-import { TermsAndPoliciesUseCase } from 'src/models/terms-and-policies';
-import { AccountRepository } from 'src/models/account';
-import { MagicLinkCodeRepository } from 'src/models/magic-link-code';
-import { RefreshTokenRepository } from 'src/models/refresh-token';
-import { GoogleAdapter } from 'src/adapters/google';
-import { AuthTokensAdapter } from 'src/adapters/token';
-import { EmailAdapter } from 'src/adapters/email';
-import { SmsAdapter } from 'src/adapters/sms';
+} from "@nestjs/common";
+import { SignInProviderEnum, type Account } from "@prisma/client";
+import { EmailAdapter } from "src/adapters/email";
+import { GoogleAdapter } from "src/adapters/google";
+import { FetchGoogleAdapter } from "src/adapters/implementations/google.service";
+import { SESAdapter } from "src/adapters/implementations/ses.service";
+import { JwtUidTokenAdapter } from "src/adapters/implementations/token.service";
+import { SmsAdapter } from "src/adapters/sms";
+import { AuthTokensAdapter } from "src/adapters/token";
+import { AccountRepository } from "src/models/account";
+import {
+	AuthRepository,
+	AuthUseCase,
+	type AuthOutput,
+	type CreateWith3rdPartyProviderInput,
+	type CreateWithEmailProviderInput,
+	type CreateWithPhoneProviderInput,
+	type ExchangeCodeInput,
+	type RefreshOutput,
+	type RefreshTokenInput,
+} from "src/models/auth";
+import { MagicLinkCodeRepository } from "src/models/magic-link-code";
+import { RefreshTokenRepository } from "src/models/refresh-token";
+import { TermsAndPoliciesUseCase } from "src/models/terms-and-policies";
+import { AccountRepositoryService } from "src/repositories/postgres/account/account-repository.service";
+import { AuthRepositoryService } from "src/repositories/postgres/auth/auth-repository.service";
+import { MagicLinkCodeRepositoryService } from "src/repositories/postgres/magic-link-code/magic-link-code-repository.service";
+import { RefreshTokenRepositoryService } from "src/repositories/postgres/refresh-token/refresh-token-repository.service";
+
+import { TermsAndPoliciesService } from "../terms-and-policies/terms-and-policies.service";
 
 interface GenTokensInput {
 	accountId: string;
@@ -43,7 +43,7 @@ interface GenTokensInput {
 
 @Injectable()
 export class AuthService extends AuthUseCase {
-	private readonly requiredGoogleScopes = ['identify', 'email'];
+	private readonly requiredGoogleScopes = ["identify", "email"];
 
 	constructor(
 		@Inject(AuthRepositoryService)
@@ -78,16 +78,16 @@ export class AuthService extends AuthUseCase {
 		const { scopes, ...providerTokens } = await this.googleAdapter
 			.exchangeCode({ code, originUrl })
 			.catch(() => {
-				throw new BadRequestException('Invalid code');
+				throw new BadRequestException("Invalid code");
 			});
 
 		const missingScopes = this.requiredGoogleScopes.filter(
-			(s) => !scopes.includes(s),
+			s => !scopes.includes(s),
 		);
 
 		if (missingScopes.length > 0) {
 			throw new BadRequestException(
-				`Missing required scopes: ${missingScopes.join(' ')}`,
+				`Missing required scopes: ${missingScopes.join(" ")}`,
 			);
 		}
 
@@ -106,15 +106,17 @@ export class AuthService extends AuthUseCase {
 
 		if (relatedAccounts.length > 0) {
 			const sameProviderId = relatedAccounts.find(
-				(a) => a.signInProviders[0].providerId === providerData.id,
+				a => a.signInProviders[0].providerId === providerData.id,
 			);
 			const sameEmail = relatedAccounts.find(
-				(a) => a.email === providerData.email,
+				a => a.email === providerData.email,
 			);
 
-			// Has an account with the same email, and it
-			// isn't linked with another provider account
-			// or it has only one account
+			/*
+			 * Has an account with the same email, and it
+			 * isn't linked with another provider account
+			 * or it has only one account
+			 */
 			if (
 				sameEmail &&
 				!sameProviderId &&
@@ -124,14 +126,16 @@ export class AuthService extends AuthUseCase {
 			) {
 				account = sameEmail;
 			}
-			// Account with same provider id (it can have a different email,
-			// in case that the user updated it in provider)
+			/*
+			 * Account with same provider id (it can have a different email,
+			 * in case that the user updated it in provider)
+			 */
 			if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
 				account = sameProviderId;
 			}
 			if (!account) {
 				throw new ConflictException(
-					`Error finding account, please contact support`,
+					"Error finding account, please contact support",
 				);
 			}
 
@@ -184,13 +188,13 @@ export class AuthService extends AuthUseCase {
 
 		const { code } = await this.magicLinkCodeRepository.upsert({
 			accountId: account.id,
-			isFirstAccess: isFirstAccess,
+			isFirstAccess,
 		});
 
 		await this.emailAdapter.send({
 			to: account.email!,
 			account,
-			templateId: 'MAGIC_LINK_LOGIN',
+			templateId: "MAGIC_LINK_LOGIN",
 			placeholders: {
 				code,
 			},
@@ -216,13 +220,13 @@ export class AuthService extends AuthUseCase {
 
 		const { code } = await this.magicLinkCodeRepository.upsert({
 			accountId: account.id,
-			isFirstAccess: isFirstAccess,
+			isFirstAccess,
 		});
 
 		await this.smsAdapter.send({
 			to: account.phone!,
 			account,
-			templateId: 'MAGIC_LINK_LOGIN',
+			templateId: "MAGIC_LINK_LOGIN",
 			placeholders: {
 				code,
 			},
@@ -239,7 +243,7 @@ export class AuthService extends AuthUseCase {
 		});
 
 		if (!magicLinkCode) {
-			throw new NotFoundException('Invalid code');
+			throw new NotFoundException("Invalid code");
 		}
 
 		return this.genAuthOutput({
@@ -257,7 +261,7 @@ export class AuthService extends AuthUseCase {
 		});
 
 		if (!refreshTokenData) {
-			throw new NotFoundException('Refresh token not found');
+			throw new NotFoundException("Refresh token not found");
 		}
 
 		const account = await this.accountRepository.getById({
@@ -265,7 +269,7 @@ export class AuthService extends AuthUseCase {
 		});
 
 		if (!account) {
-			throw new NotFoundException('User not found');
+			throw new NotFoundException("User not found");
 		}
 
 		const { isFirstAccess: _, ...authOutput } = await this.genAuthOutput({
@@ -288,15 +292,15 @@ export class AuthService extends AuthUseCase {
 		if (refresh) {
 			promises.push(
 				this.refreshTokenRepository.create({
-					accountId: accountId,
+					accountId,
 				}),
 			);
 		} else {
-			promises.push({ refreshToken: '' });
+			promises.push({ refreshToken: "" });
 		}
 		if (!isFirstAccess) {
 			this.termsAndPoliciesService.hasAcceptedLatest({
-				accountId: accountId,
+				accountId,
 			});
 		} else {
 			promises.push(false);
@@ -307,7 +311,7 @@ export class AuthService extends AuthUseCase {
 		)) as [{ refreshToken: string }, boolean];
 
 		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
-			accountId: accountId,
+			accountId,
 			hasAcceptedLatestTerms,
 		});
 

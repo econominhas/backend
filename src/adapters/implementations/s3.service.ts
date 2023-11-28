@@ -1,25 +1,26 @@
-import { Injectable } from '@nestjs/common';
-import type { FileAdapter, GetInput, SaveInput } from '../file';
 import {
 	GetObjectCommand,
 	PutObjectCommand,
 	S3Client,
-} from '@aws-sdk/client-s3';
-import type { Readable } from 'stream';
+} from "@aws-sdk/client-s3";
+import { Injectable } from "@nestjs/common";
+import type { Readable } from "stream";
+
+import type { FileAdapter, GetInput, SaveInput } from "../file";
 
 @Injectable()
 export class S3Adapter implements FileAdapter {
-	private client: S3Client;
+	private readonly client: S3Client;
 
 	constructor() {
 		this.client = new S3Client({
-			endpoint: process.env['AWS_ENDPOINT'],
-			region: process.env['AWS_DEFAULT_REGION'],
+			endpoint: process.env.AWS_ENDPOINT,
+			region: process.env.AWS_DEFAULT_REGION,
 			credentials: {
-				secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'],
-				accessKeyId: process.env['AWS_ACCESS_KEY_ID'],
+				secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+				accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 			},
-			forcePathStyle: process.env['NODE_ENV'] !== 'production',
+			forcePathStyle: process.env.NODE_ENV !== "production",
 		});
 	}
 
@@ -27,7 +28,7 @@ export class S3Adapter implements FileAdapter {
 		await this.client.send(
 			new PutObjectCommand({
 				Bucket: folder,
-				Key: filePath.replace(/^\//, ''),
+				Key: filePath.replace(/^\//, ""),
 				Body: file,
 				Metadata: metadata,
 			}),
@@ -40,7 +41,7 @@ export class S3Adapter implements FileAdapter {
 		const file = await this.client.send(
 			new GetObjectCommand({
 				Bucket: folder,
-				Key: filePath.replace(/^\//, ''),
+				Key: filePath.replace(/^\//, ""),
 			}),
 		);
 

@@ -1,4 +1,4 @@
-import type { Account, SignInProvider } from '@prisma/client';
+import type { Account, SignInProvider } from "@prisma/client";
 
 /**
  *

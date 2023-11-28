@@ -1,7 +1,8 @@
-import { IsOptional } from 'class-validator';
-import { IsAmount, IsID, IsName } from '../validators/internal';
-import { IsDay } from '../validators/date';
-import { IsNumberString } from '../validators/miscellaneous';
+import { IsOptional } from "class-validator";
+
+import { IsDay } from "../validators/date";
+import { IsAmount, IsID, IsName } from "../validators/internal";
+import { IsNumberString } from "../validators/miscellaneous";
 
 export class CreateDto {
 	@IsID()

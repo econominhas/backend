@@ -1,26 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import type {
-	GetByIdInput,
-	GetByIdWithProvidersInput,
-	GetByIdWithProvidersOutput,
-	UpdateConfigInput,
-} from 'src/models/account';
-import { AccountRepository } from 'src/models/account';
-import { InjectRepository, Repository } from '..';
-import type { Account } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import type { Account } from "@prisma/client";
+import {
+	AccountRepository,
+	type GetByIdInput,
+	type GetByIdWithProvidersInput,
+	type GetByIdWithProvidersOutput,
+	type UpdateConfigInput,
+} from "src/models/account";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class AccountRepositoryService extends AccountRepository {
 	constructor(
-		@InjectRepository('account')
-		private readonly accountRepository: Repository<'account'>,
-		@InjectRepository('config')
-		private readonly configRepository: Repository<'config'>,
+		@InjectRepository("account")
+		private readonly accountRepository: Repository<"account">,
+		@InjectRepository("config")
+		private readonly configRepository: Repository<"config">,
 	) {
 		super();
 	}
 
-	async getById({ id }: GetByIdInput): Promise<undefined | Account> {
+	getById({ id }: GetByIdInput): Promise<Account | undefined> {
 		return this.accountRepository.findUnique({
 			where: {
 				id,
@@ -28,10 +29,10 @@ export class AccountRepositoryService extends AccountRepository {
 		});
 	}
 
-	async getByIdWithProviders({
+	getByIdWithProviders({
 		id,
 	}: GetByIdWithProvidersInput): Promise<
-		undefined | GetByIdWithProvidersOutput
+		GetByIdWithProvidersOutput | undefined
 	> {
 		return this.accountRepository.findUnique({
 			include: {

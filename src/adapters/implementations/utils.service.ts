@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import type { PaginationInput, PaginationOutput, UtilsAdapter } from '../utils';
+import { Injectable } from "@nestjs/common";
+
+import type { PaginationInput, PaginationOutput, UtilsAdapter } from "../utils";
 
 @Injectable()
 export class UtilsAdapterImplementation implements UtilsAdapter {
@@ -27,18 +28,18 @@ export class UtilsAdapterImplementation implements UtilsAdapter {
 
 		const decimalsStart = value.length - 2;
 
-		const formatter = new Intl.NumberFormat('pt-BR', {
-			style: 'currency',
-			currency: 'BRL',
+		const formatter = new Intl.NumberFormat("pt-BR", {
+			style: "currency",
+			currency: "BRL",
 		});
 
 		return formatter.format(
 			parseFloat(
 				[
 					value.substring(0, decimalsStart),
-					'.',
+					".",
 					value.substring(decimalsStart),
-				].join(''),
+				].join(""),
 			),
 		);
 	}

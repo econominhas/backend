@@ -1,18 +1,19 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
-import { PaginatedDto, UserDataDto } from './dtos';
-import { CardService } from 'src/usecases/card/card.service';
-import { UserData } from './decorators/user-data';
-import { CreateDto } from './dtos/card';
-import { CardUseCase } from 'src/models/card';
+import { Body, Controller, Get, Inject, Post, Query } from "@nestjs/common";
+import { CardUseCase } from "src/models/card";
+import { CardService } from "src/usecases/card/card.service";
 
-@Controller('cards')
+import { UserData } from "./decorators/user-data";
+import { PaginatedDto, UserDataDto } from "./dtos";
+import { CreateDto } from "./dtos/card";
+
+@Controller("cards")
 export class CardController {
 	constructor(
 		@Inject(CardService)
 		private readonly cardService: CardUseCase,
 	) {}
 
-	@Get('/providers')
+	@Get("/providers")
 	getDefault(
 		@Query()
 		pagination: PaginatedDto,
@@ -20,7 +21,7 @@ export class CardController {
 		return this.cardService.getProviders(pagination);
 	}
 
-	@Post('/')
+	@Post("/")
 	create(
 		@UserData()
 		userData: UserDataDto,

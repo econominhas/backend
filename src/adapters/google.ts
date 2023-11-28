@@ -18,7 +18,7 @@ export interface GetAuthenticatedUserDataOutput {
 }
 
 export abstract class GoogleAdapter {
-	readonly requiredScopes = ['openid', 'profile', 'email'];
+	readonly requiredScopes = ["openid", "profile", "email"];
 
 	abstract exchangeCode(i: ExchangeCodeInput): Promise<ExchangeCodeOutput>;
 

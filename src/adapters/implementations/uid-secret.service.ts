@@ -1,6 +1,7 @@
-import { uid } from 'uid/single';
-import { Injectable } from '@nestjs/common';
-import type { SecretAdapter } from '../secret';
+import { Injectable } from "@nestjs/common";
+import { uid } from "uid/single";
+
+import type { SecretAdapter } from "../secret";
 
 @Injectable()
 export class UIDSecretAdapter implements SecretAdapter {

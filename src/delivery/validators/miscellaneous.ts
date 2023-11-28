@@ -1,54 +1,54 @@
-import type { ValidationArguments } from 'class-validator';
-import { registerDecorator } from 'class-validator';
-import { isDateYMD } from '@techmmunity/utils';
+import { isDateYMD } from "@techmmunity/utils";
+import { registerDecorator, type ValidationArguments } from "class-validator";
 
-export function IsDateYYYYMMDD() {
+export const IsDateYYYYMMDD = () => {
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	return function (object: Object, propertyName: string) {
+	return (object: Object, propertyName: string) => {
 		registerDecorator({
-			name: 'isDateYYYYMMDD',
+			name: "isDateYYYYMMDD",
 			target: object.constructor,
-			propertyName: propertyName,
+			propertyName,
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid birth date`,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				validate(value: any, _args: ValidationArguments) {
-					if (typeof value !== 'string') return false;
+				validate: (value: any, _args: ValidationArguments) => {
+					if (typeof value !== "string") return false;
 
 					return isDateYMD(value);
 				},
 			},
 		});
 	};
-}
+};
 
 interface IsURLValidationOptions {
 	acceptLocalhost: boolean;
 }
-export function IsURL(validationOptions: IsURLValidationOptions) {
+export const IsURL = (validationOptions: IsURLValidationOptions) => {
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	return function (object: Object, propertyName: string) {
+	return (object: Object, propertyName: string) => {
 		registerDecorator({
-			name: 'isURL',
+			name: "isURL",
 			target: object.constructor,
-			propertyName: propertyName,
+			propertyName,
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid url`,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				validate(value: any, _args: ValidationArguments) {
-					if (typeof value !== 'string') return false;
+				validate: (value: any, _args: ValidationArguments) => {
+					if (typeof value !== "string") return false;
 
-					if (value.includes('localhost')) {
+					if (value.includes("localhost")) {
 						return validationOptions.acceptLocalhost;
 					}
 
 					try {
+						// eslint-disable-next-line no-new
 						new URL(value);
 
 						return true;
@@ -59,50 +59,50 @@ export function IsURL(validationOptions: IsURLValidationOptions) {
 			},
 		});
 	};
-}
+};
 
-export function IsPhone() {
+export const IsPhone = () => {
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	return function (object: Object, propertyName: string) {
+	return (object: Object, propertyName: string) => {
 		registerDecorator({
-			name: 'isPhone',
+			name: "isPhone",
 			target: object.constructor,
-			propertyName: propertyName,
+			propertyName,
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid phone`,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				validate(value: any, _args: ValidationArguments) {
-					if (typeof value !== 'string') return false;
+				validate: (value: any, _args: ValidationArguments) => {
+					if (typeof value !== "string") return false;
 
 					return /^[+][0-9]{10,20}$/.test(value);
 				},
 			},
 		});
 	};
-}
+};
 
-export function IsNumberString(length: number) {
+export const IsNumberString = (length: number) => {
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	return function (object: Object, propertyName: string) {
+	return (object: Object, propertyName: string) => {
 		registerDecorator({
-			name: 'IsNumberString',
+			name: "IsNumberString",
 			target: object.constructor,
-			propertyName: propertyName,
+			propertyName,
 			constraints: [],
 			options: {
 				message: `${propertyName} must be a valid number string with length of ${length}.`,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				validate(value: any, _args: ValidationArguments) {
-					if (typeof value !== 'string') return false;
+				validate: (value: any, _args: ValidationArguments) => {
+					if (typeof value !== "string") return false;
 
 					return /^[0-9]*$/.test(value) && value.length === length;
 				},
 			},
 		});
 	};
-}
+};

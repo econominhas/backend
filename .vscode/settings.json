@@ -16,6 +16,13 @@
 		"editor.detectIndentation": true,
 		"editor.insertSpaces": true
 	},
+	// Remove any default formatters
+	"[javascript]": {
+		"editor.defaultFormatter": null
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": null
+	},
 
 	// ======================= Extentions ===========================
 

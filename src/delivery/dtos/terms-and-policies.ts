@@ -1,4 +1,4 @@
-import { IsSemVer } from 'class-validator';
+import { IsSemVer } from "class-validator";
 
 export class AcceptDto {
 	@IsSemVer()
