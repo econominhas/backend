@@ -1,5 +1,5 @@
 {
-	"/openapi/*": "yarn lint:openapi",
-	"/prisma/*": "yarn lint:prisma",
-	"/src/*": ["yarn lint:ts", "yarn lint:code"]
+	"openapi/*": "yarn lint:openapi",
+	"prisma/*": "yarn lint:prisma",
+	"src/*": ["yarn lint:ts", "yarn lint:code"]
 }
