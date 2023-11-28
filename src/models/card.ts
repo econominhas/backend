@@ -1,9 +1,10 @@
-import type { Card, CardProvider } from '@prisma/client';
+import type { Card, CardProvider } from "@prisma/client";
+
 import type {
 	Paginated,
 	PaginatedItems,
 	PaginatedRepository,
-} from 'src/types/paginated-items';
+} from "src/types/paginated-items";
 
 /**
  *

@@ -1,4 +1,4 @@
-import type { PaginatedItems } from 'src/types/paginated-items';
+import type { PaginatedItems } from "src/types/paginated-items";
 
 export interface PaginationInput {
 	page?: number;
@@ -6,7 +6,7 @@ export interface PaginationInput {
 }
 
 export interface PaginationOutput {
-	paging: PaginatedItems<any>['paging'];
+	paging: PaginatedItems<any>["paging"];
 	offset: number;
 	limit: number;
 }

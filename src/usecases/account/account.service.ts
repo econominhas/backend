@@ -1,14 +1,14 @@
-import { AccountRepositoryService } from 'src/repositories/postgres/account/account-repository.service';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import type {
-	IamInput,
-	IamOutput,
-	SetBudgetInput,
-	SetSalaryInput,
-	UpdateNameInput,
-} from 'src/models/account';
-import { AccountUseCase } from 'src/models/account';
-import { SignInProviderEnum } from '@prisma/client';
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { SignInProviderEnum } from "@prisma/client";
+import {
+	AccountUseCase,
+	type IamInput,
+	type IamOutput,
+	type SetBudgetInput,
+	type SetSalaryInput,
+	type UpdateNameInput,
+} from "src/models/account";
+import { AccountRepositoryService } from "src/repositories/postgres/account/account-repository.service";
 
 @Injectable()
 export class AccountService extends AccountUseCase {
@@ -25,11 +25,11 @@ export class AccountService extends AccountUseCase {
 		});
 
 		if (!account) {
-			throw new UnauthorizedException('User not found');
+			throw new UnauthorizedException("User not found");
 		}
 
 		const google = account.signInProviders.find(
-			(p) => p.provider === SignInProviderEnum.GOOGLE,
+			p => p.provider === SignInProviderEnum.GOOGLE,
 		);
 
 		return {

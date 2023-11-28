@@ -1,9 +1,10 @@
-import type { DefaultCategory, IconEnum } from '@prisma/client';
+import type { DefaultCategory, IconEnum } from "@prisma/client";
+
 import type {
 	Paginated,
 	PaginatedItems,
 	PaginatedRepository,
-} from 'src/types/paginated-items';
+} from "src/types/paginated-items";
 
 /**
  *

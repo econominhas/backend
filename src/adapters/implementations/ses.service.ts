@@ -1,15 +1,15 @@
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-import { Injectable } from '@nestjs/common';
-import type { EmailAdapter, SendInput } from '../email';
-import { EMAIL_TEMPLATES } from '../email';
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { Injectable } from "@nestjs/common";
+
+import { EMAIL_TEMPLATES, type EmailAdapter, type SendInput } from "../email";
 
 @Injectable()
 export class SESAdapter implements EmailAdapter {
-	private defaultPlaceholders: Record<string, string> = {
-		frontEndUrl: process.env['FRONT_URL'],
+	private readonly defaultPlaceholders: Record<string, string> = {
+		frontEndUrl: process.env.FRONT_URL,
 	};
 
-	private client: SESClient;
+	private readonly client: SESClient;
 
 	constructor() {
 		this.client = new SESClient();
@@ -38,12 +38,12 @@ export class SESAdapter implements EmailAdapter {
 				Message: {
 					Subject: {
 						Data: this.applyPlaceholders(title, placeholders),
-						Charset: 'UTF-8',
+						Charset: "UTF-8",
 					},
 					Body: {
 						Html: {
 							Data: this.applyPlaceholders(body, placeholders),
-							Charset: 'UTF-8',
+							Charset: "UTF-8",
 						},
 					},
 				},
@@ -60,7 +60,7 @@ export class SESAdapter implements EmailAdapter {
 			const value = placeholders[key];
 
 			formattedText = formattedText.replace(
-				new RegExp(`{{${key}}}`, 'g'),
+				new RegExp(`{{${key}}}`, "g"),
 				value,
 			);
 		}

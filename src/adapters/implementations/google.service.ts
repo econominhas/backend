@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import type {
-	ExchangeCodeInput,
-	ExchangeCodeOutput,
-	GetAuthenticatedUserDataOutput,
-} from '../google';
-import { GoogleAdapter } from '../google';
+import { Injectable } from "@nestjs/common";
+
+import {
+	GoogleAdapter,
+	type ExchangeCodeInput,
+	type ExchangeCodeOutput,
+	type GetAuthenticatedUserDataOutput,
+} from "../google";
 
 interface ExchangeCodeAPIOutput {
 	access_token: string;
@@ -32,27 +33,27 @@ export class FetchGoogleAdapter extends GoogleAdapter {
 		originUrl,
 	}: ExchangeCodeInput): Promise<ExchangeCodeOutput> {
 		const body = new URLSearchParams();
-		body.append('client_id', process.env['GOOGLE_CLIENT_ID']!);
-		body.append('client_secret', process.env['GOOGLE_CLIENT_SECRET']!);
-		body.append('grant_type', 'authorization_code');
-		body.append('code', code);
-		body.append('redirect_uri', originUrl);
+		body.append("client_id", process.env.GOOGLE_CLIENT_ID!);
+		body.append("client_secret", process.env.GOOGLE_CLIENT_SECRET!);
+		body.append("grant_type", "authorization_code");
+		body.append("code", code);
+		body.append("redirect_uri", originUrl);
 
-		const result = await fetch('https://oauth2.googleapis.com/token', {
-			method: 'POST',
+		const result = await fetch("https://oauth2.googleapis.com/token", {
+			method: "POST",
 			body,
 			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				Accept: 'application/json',
+				"Content-Type": "application/x-www-form-urlencoded",
+				"Accept": "application/json",
 			},
 		})
-			.then((r) => r.json())
-			.then((r) => r as ExchangeCodeAPIOutput);
+			.then(r => r.json())
+			.then(r => r as ExchangeCodeAPIOutput);
 
 		return {
 			accessToken: result.access_token,
 			refreshToken: result.refresh_token,
-			scopes: result.scope.split(' '),
+			scopes: result.scope.split(" "),
 			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 			expiresAt: new Date(Date.now() + (result.expires_in - 60) * 1000),
 		};
@@ -62,16 +63,16 @@ export class FetchGoogleAdapter extends GoogleAdapter {
 		accessToken: string,
 	): Promise<GetAuthenticatedUserDataOutput> {
 		const result = await fetch(
-			'https://openidconnect.googleapis.com/v1/userinfo',
+			"https://openidconnect.googleapis.com/v1/userinfo",
 			{
-				method: 'GET',
+				method: "GET",
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
 			},
 		)
-			.then((r) => r.json())
-			.then((r) => r as GetUserDataAPIOutput);
+			.then(r => r.json())
+			.then(r => r as GetUserDataAPIOutput);
 
 		return {
 			id: result.sub,

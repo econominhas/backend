@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import type {
-	GenAccessInput,
-	GenAccessOutput,
-	GenRefreshOutput,
-	TokenPayload,
-} from '../token';
-import { AuthTokensAdapter } from '../token';
-import { sign } from 'jsonwebtoken';
-import { uid } from 'uid/single';
+import { Injectable } from "@nestjs/common";
+import { sign } from "jsonwebtoken";
+import { uid } from "uid/single";
+
+import {
+	AuthTokensAdapter,
+	type GenAccessInput,
+	type GenAccessOutput,
+	type GenRefreshOutput,
+	type TokenPayload,
+} from "../token";
 
 @Injectable()
 export class JwtUidTokenAdapter extends AuthTokensAdapter {
@@ -20,11 +21,11 @@ export class JwtUidTokenAdapter extends AuthTokensAdapter {
 			terms: hasAcceptedLatestTerms,
 		};
 
-		const accessToken = sign(payload, process.env['JWT_SECRET']);
+		const accessToken = sign(payload, process.env.JWT_SECRET);
 
 		return {
 			accessToken,
-			expiresAt: '',
+			expiresAt: "",
 		};
 	}
 

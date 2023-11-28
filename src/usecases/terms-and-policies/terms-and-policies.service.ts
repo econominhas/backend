@@ -1,15 +1,12 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-
-import type { TermsAndPolicies } from '@prisma/client';
-import type {
-	AcceptInput,
-	HasAcceptedLatestInput,
-} from 'src/models/terms-and-policies';
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import type { TermsAndPolicies } from "@prisma/client";
 import {
 	TermsAndPoliciesRepository,
 	TermsAndPoliciesUseCase,
-} from 'src/models/terms-and-policies';
-import { TermsAndPoliciesRepositoryService } from 'src/repositories/postgres/terms-and-policies/terms-and-policies-repository.service';
+	type AcceptInput,
+	type HasAcceptedLatestInput,
+} from "src/models/terms-and-policies";
+import { TermsAndPoliciesRepositoryService } from "src/repositories/postgres/terms-and-policies/terms-and-policies-repository.service";
 
 @Injectable()
 export class TermsAndPoliciesService extends TermsAndPoliciesUseCase {
@@ -37,7 +34,7 @@ export class TermsAndPoliciesService extends TermsAndPoliciesUseCase {
 		}
 
 		if (latestTermsAccepted.semVer === semVer) {
-			throw new BadRequestException('User already accepted terms');
+			throw new BadRequestException("User already accepted terms");
 		}
 
 		await this.termsAndPoliciesRepository.accept({

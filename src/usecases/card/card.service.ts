@@ -3,15 +3,14 @@ import {
 	Inject,
 	Injectable,
 	NotFoundException,
-} from '@nestjs/common';
-import type { CardProvider } from '@prisma/client';
-import { CardTypeEnum } from '@prisma/client';
-import { UtilsAdapterImplementation } from 'src/adapters/implementations/utils.service';
-import { UtilsAdapter } from 'src/adapters/utils';
-import type { CreateInput } from 'src/models/card';
-import { CardRepository, CardUseCase } from 'src/models/card';
-import { CardRepositoryService } from 'src/repositories/postgres/card/card-repository.service';
-import type { Paginated, PaginatedItems } from 'src/types/paginated-items';
+} from "@nestjs/common";
+import { CardTypeEnum, type CardProvider } from "@prisma/client";
+import { UtilsAdapterImplementation } from "src/adapters/implementations/utils.service";
+import { UtilsAdapter } from "src/adapters/utils";
+import { CardRepository, CardUseCase, type CreateInput } from "src/models/card";
+import { CardRepositoryService } from "src/repositories/postgres/card/card-repository.service";
+
+import type { Paginated, PaginatedItems } from "src/types/paginated-items";
 
 @Injectable()
 export class CardService extends CardUseCase {
@@ -46,21 +45,21 @@ export class CardService extends CardUseCase {
 		}
 
 		if (this.isPostpaid(provider.type)) {
-			if (typeof i.dueDay === 'undefined' || typeof i.limit === 'undefined') {
+			if (typeof i.dueDay === "undefined" || typeof i.limit === "undefined") {
 				throw new BadRequestException(
 					'Postpaid cards must have "dueDay" and "limit"',
 				);
 			}
-			if (typeof i.balance !== 'undefined') {
+			if (typeof i.balance !== "undefined") {
 				throw new BadRequestException('Postpaid cards can\'t have "balance"');
 			}
 		}
 
 		if (this.isPrepaid(provider.type)) {
-			if (typeof i.balance === 'undefined') {
+			if (typeof i.balance === "undefined") {
 				throw new BadRequestException('Prepaid cards must have "balance"');
 			}
-			if (typeof i.dueDay !== 'undefined' || typeof i.limit !== 'undefined') {
+			if (typeof i.dueDay !== "undefined" || typeof i.limit !== "undefined") {
 				throw new BadRequestException(
 					'Prepaid cards can\'t have "dueDay" and "limit"',
 				);

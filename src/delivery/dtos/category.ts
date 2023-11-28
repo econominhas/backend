@@ -1,5 +1,5 @@
-import { IconEnum } from '@prisma/client';
-import { Type } from 'class-transformer';
+import { IconEnum } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
 	ArrayMaxSize,
 	ArrayMinSize,
@@ -7,8 +7,9 @@ import {
 	IsEnum,
 	IsHexColor,
 	ValidateNested,
-} from 'class-validator';
-import { IsDescription, IsName } from '../validators/internal';
+} from "class-validator";
+
+import { IsDescription, IsName } from "../validators/internal";
 
 class CreateCategoryDto {
 	@IsName()

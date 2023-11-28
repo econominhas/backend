@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
-import { CardService } from './card.service';
-import { UtilsAdapterImplementation } from 'src/adapters/implementations/utils.service';
-import { CardRepositoryModule } from 'src/repositories/postgres/card/card-repository.module';
-import { CardController } from 'src/delivery/card.controller';
+import { Module } from "@nestjs/common";
+import { UtilsAdapterImplementation } from "src/adapters/implementations/utils.service";
+import { CardController } from "src/delivery/card.controller";
+import { CardRepositoryModule } from "src/repositories/postgres/card/card-repository.module";
+
+import { CardService } from "./card.service";
 
 @Module({
 	controllers: [CardController],

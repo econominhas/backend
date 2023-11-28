@@ -1,10 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { CreateBasicInput, CreateInput } from 'src/models/budget';
-import { BudgetRepository, BudgetUseCase } from 'src/models/budget';
-import { BudgetRepositoryService } from 'src/repositories/postgres/budget/budget-repository.service';
-import { AccountService } from '../account/account.service';
-import type { Budget } from '@prisma/client';
-import { AccountUseCase } from 'src/models/account';
+import { Inject, Injectable } from "@nestjs/common";
+import type { Budget } from "@prisma/client";
+import { AccountUseCase } from "src/models/account";
+import {
+	BudgetRepository,
+	BudgetUseCase,
+	type CreateBasicInput,
+	type CreateInput,
+} from "src/models/budget";
+import { BudgetRepositoryService } from "src/repositories/postgres/budget/budget-repository.service";
+
+import { AccountService } from "../account/account.service";
 
 @Injectable()
 export class BudgetService extends BudgetUseCase {
@@ -26,8 +31,8 @@ export class BudgetService extends BudgetUseCase {
 		items,
 	}: CreateInput): Promise<Budget> {
 		const itemsFormatted = items
-			.map((item) =>
-				item.items.map((categoryItem) => ({
+			.map(item =>
+				item.items.map(categoryItem => ({
 					categoryId: item.categoryId,
 					month: categoryItem.month,
 					amount: categoryItem.amount,

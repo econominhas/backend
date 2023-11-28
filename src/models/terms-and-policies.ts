@@ -1,7 +1,7 @@
 import type {
 	TermsAndPolicies,
 	TermsAndPoliciesAccepted,
-} from '@prisma/client';
+} from "@prisma/client";
 
 /**
  *

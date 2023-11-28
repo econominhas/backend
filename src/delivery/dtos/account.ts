@@ -1,4 +1,4 @@
-import { IsName } from '../validators/internal';
+import { IsName } from "../validators/internal";
 
 export class NameDto {
 	@IsName()

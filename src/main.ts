@@ -1,11 +1,11 @@
-import { NestFactory, Reflector } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory, Reflector } from "@nestjs/core";
 
-import 'reflect-metadata';
-import { AuthGuard } from './delivery/guards/auth.guard';
+import { AppModule } from "./app.module";
+import { AuthGuard } from "./delivery/guards/auth.guard";
+import "reflect-metadata";
 
-async function bootstrap() {
+const bootstrap = async () => {
 	const app = await NestFactory.create(AppModule);
 
 	app.enableCors();
@@ -23,6 +23,7 @@ async function bootstrap() {
 
 	app.enableShutdownHooks();
 
-	await app.listen(process.env['PORT']);
-}
+	await app.listen(process.env.PORT);
+};
+
 bootstrap();

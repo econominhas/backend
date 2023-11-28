@@ -1,4 +1,4 @@
-import type { RefreshToken } from '@prisma/client';
+import type { RefreshToken } from "@prisma/client";
 
 /**
  *

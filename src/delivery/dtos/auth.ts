@@ -1,14 +1,15 @@
-import { IsEmail, IsEnum } from 'class-validator';
-import { IsID, IsSecretCode } from '../validators/internal';
-import { IsPhone, IsURL } from '../validators/miscellaneous';
-import { TimezoneEnum } from '@prisma/client';
-import { IsSingInProviderCode } from '../validators/sign-in-provider';
+import { TimezoneEnum } from "@prisma/client";
+import { IsEmail, IsEnum } from "class-validator";
+
+import { IsID, IsSecretCode } from "../validators/internal";
+import { IsPhone, IsURL } from "../validators/miscellaneous";
+import { IsSingInProviderCode } from "../validators/sign-in-provider";
 
 export class CreateFromGoogleProviderDto {
 	@IsSingInProviderCode()
 	code: string;
 
-	@IsURL({ acceptLocalhost: process.env['NODE_ENV'] !== 'production' })
+	@IsURL({ acceptLocalhost: process.env.NODE_ENV !== "production" })
 	originUrl: string;
 
 	@IsEnum(TimezoneEnum)

@@ -6,22 +6,23 @@ import {
 	HttpStatus,
 	Inject,
 	Patch,
-} from '@nestjs/common';
-import { AccountService } from 'src/usecases/account/account.service';
-import { IgnoreTermsCheck } from './guards/auth.guard';
-import { UserData } from './decorators/user-data';
-import { NameDto } from './dtos/account';
-import { UserDataDto } from './dtos';
-import { AccountUseCase } from 'src/models/account';
+} from "@nestjs/common";
+import { AccountUseCase } from "src/models/account";
+import { AccountService } from "src/usecases/account/account.service";
 
-@Controller('accounts')
+import { UserData } from "./decorators/user-data";
+import { UserDataDto } from "./dtos";
+import { NameDto } from "./dtos/account";
+import { IgnoreTermsCheck } from "./guards/auth.guard";
+
+@Controller("accounts")
 export class AccountController {
 	constructor(
 		@Inject(AccountService)
 		private readonly accountService: AccountUseCase,
 	) {}
 
-	@Get('/iam')
+	@Get("/iam")
 	@IgnoreTermsCheck()
 	iam(
 		@UserData()
@@ -33,7 +34,7 @@ export class AccountController {
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Patch('/name')
+	@Patch("/name")
 	name(
 		@UserData()
 		userData: UserDataDto,

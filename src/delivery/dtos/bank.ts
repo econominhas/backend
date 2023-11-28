@@ -1,5 +1,5 @@
-import { IsAmount, IsID, IsName } from '../validators/internal';
-import { IsNumberString } from '../validators/miscellaneous';
+import { IsAmount, IsID, IsName } from "../validators/internal";
+import { IsNumberString } from "../validators/miscellaneous";
 
 export class CreateDto {
 	@IsName()

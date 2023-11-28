@@ -3,7 +3,7 @@ import type {
 	SignInProvider,
 	SignInProviderEnum,
 	TimezoneEnum,
-} from '@prisma/client';
+} from "@prisma/client";
 
 /**
  *
@@ -32,7 +32,7 @@ export interface CreateWithGoogle {
 	};
 }
 
-export type CreateInput = CreateWithEmail | CreateWithPhone | CreateWithGoogle;
+export type CreateInput = CreateWithEmail | CreateWithGoogle | CreateWithPhone;
 
 export interface GetByEmailInput {
 	email: string;

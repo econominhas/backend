@@ -1,18 +1,19 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
-import { PaginatedDto, UserDataDto } from './dtos';
-import { BankService } from 'src/usecases/bank/bank.service';
-import { UserData } from './decorators/user-data';
-import { CreateDto } from './dtos/bank';
-import { BankUseCase } from 'src/models/bank';
+import { Body, Controller, Get, Inject, Post, Query } from "@nestjs/common";
+import { BankUseCase } from "src/models/bank";
+import { BankService } from "src/usecases/bank/bank.service";
 
-@Controller('banks')
+import { UserData } from "./decorators/user-data";
+import { PaginatedDto, UserDataDto } from "./dtos";
+import { CreateDto } from "./dtos/bank";
+
+@Controller("banks")
 export class BankController {
 	constructor(
 		@Inject(BankService)
 		private readonly bankService: BankUseCase,
 	) {}
 
-	@Get('/providers')
+	@Get("/providers")
 	getDefault(
 		@Query()
 		pagination: PaginatedDto,
@@ -20,7 +21,7 @@ export class BankController {
 		return this.bankService.getProviders(pagination);
 	}
 
-	@Post('accounts')
+	@Post("accounts")
 	create(
 		@UserData()
 		userData: UserDataDto,
