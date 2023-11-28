@@ -66,14 +66,18 @@
 
 	// Code Spell Checker
 	"cSpell.words": [
+		"Accepteds",
+		"datasource",
 		"dbdocs",
 		"dbml",
 		"dtos",
 		"Econominhas",
+		"medkit",
 		"nestjs",
 		"openapi",
 		"redocly",
 		"Usecase",
 		"usecases"
-	]
+	],
+	"cSpell.enableFiletypes": ["prisma"]
 }

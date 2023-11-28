@@ -59,18 +59,18 @@ model Account {
   phone     String?  @unique @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
 
-  config                   Config                     @relation(fields: [id], references: [accountId], map: "Config_id_fkey", onDelete: Restrict)
-  magicLinkCode            MagicLinkCode?             @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
-  signInProviders          SignInProvider[]
-  refreshTokens            RefreshToken[]
-  userSubscriptions        UserSubscription[]
-  termsAndPoliciesAccepted TermsAndPoliciesAccepted[]
-  bankAccounts             BankAccount[]
-  cards                    Card[]
-  categories               Category[]
-  budgets                  Budget[]
-  transactions             Transaction[]
-  recurrentTransactions    RecurrentTransaction[]
+  config                    Config                     @relation(fields: [id], references: [accountId], map: "Config_id_fkey", onDelete: Restrict)
+  magicLinkCode             MagicLinkCode?             @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
+  signInProviders           SignInProvider[]
+  refreshTokens             RefreshToken[]
+  userSubscriptions         UserSubscription[]
+  termsAndPoliciesAccepteds TermsAndPoliciesAccepted[]
+  bankAccounts              BankAccount[]
+  cards                     Card[]
+  categories                Category[]
+  budgets                   Budget[]
+  transactions              Transaction[]
+  recurrentTransactions     RecurrentTransaction[]
 
   @@map("accounts")
 }
@@ -99,7 +99,7 @@ model Config {
   salaryId        String?      @unique @map("salary_id") @db.Char(16)
 
   account       Account?
-  burrentBudget Budget?               @relation(fields: [currentBudgetId], references: [id])
+  currentBudget Budget?               @relation(fields: [currentBudgetId], references: [id])
   salary        RecurrentTransaction? @relation(fields: [salaryId], references: [id])
 
   @@map("configs")
@@ -194,7 +194,7 @@ model TermsAndPolicies {
   liveAt        DateTime? @map("live_at")
   createdAt     DateTime  @default(now()) @map("created_at")
 
-  termsAndPoliciesAccepted TermsAndPoliciesAccepted[]
+  termsAndPoliciesAccepteds TermsAndPoliciesAccepted[]
 
   @@map("terms_and_policies")
 }
@@ -218,7 +218,7 @@ model TermsAndPoliciesAccepted {
 //
 //
 
-/// Contains the record of all the existant banks
+/// Contains the record of all the existent banks
 model BankProvider {
   id      String @id @db.Char(16)
   name    String @db.VarChar(30)
@@ -280,7 +280,7 @@ enum CardNetworkEnum {
   @@map("card_network_enum")
 }
 
-/// Contains the record of all the existant cards
+/// Contains the record of all the existent cards
 model CardProvider {
   id             String          @id @db.Char(16)
   bankProviderId String          @map("bank_provider_id") @db.Char(16)
@@ -515,26 +515,25 @@ model Installment {
 //
 //
 
-enum RecurrencyCalculateEnum {
+enum CaFormulaEnum {
   EXACT_AMOUNT
   MBWOPM /// MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the amount is multiplied by the amount of weeks of the previous month
   MBDOPM /// MULTIPLY_BY_DAYS_OF_PREV_MONTH, the amount is multiplied by the amount of days of the previous month
+  DPFET // DIFFERENT_PERCENTAGES_FOR_EACH_TRANSACTION, the "params" prop is an array of percentages matching each of the transactions that should be created. Using these parameters, the amount of the transaction will be multiplied by the percentage to get the final amount
 
-  @@map("recurrency_calculate_enum")
+  @@map("ca_formula_enum")
 }
 
-enum RecurrencyFrequencyEnum {
+enum RecurrenceFrequencyEnum {
   DAILY /// Every day
   WEEKLY /// Every week
-  CUSTOM_WEEKLY /// Every week, on the days defined by the user
   MONTHLY /// Once a month
-  BI_MONTHLY /// Twice a month
   SEMI_MONTHLY /// One month yes, another month no
   QUARTERLY /// Once every 3 months
-  ANNUALY /// Once a year
-  SEMI_ANNUALY /// Once every 6 months
+  ANNUALLY /// Once a year @map("ANNUALLY")
+  SEMI_ANNUALLY /// Once every 6 months
 
-  @@map("recurrency_frequency_enum")
+  @@map("recurrence_frequency_enum")
 }
 
 enum DaysOfWeekEnum {
@@ -566,14 +565,16 @@ enum MonthEnum {
   @@map("month_enum")
 }
 
-enum RecurrencyConditionsEnum {
+enum RecurrenceConditionsEnum {
   IN_WEEKDAY /// Mon-Fri
   IN_WEEKEND /// Sat-Sun
   IS_EVEN_DAY /// Like 2, 4, 6
   IS_ODD_DAY /// Like 1, 3, 5
   NOT_HOLIDAY
+  IF_NOT_BEFORE /// If the day doesn't match the conditions, try previuoius days
+  IF_NOT_AFTER /// If the day doesn't match the conditions, try following days
 
-  @@map("recurrency_conditions_enum")
+  @@map("recurrence_conditions_enum")
 }
 
 /// Contains all the user's recurrent transactions.
@@ -599,17 +600,17 @@ model RecurrentTransaction {
   bankAccountFromId String?             @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
   bankAccountToId   String?             @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
 
-  account                  Account                    @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  budget                   Budget                     @relation(fields: [budgetId], references: [id], onDelete: Restrict)
-  recurrentTransactionRule RecurrentTransactionRule[]
-  config                   Config?
+  account                   Account                    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budget                    Budget                     @relation(fields: [budgetId], references: [id], onDelete: Restrict)
+  recurrentTransactionRules RecurrentTransactionRule[]
+  config                    Config?
   // Transaction type=IN,OUT
-  category                 Category?                  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  card                     Card?                      @relation(fields: [cardId], references: [id], onDelete: Restrict)
-  bankAccount              BankAccount?               @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
+  category                  Category?                  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  card                      Card?                      @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  bankAccount               BankAccount?               @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
-  bankAccountFrom          BankAccount?               @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
-  bankAccountTo            BankAccount?               @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
+  bankAccountFrom           BankAccount?               @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
+  bankAccountTo             BankAccount?               @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
 
   @@map("recurrent_transactions")
 }
@@ -619,17 +620,15 @@ model RecurrentTransactionRule {
   id                     String @id @db.Char(16)
   recurrentTransactionId String @map("recurrent_transaction_id") @db.Char(16)
 
-  caFormula        RecurrencyCalculateEnum    @map("ca_formula")
-  caDaysOfWeek     DaysOfWeekEnum[]           @map("ca_days_of_week")
-  caDaysOfTheMonth Int[]                      @map("ca_days_of_the_month") // Can be only numbers, 1 to 31
-  caMonths         MonthEnum[]                @map("ca_months")
-  caConditions     RecurrencyConditionsEnum[] @map("ca_conditions") /// Only count if the day is Mon-Fri
+  caFormula    CaFormulaEnum              @map("ca_formula")
+  caParams     String                     @map("ca_params") @db.VarChar /// JSON stringified prop to pass the params to calculate the amount
+  caConditions RecurrenceConditionsEnum[] @map("ca_conditions")
 
-  frequency      RecurrencyFrequencyEnum
-  fDaysOfWeek    DaysOfWeekEnum[]           @map("f_days_of_week")
-  fDayOfTheMonth String[]                   @map("f_day_of_the_month") /// Unlike caDaysOfTheMonth, it can be "FIRST", "LAST" and numbers 1 to 31
-  fMonths        MonthEnum[]                @map("f_months")
-  fConditions    RecurrencyConditionsEnum[] @map("f_conditions") /// Only count if the day is Mon-Fri
+  frequency        RecurrenceFrequencyEnum
+  fDaysOfWeeks     DaysOfWeekEnum[]           @map("f_days_of_weeks")
+  fDaysOfTheMonths String[]                   @map("f_days_of_the_months") /// Can have the values "FIRST", "LAST" and numbers 1 to 31
+  fMonths          MonthEnum[]                @map("f_months")
+  fConditions      RecurrenceConditionsEnum[] @map("f_conditions")
 
   recurrentTransaction RecurrentTransaction @relation(fields: [recurrentTransactionId], references: [id])
 

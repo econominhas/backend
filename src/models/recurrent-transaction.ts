@@ -1,7 +1,11 @@
 import type {
+	DaysOfWeekEnum,
+	MonthEnum,
 	PaymentMethodEnum,
+	CaFormulaEnum,
+	RecurrenceConditionsEnum,
+	RecurrenceFrequencyEnum,
 	RecurrentTransaction,
-	RecurrentTransactionFrequencyEnum,
 	TransactionTypeEnum,
 } from '@prisma/client';
 
@@ -16,14 +20,12 @@ import type {
 export interface CreateInput {
 	accountId: string;
 	budgetId: string;
-	frequency: RecurrentTransactionFrequencyEnum;
 	isSystemManaged: boolean;
 	// Data to create the transaction
 	type: TransactionTypeEnum;
 	name: string;
 	description: string;
 	amount: number;
-	budgetItemId: string;
 	isSystemManagedT: boolean;
 	// Transaction type=IN,OUT
 	paymentMethod?: PaymentMethodEnum;
@@ -33,6 +35,18 @@ export interface CreateInput {
 	// Transaction type=TRANSFER
 	bankAccountFromId?: string;
 	bankAccountToId?: string;
+
+	rules: Array<{
+		caFormula: CaFormulaEnum;
+		caParams: Record<string, any>;
+		caConditions: RecurrenceConditionsEnum[];
+
+		frequency: RecurrenceFrequencyEnum;
+		fDaysOfWeeks: DaysOfWeekEnum[];
+		fDaysOfTheMonths: string[];
+		fMonths: MonthEnum[];
+		fConditions: RecurrenceConditionsEnum[];
+	}>;
 }
 
 export abstract class RecurrentTransactionRepository {
@@ -49,9 +63,9 @@ export abstract class RecurrentTransactionRepository {
 
 export interface CreateSalaryInput {
 	accountId: string;
+	bankAccountId: string;
 	budgetId: string;
 	categoryId: string;
-	bankAccountId: string;
 	amount: number;
 	installments: Array<{
 		dayOfTheMonth: number;

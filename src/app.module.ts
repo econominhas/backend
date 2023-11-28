@@ -7,6 +7,7 @@ import { BankModule } from './usecases/bank/bank.module';
 import { CardModule } from './usecases/card/card.module';
 import { BudgetModule } from './usecases/budget/budget.module';
 import { AuthModule } from './usecases/auth/auth.module';
+import { RecurrentTransactionModule } from './usecases/recurrent-transaction/recurrent-transaction.module';
 
 @Module({
 	imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './usecases/auth/auth.module';
 		BankModule,
 		CardModule,
 		BudgetModule,
+		RecurrentTransactionModule,
 	],
 })
 export class AppModule {}
