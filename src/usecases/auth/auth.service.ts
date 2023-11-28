@@ -32,6 +32,7 @@ import { GoogleAdapter } from 'src/adapters/google';
 import { AuthTokensAdapter } from 'src/adapters/token';
 import { EmailAdapter } from 'src/adapters/email';
 import { SmsAdapter } from 'src/adapters/sms';
+import { SNSAdapter } from 'src/adapters/implementations/sns.service';
 
 interface GenTokensInput {
 	accountId: string;
@@ -61,7 +62,7 @@ export class AuthService extends AuthUseCase {
 		private readonly tokenAdapter: AuthTokensAdapter,
 		@Inject(SESAdapter)
 		private readonly emailAdapter: EmailAdapter,
-		@Inject(SESAdapter)
+		@Inject(SNSAdapter)
 		private readonly smsAdapter: SmsAdapter,
 	) {
 		super();

@@ -1,18 +1,27 @@
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { Injectable } from '@nestjs/common';
-import type { EmailAdapter, SendInput } from '../email';
-import { EMAIL_TEMPLATES } from '../email';
+import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
+import { SMS_TEMPLATES, SmsAdapter } from '../sms';
+import type { SendInput } from '../sms';
 
 @Injectable()
-export class SESAdapter implements EmailAdapter {
+export class SNSAdapter extends SmsAdapter {
 	private defaultPlaceholders: Record<string, string> = {
 		frontEndUrl: process.env['FRONT_URL'],
 	};
 
-	private client: SESClient;
+	private client: SNSClient;
 
 	constructor() {
-		this.client = new SESClient();
+		super();
+
+		this.client = new SNSClient({
+			endpoint: process.env['AWS_ENDPOINT'],
+			region: process.env['AWS_DEFAULT_REGION'],
+			credentials: {
+				secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'],
+				accessKeyId: process.env['AWS_ACCESS_KEY_ID'],
+			},
+		});
 	}
 
 	async send({
@@ -21,7 +30,7 @@ export class SESAdapter implements EmailAdapter {
 		templateId,
 		placeholders: placeholdersWithoutDefault,
 	}: SendInput) {
-		const { from, title, body } = EMAIL_TEMPLATES[templateId];
+		const { body } = SMS_TEMPLATES[templateId];
 
 		const placeholders = {
 			accountId: account.id,
@@ -30,23 +39,9 @@ export class SESAdapter implements EmailAdapter {
 		};
 
 		await this.client.send(
-			new SendEmailCommand({
-				Source: from,
-				Destination: {
-					ToAddresses: [to],
-				},
-				Message: {
-					Subject: {
-						Data: this.applyPlaceholders(title, placeholders),
-						Charset: 'UTF-8',
-					},
-					Body: {
-						Html: {
-							Data: this.applyPlaceholders(body, placeholders),
-							Charset: 'UTF-8',
-						},
-					},
-				},
+			new PublishCommand({
+				PhoneNumber: to,
+				Message: this.applyPlaceholders(body, placeholders),
 			}),
 		);
 	}

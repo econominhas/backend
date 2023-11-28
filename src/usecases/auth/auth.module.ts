@@ -8,6 +8,7 @@ import { TermsAndPoliciesModule } from '../terms-and-policies/terms-and-policies
 import { MagicLinkCodeRepositoryModule } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.module';
 import { RefreshTokenRepositoryModule } from 'src/repositories/postgres/refresh-token/refresh-token-repository.module';
 import { AuthRepositoryModule } from 'src/repositories/postgres/auth/auth-repository.module';
+import { SNSAdapter } from 'src/adapters/implementations/sns.service';
 
 @Module({
 	controllers: [AuthController],
@@ -18,6 +19,12 @@ import { AuthRepositoryModule } from 'src/repositories/postgres/auth/auth-reposi
 
 		TermsAndPoliciesModule,
 	],
-	providers: [AuthService, FetchGoogleAdapter, JwtUidTokenAdapter, SESAdapter],
+	providers: [
+		AuthService,
+		FetchGoogleAdapter,
+		JwtUidTokenAdapter,
+		SESAdapter,
+		SNSAdapter,
+	],
 })
 export class AuthModule {}
