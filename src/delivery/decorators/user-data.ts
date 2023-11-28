@@ -13,11 +13,16 @@ export const UserData = createParamDecorator(
 
 		const [token] = request.headers.authorization?.split(' ') ?? [];
 
-		const payload = decode(token) as TokenPayload;
+		const payload = decode(token) as TokenPayload | undefined;
+
+		if (!payload) {
+			return {} as UserDataType;
+		}
 
 		return {
-			accountId: payload?.sub,
+			accountId: payload.sub,
 			hasAcceptedLatestTerms: payload.terms,
+			timezone: payload.tz,
 		};
 	},
 );

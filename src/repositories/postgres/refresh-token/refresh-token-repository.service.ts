@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { CreateInput, GetByTokenInput } from 'src/models/refresh-token';
+import type {
+	CreateInput,
+	GetByTokenInput,
+	GetByTokenOutput,
+} from 'src/models/refresh-token';
 import { RefreshTokenRepository } from 'src/models/refresh-token';
 import { JwtUidTokenAdapter } from 'src/adapters/implementations/token.service';
 import { InjectRepository, Repository } from '..';
@@ -29,8 +33,21 @@ export class RefreshTokenRepositoryService extends RefreshTokenRepository {
 		});
 	}
 
-	get({ refreshToken }: GetByTokenInput): Promise<RefreshToken> {
+	get({
+		refreshToken,
+	}: GetByTokenInput): Promise<GetByTokenOutput | undefined> {
 		return this.refreshTokenRepository.findUnique({
+			include: {
+				account: {
+					include: {
+						config: {
+							select: {
+								timezone: true,
+							},
+						},
+					},
+				},
+			},
 			where: {
 				refreshToken,
 			},

@@ -20,14 +20,12 @@ import { SESAdapter } from 'src/adapters/implementations/ses.service';
 import { MagicLinkCodeRepositoryService } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.service';
 import { RefreshTokenRepositoryService } from 'src/repositories/postgres/refresh-token/refresh-token-repository.service';
 import { FetchGoogleAdapter } from 'src/adapters/implementations/google.service';
-import type { Account } from '@prisma/client';
+import type { Account, TimezoneEnum } from '@prisma/client';
 import { SignInProviderEnum } from '@prisma/client';
 import { TermsAndPoliciesService } from '../terms-and-policies/terms-and-policies.service';
 import { AuthUseCase } from 'src/models/auth';
 import { AuthRepositoryService } from 'src/repositories/postgres/auth/auth-repository.service';
-import { AccountRepositoryService } from 'src/repositories/postgres/account/account-repository.service';
 import { TermsAndPoliciesUseCase } from 'src/models/terms-and-policies';
-import { AccountRepository } from 'src/models/account';
 import { MagicLinkCodeRepository } from 'src/models/magic-link-code';
 import { RefreshTokenRepository } from 'src/models/refresh-token';
 import { GoogleAdapter } from 'src/adapters/google';
@@ -37,6 +35,7 @@ import { SmsAdapter } from 'src/adapters/sms';
 
 interface GenTokensInput {
 	accountId: string;
+	timezone: TimezoneEnum;
 	isFirstAccess: boolean;
 	refresh?: boolean;
 }
@@ -48,8 +47,6 @@ export class AuthService extends AuthUseCase {
 	constructor(
 		@Inject(AuthRepositoryService)
 		private readonly authRepository: AuthRepository,
-		@Inject(AccountRepositoryService)
-		private readonly accountRepository: AccountRepository,
 		@Inject(MagicLinkCodeRepositoryService)
 		private readonly magicLinkCodeRepository: MagicLinkCodeRepository,
 		@Inject(RefreshTokenRepositoryService)
@@ -160,6 +157,7 @@ export class AuthService extends AuthUseCase {
 
 		return this.genAuthOutput({
 			accountId: account.id,
+			timezone,
 			isFirstAccess,
 			refresh: true,
 		});
@@ -244,6 +242,7 @@ export class AuthService extends AuthUseCase {
 
 		return this.genAuthOutput({
 			accountId: magicLinkCode.accountId,
+			timezone: magicLinkCode.account.config.timezone,
 			isFirstAccess: magicLinkCode.isFirstAccess,
 			refresh: true,
 		});
@@ -260,17 +259,10 @@ export class AuthService extends AuthUseCase {
 			throw new NotFoundException('Refresh token not found');
 		}
 
-		const account = await this.accountRepository.getById({
-			id: refreshTokenData.accountId,
-		});
-
-		if (!account) {
-			throw new NotFoundException('User not found');
-		}
-
 		const { isFirstAccess: _, ...authOutput } = await this.genAuthOutput({
 			accountId: refreshTokenData.accountId,
 			isFirstAccess: false,
+			timezone: refreshTokenData.account.config.timezone,
 		});
 
 		return authOutput;
@@ -280,6 +272,7 @@ export class AuthService extends AuthUseCase {
 
 	private async genAuthOutput({
 		accountId,
+		timezone,
 		isFirstAccess,
 		refresh,
 	}: GenTokensInput): Promise<AuthOutput> {
@@ -309,6 +302,7 @@ export class AuthService extends AuthUseCase {
 		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
 			accountId: accountId,
 			hasAcceptedLatestTerms,
+			timezone,
 		});
 
 		return {

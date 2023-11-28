@@ -8,13 +8,11 @@ import { TermsAndPoliciesModule } from '../terms-and-policies/terms-and-policies
 import { MagicLinkCodeRepositoryModule } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.module';
 import { RefreshTokenRepositoryModule } from 'src/repositories/postgres/refresh-token/refresh-token-repository.module';
 import { AuthRepositoryModule } from 'src/repositories/postgres/auth/auth-repository.module';
-import { AccountRepositoryModule } from 'src/repositories/postgres/account/account-repository.module';
 
 @Module({
 	controllers: [AuthController],
 	imports: [
 		AuthRepositoryModule,
-		AccountRepositoryModule,
 		MagicLinkCodeRepositoryModule,
 		RefreshTokenRepositoryModule,
 

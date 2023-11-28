@@ -14,17 +14,21 @@ export class JwtUidTokenAdapter extends AuthTokensAdapter {
 	genAccess({
 		accountId,
 		hasAcceptedLatestTerms,
+		timezone,
 	}: GenAccessInput): GenAccessOutput {
 		const payload: TokenPayload = {
 			sub: accountId,
 			terms: hasAcceptedLatestTerms,
+			tz: timezone,
 		};
+
+		const expiresAt = '';
 
 		const accessToken = sign(payload, process.env['JWT_SECRET']);
 
 		return {
 			accessToken,
-			expiresAt: '',
+			expiresAt,
 		};
 	}
 

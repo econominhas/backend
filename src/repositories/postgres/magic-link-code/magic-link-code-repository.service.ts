@@ -44,6 +44,17 @@ export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
 
 	get({ accountId, code }: GetInput): Promise<GetOutput> {
 		return this.magicLinkCodeRepository.findUnique({
+			include: {
+				account: {
+					include: {
+						config: {
+							select: {
+								timezone: true,
+							},
+						},
+					},
+				},
+			},
 			where: {
 				accountId,
 				code,
