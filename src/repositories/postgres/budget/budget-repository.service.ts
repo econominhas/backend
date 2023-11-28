@@ -3,8 +3,8 @@ import { InjectRepository, Repository } from '..';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import type {
 	CreateWithItemsInput,
-	GetMonthlyBudgetByCategoryInput,
-	GetMonthlyBudgetByCategoryOutput,
+	GetMonthlyByCategoryInput,
+	GetMonthlyByCategoryOutput,
 } from 'src/models/budget';
 import { BudgetRepository } from 'src/models/budget';
 import type { Budget } from '@prisma/client';
@@ -63,35 +63,37 @@ export class BudgetRepositoryService extends BudgetRepository {
 		});
 	}
 
-	async getMonthlyBudgetByCategory({
+	async getMonthlyByCategory({
 		accountId,
 		budgetId,
 		timezone,
-	}: GetMonthlyBudgetByCategoryInput): Promise<GetMonthlyBudgetByCategoryOutput> {
+		month: monthParam,
+		year: yearParam,
+	}: GetMonthlyByCategoryInput): Promise<GetMonthlyByCategoryOutput> {
 		const { month, year } = this.dateAdapter.getTodayInfo(timezone);
 
 		const budget = await this.budgetRepository.findUnique({
-			include: {
+			select: {
 				budgetDates: {
-					include: {
+					select: {
 						budgetItems: {
 							select: {
+								categoryId: true,
 								amount: true,
 							},
-							include: {
-								category: true,
-							},
 						},
-					},
-					where: {
-						month,
-						year,
 					},
 				},
 			},
 			where: {
 				id: budgetId,
 				accountId,
+				budgetDates: {
+					every: {
+						month: monthParam || month,
+						year: yearParam || year,
+					},
+				},
 			},
 		});
 
