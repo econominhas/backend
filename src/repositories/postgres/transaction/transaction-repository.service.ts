@@ -1,21 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
-import { DayjsAdapter } from 'src/adapters/implementations/dayjs.service';
 import type {
 	GetMonthlyAmountByCategoryInput,
 	GetMonthlyAmountByCategoryOutput,
 } from 'src/models/transaction';
 import { TransactionRepository } from 'src/models/transaction';
-import { DateAdapter } from 'src/adapters/date';
 
 @Injectable()
 export class TransactionRepositoryService extends TransactionRepository {
 	constructor(
 		@InjectRepository('transaction')
 		private readonly transactionRepository: Repository<'transaction'>,
-
-		@Inject(DayjsAdapter)
-		private readonly dateAdapter: DateAdapter,
 	) {
 		super();
 	}
@@ -23,12 +18,9 @@ export class TransactionRepositoryService extends TransactionRepository {
 	async getMonthlyAmountByCategory({
 		accountId,
 		budgetId,
-		timezone,
-		month: monthParam,
-		year: yearParam,
+		month,
+		year,
 	}: GetMonthlyAmountByCategoryInput): Promise<GetMonthlyAmountByCategoryOutput> {
-		const { month, year } = this.dateAdapter.getTodayInfo(timezone);
-
 		const transactions = await this.transactionRepository.findMany({
 			select: {
 				amount: true,
@@ -47,8 +39,8 @@ export class TransactionRepositoryService extends TransactionRepository {
 				budgetDate: {
 					is: {
 						budgetId,
-						month: monthParam || month,
-						year: yearParam || year,
+						month,
+						year,
 					},
 				},
 			},

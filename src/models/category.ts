@@ -1,4 +1,4 @@
-import type { DefaultCategory, IconEnum } from '@prisma/client';
+import type { Category, DefaultCategory, IconEnum } from '@prisma/client';
 import type {
 	Paginated,
 	PaginatedItems,
@@ -23,10 +23,16 @@ export interface CreateManyInput {
 	}>;
 }
 
+export interface GetAllByUserInput {
+	accountId: string;
+}
+
 export abstract class CategoryRepository {
 	abstract getDefault(i: PaginatedRepository): Promise<Array<DefaultCategory>>;
 
 	abstract createMany(i: CreateManyInput): Promise<void>;
+
+	abstract getAllByUser(i: GetAllByUserInput): Promise<Array<Category>>;
 }
 
 /**

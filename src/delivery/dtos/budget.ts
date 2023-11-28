@@ -68,3 +68,14 @@ export class CreateBasicDto {
 	@Type(() => CreateBasicItem)
 	items: Array<CreateBasicItem>;
 }
+
+export class OverviewDtoDto {
+	@IsID()
+	budgetId: string;
+
+	@IsMonth()
+	month: number;
+
+	@IsYear()
+	year: number;
+}

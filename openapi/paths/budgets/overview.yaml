@@ -1,0 +1,88 @@
+get:
+  tags:
+    - Budget
+  summary: Get budget overview
+  description: |
+    Get budget overview
+  operationId: budget-overview
+  security:
+    - bearer: []
+  parameters:
+    - in: query
+      name: budgetId
+      schema:
+        type: string
+        format: uuid
+      description: Budget ID
+      required: true
+    - in: query
+      name: month
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 12
+      description: Budget month to get overview
+      required: true
+    - in: query
+      name: year
+      schema:
+        type: integer
+        minimum: 2000
+        maximum: 2100
+      description: Budget year to get overview
+      required: true
+  responses:
+    '200':
+      description: |
+        Success
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - totalExpenses
+              - totalBudget
+              - remainingBudget
+              - budgetByCategory
+            properties:
+              totalExpenses:
+                $ref: ../../components/fields/amount.yaml
+              totalBudget:
+                $ref: ../../components/fields/amount.yaml
+              remainingBudget:
+                $ref: ../../components/fields/amount.yaml
+              budgetByCategory:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - name
+                    - description
+                    - icon
+                    - color
+                    - active
+                    - remainingBudget
+                  properties:
+                    id:
+                      description: Category ID
+                      type: string
+                      format: uuid
+                    name:
+                      $ref: ../../components/fields/name.yaml
+                    description:
+                      $ref: ../../components/fields/description.yaml
+                    icon:
+                      $ref: ../../components/fields/icon.yaml
+                    color:
+                      $ref: ../../components/fields/color.yaml
+                    active:
+                      type: boolean
+                      description: |
+                        Tells if the category should appear on the category selection or not
+                    remainingBudget:
+                      $ref: ../../components/fields/amount.yaml
+    '400':
+      $ref: ../../components/responses/bad-request.yaml
+    '401':
+      $ref: ../../components/responses/unauthorized.yaml

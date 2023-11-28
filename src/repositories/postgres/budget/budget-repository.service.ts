@@ -9,8 +9,6 @@ import type {
 import { BudgetRepository } from 'src/models/budget';
 import type { Budget } from '@prisma/client';
 import { IdAdapter } from 'src/adapters/id';
-import { DateAdapter } from 'src/adapters/date';
-import { DayjsAdapter } from 'src/adapters/implementations/dayjs.service';
 
 @Injectable()
 export class BudgetRepositoryService extends BudgetRepository {
@@ -20,8 +18,6 @@ export class BudgetRepositoryService extends BudgetRepository {
 
 		@Inject(UIDAdapter)
 		private readonly idAdapter: IdAdapter,
-		@Inject(DayjsAdapter)
-		private readonly dateAdapter: DateAdapter,
 	) {
 		super();
 	}
@@ -66,12 +62,9 @@ export class BudgetRepositoryService extends BudgetRepository {
 	async getMonthlyByCategory({
 		accountId,
 		budgetId,
-		timezone,
-		month: monthParam,
-		year: yearParam,
+		month,
+		year,
 	}: GetMonthlyByCategoryInput): Promise<GetMonthlyByCategoryOutput> {
-		const { month, year } = this.dateAdapter.getTodayInfo(timezone);
-
 		const budget = await this.budgetRepository.findUnique({
 			select: {
 				budgetDates: {
@@ -90,8 +83,8 @@ export class BudgetRepositoryService extends BudgetRepository {
 				accountId,
 				budgetDates: {
 					every: {
-						month: monthParam || month,
-						year: yearParam || year,
+						month,
+						year,
 					},
 				},
 			},

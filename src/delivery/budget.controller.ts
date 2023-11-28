@@ -1,8 +1,8 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { UserDataDto } from './dtos';
 import { UserData } from './decorators/user-data';
 import { BudgetService } from 'src/usecases/budget/budget.service';
-import { CreateBasicDto, CreateDto } from './dtos/budget';
+import { CreateBasicDto, CreateDto, OverviewDtoDto } from './dtos/budget';
 import { BudgetUseCase } from 'src/models/budget';
 
 @Controller('budgets')
@@ -34,6 +34,19 @@ export class BudgetController {
 	) {
 		return this.budgetService.createBasic({
 			...body,
+			accountId: userData.accountId,
+		});
+	}
+
+	@Get('overview')
+	overview(
+		@UserData()
+		userData: UserDataDto,
+		@Query()
+		query: OverviewDtoDto,
+	) {
+		return this.budgetService.overview({
+			...query,
 			accountId: userData.accountId,
 		});
 	}

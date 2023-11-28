@@ -87,6 +87,8 @@ paths:
     $ref: paths/budgets/index.yaml
   /budgets/basic:
     $ref: paths/budgets/basic.yaml
+  /budgets/overview:
+    $ref: paths/budgets/overview.yaml
 
   /cards/providers:
     $ref: paths/cards/providers.yaml

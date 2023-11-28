@@ -1,5 +1,3 @@
-import type { TimezoneEnum } from '@prisma/client';
-
 /**
  *
  *
@@ -11,9 +9,8 @@ import type { TimezoneEnum } from '@prisma/client';
 export interface GetMonthlyAmountByCategoryInput {
 	accountId: string;
 	budgetId: string;
-	timezone: TimezoneEnum;
-	month?: number;
-	year?: number;
+	month: number;
+	year: number;
 }
 
 export type GetMonthlyAmountByCategoryOutput = Array<{

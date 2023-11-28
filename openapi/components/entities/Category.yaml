@@ -10,7 +10,7 @@ required:
   - active
 properties:
   id:
-    description: Card ID
+    description: Category ID
     type: string
     format: uuid
   accountId:
