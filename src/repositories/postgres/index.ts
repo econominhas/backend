@@ -31,7 +31,7 @@ export class PostgresModule {
 
 	static forFeature(tableNames: Array<TablesNames> = []): DynamicModule {
 		const providers = tableNames.map((tableName) => ({
-			provide: PostgresModule.getRepositoryToken(tableName),
+			provide: PostgresCoreModule.getRepositoryToken(tableName as string),
 			useFactory: (connection: PrismaClient) => connection[tableName],
 			inject: [POSTGRES_CONNECTION_NAME],
 		}));
@@ -43,12 +43,27 @@ export class PostgresModule {
 		};
 	}
 
-	static getRepositoryToken(table: TablesNames) {
-		return `POSTGRES_${(table as string).toUpperCase()}_REPOSITORY`;
+	static raw(): DynamicModule {
+		const providers = [
+			{
+				provide: PostgresCoreModule.getRepositoryToken('RAW'),
+				useFactory: (connection: PrismaClient) => connection.$queryRaw,
+				inject: [POSTGRES_CONNECTION_NAME],
+			},
+		];
+
+		return {
+			module: PostgresModule,
+			providers,
+			exports: providers,
+		};
 	}
 }
 
 export const InjectRepository = (tableName: TablesNames) =>
-	Inject(PostgresModule.getRepositoryToken(tableName));
+	Inject(PostgresCoreModule.getRepositoryToken(tableName as string));
+
+export const InjectRaw = () =>
+	Inject(PostgresCoreModule.getRepositoryToken('RAW'));
 
 export type Repository<T extends TablesNames> = AllTables[T];

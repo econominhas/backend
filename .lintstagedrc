@@ -1,5 +1,5 @@
 {
-	"openapi/*": "bash -c \"yarn lint:openapi\"",
-	"prisma/*": "bash -c \"yarn lint:prisma\"",
-	"src/*": ["bash -c \"yarn lint:ts\"", "bash -c \"yarn lint:code\""]
+	"openapi/**/*": "bash -c \"yarn lint:openapi\"",
+	"prisma/**/*": "bash -c \"yarn lint:prisma\"",
+	"src/**/*": ["bash -c \"yarn lint:ts\"", "bash -c \"yarn lint:code\""]
 }

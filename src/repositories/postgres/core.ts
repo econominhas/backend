@@ -46,4 +46,8 @@ export class PostgresCoreModule implements OnApplicationShutdown {
 			Logger.error(e?.message);
 		}
 	}
+
+	static getRepositoryToken(table: string) {
+		return `POSTGRES_${table.toUpperCase()}_REPOSITORY`;
+	}
 }
