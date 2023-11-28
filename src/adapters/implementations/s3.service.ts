@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import type { FileAdapter, GetInput, SaveInput } from '../file';
+import { FileAdapter } from '../file';
+import type { GetInput, SaveInput } from '../file';
 import {
 	GetObjectCommand,
 	PutObjectCommand,
@@ -8,10 +9,12 @@ import {
 import type { Readable } from 'stream';
 
 @Injectable()
-export class S3Adapter implements FileAdapter {
+export class S3Adapter extends FileAdapter {
 	private client: S3Client;
 
 	constructor() {
+		super();
+
 		this.client = new S3Client({
 			endpoint: process.env['AWS_ENDPOINT'],
 			region: process.env['AWS_DEFAULT_REGION'],

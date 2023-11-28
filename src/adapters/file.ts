@@ -12,8 +12,8 @@ export interface GetInput {
 	filePath: `/${string}`;
 }
 
-export interface FileAdapter {
-	save: (i: SaveInput) => Promise<string>;
+export abstract class FileAdapter {
+	abstract save(i: SaveInput): Promise<string>;
 
-	getReadStream: (i: GetInput) => Promise<Readable>;
+	abstract getReadStream(i: GetInput): Promise<Readable>;
 }

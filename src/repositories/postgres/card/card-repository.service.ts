@@ -57,7 +57,7 @@ export class CardRepositoryService extends CardRepository {
 		try {
 			const cardAccount = await this.cardRepository.create({
 				data: {
-					id: this.idAdapter.gen(),
+					id: this.idAdapter.genId(),
 					accountId,
 					cardProviderId,
 					name,

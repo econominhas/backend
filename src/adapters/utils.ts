@@ -11,8 +11,8 @@ export interface PaginationOutput {
 	limit: number;
 }
 
-export interface UtilsAdapter {
-	pagination: (i: PaginationInput) => PaginationOutput;
+export abstract class UtilsAdapter {
+	abstract pagination(i: PaginationInput): PaginationOutput;
 
-	formatMoney: (i: number) => string;
+	abstract formatMoney(i: number): string;
 }

@@ -1,3 +1,3 @@
-export interface SecretAdapter {
-	gen: () => string;
+export abstract class SecretAdapter {
+	abstract genSecret(): string;
 }

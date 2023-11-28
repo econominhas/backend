@@ -15,6 +15,6 @@ export interface SendInput {
 	placeholders: Record<string, string | number>;
 }
 
-export interface EmailAdapter {
-	send: (i: SendInput) => Promise<void>;
+export abstract class EmailAdapter {
+	abstract send(i: SendInput): Promise<void>;
 }

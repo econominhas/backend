@@ -26,13 +26,13 @@ export class BudgetRepositoryService extends BudgetRepository {
 	}: CreateWithItemsInput): Promise<Budget> {
 		return this.budgetRepository.create({
 			data: {
-				id: this.idAdapter.gen(),
+				id: this.idAdapter.genId(),
 				accountId,
 				name,
 				description,
 				budgetItems: {
 					create: items.map(({ categoryId, month, year, amount }) => ({
-						id: this.idAdapter.gen(),
+						id: this.idAdapter.genId(),
 						categoryId,
 						month,
 						year,

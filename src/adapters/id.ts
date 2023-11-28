@@ -1,3 +1,3 @@
-export interface IdAdapter {
-	gen: () => string;
+export abstract class IdAdapter {
+	abstract genId(): string;
 }

@@ -39,7 +39,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 
 		rules,
 	}: CreateInput): Promise<RecurrentTransaction> {
-		const recurrentTransactionId = this.idAdapter.gen();
+		const recurrentTransactionId = this.idAdapter.genId();
 
 		return this.recurrentTransactionRepository.create({
 			data: {
@@ -76,7 +76,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 								fMonths,
 								fConditions,
 							}) => ({
-								id: this.idAdapter.gen(),
+								id: this.idAdapter.genId(),
 								recurrentTransactionId,
 
 								caFormula,

@@ -5,10 +5,10 @@ import type {
 	GetOutput,
 } from 'src/models/magic-link-code';
 import { MagicLinkCodeRepository } from 'src/models/magic-link-code';
-import { UIDSecretAdapter } from 'src/adapters/implementations/uid-secret.service';
 import { InjectRepository, Repository } from '..';
 import type { MagicLinkCode } from '@prisma/client';
 import { SecretAdapter } from 'src/adapters/secret';
+import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 
 @Injectable()
 export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
@@ -16,7 +16,7 @@ export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
 		@InjectRepository('magicLinkCode')
 		private readonly magicLinkCodeRepository: Repository<'magicLinkCode'>,
 
-		@Inject(UIDSecretAdapter)
+		@Inject(UIDAdapter)
 		private readonly secretAdapter: SecretAdapter,
 	) {
 		super();
@@ -30,13 +30,13 @@ export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
 			create: {
 				accountId,
 				isFirstAccess: isFirstAccess ?? false,
-				code: this.secretAdapter.gen(),
+				code: this.secretAdapter.genSecret(),
 				createdAt: new Date(),
 			},
 			update: {
 				accountId,
 				isFirstAccess: isFirstAccess ?? false,
-				code: this.secretAdapter.gen(),
+				code: this.secretAdapter.genSecret(),
 				createdAt: new Date(),
 			},
 		});

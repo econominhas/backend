@@ -48,7 +48,7 @@ export class BankRepositoryService extends BankRepository {
 		try {
 			const bankAccount = await this.bankAccountRepository.create({
 				data: {
-					id: this.idAdapter.gen(),
+					id: this.idAdapter.genId(),
 					accountId,
 					bankProviderId,
 					name,

@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import type { PaginationInput, PaginationOutput, UtilsAdapter } from '../utils';
+import { UtilsAdapter } from '../utils';
+import type { PaginationInput, PaginationOutput } from '../utils';
 
 @Injectable()
-export class UtilsAdapterImplementation implements UtilsAdapter {
+export class UtilsAdapterImplementation extends UtilsAdapter {
+	constructor() {
+		super();
+	}
+
 	pagination({
 		page: originalPage,
 		limit: originalLimit,

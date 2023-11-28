@@ -37,7 +37,7 @@ export class AuthRepositoryService extends AuthRepository {
 	}
 
 	async create(i: CreateInput): Promise<Account> {
-		const accountId = this.idAdapter.gen();
+		const accountId = this.idAdapter.genId();
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		//@ts-ignore

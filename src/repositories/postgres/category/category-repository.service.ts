@@ -35,7 +35,7 @@ export class CategoryRepositoryService extends CategoryRepository {
 		const data = categories.map((c) => ({
 			...c,
 			accountId,
-			id: this.idAdapter.gen(),
+			id: this.idAdapter.genId(),
 			active: true,
 		}));
 

@@ -1,10 +1,10 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { Injectable } from '@nestjs/common';
-import type { EmailAdapter, SendInput } from '../email';
-import { EMAIL_TEMPLATES } from '../email';
+import type { SendInput } from '../email';
+import { EMAIL_TEMPLATES, EmailAdapter } from '../email';
 
 @Injectable()
-export class SESAdapter implements EmailAdapter {
+export class SESAdapter extends EmailAdapter {
 	private defaultPlaceholders: Record<string, string> = {
 		frontEndUrl: process.env['FRONT_URL'],
 	};
@@ -12,7 +12,16 @@ export class SESAdapter implements EmailAdapter {
 	private client: SESClient;
 
 	constructor() {
-		this.client = new SESClient();
+		super();
+
+		this.client = new SESClient({
+			endpoint: process.env['AWS_ENDPOINT'],
+			region: process.env['AWS_DEFAULT_REGION'],
+			credentials: {
+				secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'],
+				accessKeyId: process.env['AWS_ACCESS_KEY_ID'],
+			},
+		});
 	}
 
 	async send({
