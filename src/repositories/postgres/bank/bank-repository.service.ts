@@ -8,7 +8,7 @@ import {
 import { InjectRepository, Repository } from '..';
 import type { BankAccount, BankProvider } from '@prisma/client';
 import type { PaginatedRepository } from 'src/types/paginated-items';
-import type { CreateInput } from 'src/models/bank';
+import type { CreateInput, GetBalanceByUserInput } from 'src/models/bank';
 import { BankRepository } from 'src/models/bank';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import { IdAdapter } from 'src/adapters/id';
@@ -73,5 +73,20 @@ export class BankRepositoryService extends BankRepository {
 				`Fail to create bank account: ${err.message}`,
 			);
 		}
+	}
+
+	async getBalanceByUser({
+		accountId,
+	}: GetBalanceByUserInput): Promise<number> {
+		const r = await this.bankAccountRepository.aggregate({
+			_sum: {
+				balance: true,
+			},
+			where: {
+				accountId,
+			},
+		});
+
+		return r._sum.balance;
 	}
 }

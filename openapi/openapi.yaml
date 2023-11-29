@@ -55,6 +55,8 @@ tags:
     description: To manage terms of service and privacy policy.
   - name: Transaction
     description: To manage transactions.
+  - name: Wallet
+    description: To manage users wallets.
 
 servers:
   - url: https://econominhas.com.br/api/v1
@@ -109,6 +111,9 @@ paths:
 
   /transactions/salary:
     $ref: paths/transactions/salary.yaml
+
+  /wallet/balance:
+    $ref: paths/wallet/balance.yaml
 
 components:
   securitySchemes:

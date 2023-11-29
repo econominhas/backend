@@ -22,10 +22,16 @@ export interface CreateInput {
 	balance: number;
 }
 
+export interface GetBalanceByUserInput {
+	accountId: string;
+}
+
 export abstract class BankRepository {
 	abstract getProviders(i: PaginatedRepository): Promise<Array<BankProvider>>;
 
 	abstract create(i: CreateInput): Promise<BankAccount>;
+
+	abstract getBalanceByUser(i: GetBalanceByUserInput): Promise<number>;
 }
 
 /**

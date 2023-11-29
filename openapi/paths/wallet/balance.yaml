@@ -1,0 +1,30 @@
+get:
+  tags:
+    - Wallet
+  summary: Get user's balance overview
+  description: |
+    Get user's balance overview
+  operationId: wallet-balance
+  security:
+    - bearer: []
+  responses:
+    '200':
+      description: |
+        Success
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - bankAccountBalance
+            properties:
+              bankAccountBalance:
+                $ref: ../../components/fields/amount.yaml
+              vaBalance:
+                $ref: ../../components/fields/amount.yaml
+              vrBalance:
+                $ref: ../../components/fields/amount.yaml
+              vtBalance:
+                $ref: ../../components/fields/amount.yaml
+    '401':
+      $ref: ../../components/responses/unauthorized.yaml

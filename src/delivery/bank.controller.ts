@@ -13,7 +13,7 @@ export class BankController {
 	) {}
 
 	@Get('/providers')
-	getDefault(
+	getProviders(
 		@Query()
 		pagination: PaginatedDto,
 	) {

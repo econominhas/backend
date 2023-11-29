@@ -5,11 +5,17 @@ import {
 	InternalServerErrorException,
 	NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository, Repository } from '..';
+import { InjectRaw, InjectRepository, RawPostgres, Repository } from '..';
 import type { PaginatedRepository } from 'src/types/paginated-items';
-import type { CreateInput, GetProviderInput } from 'src/models/card';
+import type {
+	CreateInput,
+	GetBalanceByUserInput,
+	GetBalanceByUserOutput,
+	GetProviderInput,
+} from 'src/models/card';
 import { CardRepository } from 'src/models/card';
 import type { Card, CardProvider } from '@prisma/client';
+import { CardTypeEnum } from '@prisma/client';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import { IdAdapter } from 'src/adapters/id';
 
@@ -20,6 +26,8 @@ export class CardRepositoryService extends CardRepository {
 		private readonly cardProviderRepository: Repository<'cardProvider'>,
 		@InjectRepository('card')
 		private readonly cardRepository: Repository<'card'>,
+		@InjectRaw()
+		private readonly rawPostgres: RawPostgres,
 
 		@Inject(UIDAdapter)
 		private readonly idAdapter: IdAdapter,
@@ -83,5 +91,41 @@ export class CardRepositoryService extends CardRepository {
 				`Fail to create card: ${err.message}`,
 			);
 		}
+	}
+
+	async getBalanceByUser({
+		accountId,
+	}: GetBalanceByUserInput): Promise<GetBalanceByUserOutput> {
+		const r = await this.rawPostgres<
+			Array<{
+				type: CardTypeEnum;
+				balance: number;
+			}>
+		>`
+			SELECT
+				sum(cards.balance) AS balance,
+				card_providers.type as type
+			FROM
+				cards
+			JOIN
+				card_providers
+			ON
+				card_providers.id = cards.card_provider_id
+			WHERE
+				cards.account_id = ${accountId}
+				AND
+				card_providers.type IN ${[CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT]}
+			GROUP BY
+				card_providers.type;
+		`;
+
+		return r.reduce(
+			(acc, cur) => {
+				acc[cur.type] = cur.balance;
+
+				return acc;
+			},
+			{} as Record<CardTypeEnum, number>,
+		);
 	}
 }

@@ -1,4 +1,4 @@
-import type { Card, CardProvider } from '@prisma/client';
+import type { Card, CardProvider, CardTypeEnum } from '@prisma/client';
 import type {
 	Paginated,
 	PaginatedItems,
@@ -27,12 +27,26 @@ export interface CreateInput {
 	balance?: number;
 }
 
+export interface GetBalanceByUserInput {
+	accountId: string;
+}
+
+export interface GetBalanceByUserOutput {
+	[CardTypeEnum.VA]: number;
+	[CardTypeEnum.VR]: number;
+	[CardTypeEnum.VT]: number;
+}
+
 export abstract class CardRepository {
 	abstract getProviders(i: PaginatedRepository): Promise<Array<CardProvider>>;
 
 	abstract getProvider(i: GetProviderInput): Promise<CardProvider | undefined>;
 
 	abstract create(i: CreateInput): Promise<Card>;
+
+	abstract getBalanceByUser(
+		i: GetBalanceByUserInput,
+	): Promise<GetBalanceByUserOutput>;
 }
 
 /**
