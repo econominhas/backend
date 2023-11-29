@@ -121,6 +121,8 @@ export class BudgetService extends BudgetUseCase {
 				.filter((c) => !c.active && expensesByCategoryId[c.id] === 0)
 				.map(({ accountId: _, ...c }) => ({
 					...c,
+					totalExpenses: expensesByCategoryId[c.id],
+					totalBudget: budgetsByCategoryId[c.id],
 					remainingBudget:
 						budgetsByCategoryId[c.id] - expensesByCategoryId[c.id],
 				})),

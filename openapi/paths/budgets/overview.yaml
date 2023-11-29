@@ -32,7 +32,7 @@ get:
       description: Budget year to get overview
       required: true
   responses:
-    '200':
+    "200":
       description: |
         Success
       content:
@@ -62,6 +62,8 @@ get:
                     - icon
                     - color
                     - active
+                    - totalExpenses
+                    - totalBudget
                     - remainingBudget
                   properties:
                     id:
@@ -80,9 +82,13 @@ get:
                       type: boolean
                       description: |
                         Tells if the category should appear on the category selection or not
+                    totalExpenses:
+                      $ref: ../../components/fields/amount.yaml
+                    totalBudget:
+                      $ref: ../../components/fields/amount.yaml
                     remainingBudget:
                       $ref: ../../components/fields/amount.yaml
-    '400':
+    "400":
       $ref: ../../components/responses/bad-request.yaml
-    '401':
+    "401":
       $ref: ../../components/responses/unauthorized.yaml

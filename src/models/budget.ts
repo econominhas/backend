@@ -88,6 +88,8 @@ export interface OverviewOutput {
 	remainingBudget: number;
 	budgetByCategory: Array<
 		Omit<Category, 'accountId'> & {
+			totalExpenses: number;
+			totalBudget: number;
 			remainingBudget: number;
 		}
 	>;
