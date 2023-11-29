@@ -35,6 +35,12 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 - [API](https://wise-bulldog-88.redoc.ly/)
 - [Database](https://dbdocs.io/henriqueleite42/Econominhas?view=relationships)
 
+## Third party Urls
+
+### Dev
+
+- [Google](https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=489785083174-0rqt9bc7l9t09luor3fc16h21kdf57q7.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8081&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&access_type=offline&state=1234_purpleGoogle&prompt=consent&authuser=1&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow)
+
 ## Useful commands
 
 | Command         | Description                                                 |

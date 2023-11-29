@@ -112,7 +112,7 @@ export interface RefreshOutput {
 
 export interface CreateWith3rdPartyProviderInput {
 	code: string;
-	originUrl: string;
+	originUrl?: string;
 	timezone: TimezoneEnum;
 }
 

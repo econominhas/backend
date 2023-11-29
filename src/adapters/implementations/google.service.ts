@@ -36,7 +36,9 @@ export class FetchGoogleAdapter extends GoogleAdapter {
 		body.append('client_secret', process.env['GOOGLE_CLIENT_SECRET']!);
 		body.append('grant_type', 'authorization_code');
 		body.append('code', code);
-		body.append('redirect_uri', originUrl);
+		if (originUrl) {
+			body.append('redirect_uri', originUrl);
+		}
 
 		const result = await fetch('https://oauth2.googleapis.com/token', {
 			method: 'POST',

@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { IsID, IsSecretCode } from '../validators/internal';
 import { IsPhone, IsURL } from '../validators/miscellaneous';
 import { TimezoneEnum } from '@prisma/client';
@@ -8,8 +8,9 @@ export class CreateFromGoogleProviderDto {
 	@IsSingInProviderCode()
 	code: string;
 
+	@IsOptional()
 	@IsURL({ acceptLocalhost: process.env['NODE_ENV'] !== 'production' })
-	originUrl: string;
+	originUrl?: string;
 
 	@IsEnum(TimezoneEnum)
 	timezone: TimezoneEnum;

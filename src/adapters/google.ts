@@ -1,6 +1,6 @@
 export interface ExchangeCodeInput {
 	code: string;
-	originUrl: string;
+	originUrl?: string;
 }
 
 export interface ExchangeCodeOutput {
@@ -18,7 +18,11 @@ export interface GetAuthenticatedUserDataOutput {
 }
 
 export abstract class GoogleAdapter {
-	readonly requiredScopes = ['openid', 'profile', 'email'];
+	readonly requiredScopes = [
+		'https://www.googleapis.com/auth/userinfo.profile',
+		'openid',
+		'https://www.googleapis.com/auth/userinfo.email',
+	];
 
 	abstract exchangeCode(i: ExchangeCodeInput): Promise<ExchangeCodeOutput>;
 
