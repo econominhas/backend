@@ -109,6 +109,8 @@ paths:
   /terms/latest:
     $ref: paths/terms/latest.yaml
 
+  /transactions:
+    $ref: paths/transactions/index.yaml
   /transactions/salary:
     $ref: paths/transactions/salary.yaml
 

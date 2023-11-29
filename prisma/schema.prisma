@@ -442,7 +442,7 @@ model BudgetDate {
 model BudgetItem {
   budgetDateId String @map("budget_date_id") @db.Char(16)
   categoryId   String @map("category_id") @db.Char(16)
-  amount       Int
+  amount       Int /// Can only be POSITIVE
 
   budgetDate BudgetDate @relation(fields: [budgetDateId], references: [id], onDelete: Cascade)
   category   Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
@@ -479,7 +479,7 @@ model Transaction {
   type                   TransactionTypeEnum
   name                   String              @db.VarChar(30)
   description            String              @db.VarChar(300)
-  amount                 Int
+  amount                 Int /// Can only be POSITIVE, the real amount is determined by the type (OUT = amount * -1)
   budgetDateId           String              @map("budget_date_id") @db.Char(16)
   createdAt              DateTime            @default(now()) @map("created_at")
   isSystemManaged        Boolean             @map("is_system_managed") /// Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
@@ -599,7 +599,7 @@ model RecurrentTransaction {
   type              TransactionTypeEnum
   name              String              @db.VarChar(30)
   description       String              @db.VarChar(300)
-  amount            Int
+  amount            Int /// Can only be POSITIVE, the real amount is determined by the type (OUT = amount * -1)
   createdAt         DateTime            @default(now()) @map("created_at")
   isSystemManagedT  Boolean             @map("is_system_managed_t") /// Same as "isSystemManaged". It exists because some RecurrentTransactions may be system managed, but the Trasactions created by this RecurrentTransaction aren't. An example of it it's the salary, we have a specific interface for the user to managed it, and it shouldn't be managed directly by the user like other RecurrentTransactions, but the transactions created by it are normal Transactions, that the user can edit freely.
   // Transaction type=IN,OUT

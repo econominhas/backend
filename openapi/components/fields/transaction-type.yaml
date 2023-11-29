@@ -1,0 +1,7 @@
+description: |
+  Transaction type
+type: string
+enum:
+  - IN
+  - OUT
+  - TRANSFER

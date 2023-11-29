@@ -1,0 +1,92 @@
+get:
+  tags:
+    - Transaction
+  summary: Get user's transaction
+  description: |
+    Get user's transaction
+  operationId: transaction-get
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Get user's transaction
+          required:
+            - budgetId
+            - month
+            - year
+          properties:
+            budgetId:
+              description: Budget ID
+              type: string
+              format: uuid
+            month:
+              $ref: ../../components/fields/month.yaml
+            year:
+              $ref: ../../components/fields/year.yaml
+    required: true
+  responses:
+    "200":
+      description: |
+        Success
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - paging
+              - data
+            properties:
+              paging:
+                $ref: ../../components/schemas/paging.yaml
+              data:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - name
+                    - amount
+                    - type
+                    - category
+                  properties:
+                    id:
+                      description: Transaction ID
+                      type: string
+                      format: uuid
+                    name:
+                      $ref: ../../components/fields/name.yaml
+                    amount:
+                      $ref: ../../components/fields/amount.yaml
+                    type:
+                      $ref: ../../components/fields/transaction-type.yaml
+                    category:
+                      description: Transaction installments
+                      type: object
+                      required:
+                        - icon
+                        - color
+                      properties:
+                        icon:
+                          $ref: ../../components/fields/icon.yaml
+                        color:
+                          $ref: ../../components/fields/color.yaml
+                    installment:
+                      description: Transaction installments
+                      type: object
+                      required:
+                        - total
+                        - current
+                      properties:
+                        total:
+                          description: Total installments that the transaction group has
+                          type: integer
+                        current:
+                          description: Current installment that the transaction represents
+                          type: integer
+    "400":
+      $ref: ../../components/responses/bad-request.yaml
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml

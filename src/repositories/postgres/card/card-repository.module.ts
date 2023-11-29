@@ -4,7 +4,10 @@ import { CardRepositoryService } from './card-repository.service';
 import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 
 @Module({
-	imports: [PostgresModule.forFeature(['cardProvider', 'card'])],
+	imports: [
+		PostgresModule.forFeature(['cardProvider', 'card']),
+		PostgresModule.raw(),
+	],
 	providers: [CardRepositoryService, UIDAdapter],
 	exports: [CardRepositoryService],
 })

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import type {
+	GetByBudgetInput,
+	GetByBudgetOutput,
 	GetMonthlyAmountByCategoryInput,
 	GetMonthlyAmountByCategoryOutput,
 } from 'src/models/transaction';
@@ -69,5 +71,48 @@ export class TransactionRepositoryService extends TransactionRepository {
 		}
 
 		return Object.values(expensesPerCategory);
+	}
+
+	getByBudget({
+		accountId,
+		budgetId,
+		month,
+		year,
+		limit,
+		offset,
+	}: GetByBudgetInput): Promise<GetByBudgetOutput[]> {
+		return this.transactionRepository.findMany({
+			select: {
+				id: true,
+				name: true,
+				amount: true,
+				type: true,
+				installment: {
+					select: {
+						total: true,
+						current: true,
+					},
+				},
+				category: {
+					select: {
+						icon: true,
+						color: true,
+					},
+				},
+			},
+			where: {
+				accountId,
+				budgetDate: {
+					budgetId,
+					month,
+					year,
+				},
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
+			skip: offset,
+			take: limit,
+		});
 	}
 }
