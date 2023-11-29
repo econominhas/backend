@@ -20,7 +20,7 @@ import { SESAdapter } from 'src/adapters/implementations/ses.service';
 import { MagicLinkCodeRepositoryService } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.service';
 import { RefreshTokenRepositoryService } from 'src/repositories/postgres/refresh-token/refresh-token-repository.service';
 import { FetchGoogleAdapter } from 'src/adapters/implementations/google.service';
-import type { Account, TimezoneEnum } from '@prisma/client';
+import type { Account } from '@prisma/client';
 import { SignInProviderEnum } from '@prisma/client';
 import { TermsAndPoliciesService } from '../terms-and-policies/terms-and-policies.service';
 import { AuthUseCase } from 'src/models/auth';
@@ -36,7 +36,6 @@ import { SNSAdapter } from 'src/adapters/implementations/sns.service';
 
 interface GenTokensInput {
 	accountId: string;
-	timezone: TimezoneEnum;
 	isFirstAccess: boolean;
 	refresh?: boolean;
 }
@@ -70,7 +69,6 @@ export class AuthService extends AuthUseCase {
 
 	async createFromGoogleProvider({
 		code,
-		timezone,
 		originUrl,
 	}: CreateWith3rdPartyProviderInput): Promise<AuthOutput> {
 		const { scopes, ...providerTokens } = await this.googleAdapter
@@ -144,7 +142,6 @@ export class AuthService extends AuthUseCase {
 		} else {
 			account = await this.authRepository.create({
 				email: providerData.email,
-				timezone,
 				google: {
 					id: providerData.id,
 					accessToken: providerTokens.accessToken,
@@ -158,7 +155,6 @@ export class AuthService extends AuthUseCase {
 
 		return this.genAuthOutput({
 			accountId: account.id,
-			timezone,
 			isFirstAccess,
 			refresh: true,
 		});
@@ -175,7 +171,6 @@ export class AuthService extends AuthUseCase {
 		if (!account) {
 			account = await this.authRepository.create({
 				email: i.email,
-				timezone: i.timezone,
 			});
 
 			isFirstAccess = true;
@@ -207,7 +202,6 @@ export class AuthService extends AuthUseCase {
 		if (!account) {
 			account = await this.authRepository.create({
 				phone: i.phone,
-				timezone: i.timezone,
 			});
 
 			isFirstAccess = true;
@@ -243,7 +237,6 @@ export class AuthService extends AuthUseCase {
 
 		return this.genAuthOutput({
 			accountId: magicLinkCode.accountId,
-			timezone: magicLinkCode.account.config.timezone,
 			isFirstAccess: magicLinkCode.isFirstAccess,
 			refresh: true,
 		});
@@ -263,7 +256,6 @@ export class AuthService extends AuthUseCase {
 		const { isFirstAccess: _, ...authOutput } = await this.genAuthOutput({
 			accountId: refreshTokenData.accountId,
 			isFirstAccess: false,
-			timezone: refreshTokenData.account.config.timezone,
 		});
 
 		return authOutput;
@@ -273,7 +265,6 @@ export class AuthService extends AuthUseCase {
 
 	private async genAuthOutput({
 		accountId,
-		timezone,
 		isFirstAccess,
 		refresh,
 	}: GenTokensInput): Promise<AuthOutput> {
@@ -303,7 +294,6 @@ export class AuthService extends AuthUseCase {
 		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
 			accountId: accountId,
 			hasAcceptedLatestTerms,
-			timezone,
 		});
 
 		return {

@@ -46,7 +46,6 @@ export class AuthRepositoryService extends AuthRepository {
 			config: {
 				create: {
 					accountId,
-					timezone: i.timezone,
 				},
 			},
 		};

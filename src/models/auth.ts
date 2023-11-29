@@ -2,7 +2,6 @@ import type {
 	Account,
 	SignInProvider,
 	SignInProviderEnum,
-	TimezoneEnum,
 } from '@prisma/client';
 
 /**
@@ -15,15 +14,12 @@ import type {
 
 export interface CreateWithEmail {
 	email: string;
-	timezone: TimezoneEnum;
 }
 export interface CreateWithPhone {
 	phone: string;
-	timezone: TimezoneEnum;
 }
 export interface CreateWithGoogle {
 	email: string;
-	timezone: TimezoneEnum;
 	google: {
 		id: string;
 		accessToken: string;
@@ -113,17 +109,14 @@ export interface RefreshOutput {
 export interface CreateWith3rdPartyProviderInput {
 	code: string;
 	originUrl?: string;
-	timezone: TimezoneEnum;
 }
 
 export interface CreateWithEmailProviderInput {
 	email: string;
-	timezone: TimezoneEnum;
 }
 
 export interface CreateWithPhoneProviderInput {
 	phone: string;
-	timezone: TimezoneEnum;
 }
 
 export interface ExchangeCodeInput {

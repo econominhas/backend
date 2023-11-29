@@ -22,7 +22,6 @@ export const UserData = createParamDecorator(
 		return {
 			accountId: payload.sub,
 			hasAcceptedLatestTerms: payload.terms,
-			timezone: payload.tz,
 		};
 	},
 );

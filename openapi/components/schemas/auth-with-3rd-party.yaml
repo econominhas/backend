@@ -2,8 +2,6 @@ type: object
 title: Auth with Third Party Provider
 required:
   - code
-  - originUrl
-  - timezone
 properties:
   code:
     description: Code returned by the auth provider
@@ -16,5 +14,3 @@ properties:
     format: url
     examples:
       - https://example.com/google
-  timezone:
-    $ref: ../fields/timezone.yaml

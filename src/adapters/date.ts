@@ -1,4 +1,4 @@
-import type { TimezoneEnum } from '@prisma/client';
+import type { TimezoneEnum } from 'src/types/enums';
 
 export interface GetTodayInfoOutput {
 	day: number;
@@ -7,5 +7,5 @@ export interface GetTodayInfoOutput {
 }
 
 export abstract class DateAdapter {
-	abstract getTodayInfo(timezone: TimezoneEnum): GetTodayInfoOutput;
+	abstract getTodayInfo(timezone?: TimezoneEnum): GetTodayInfoOutput;
 }

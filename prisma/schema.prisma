@@ -25,27 +25,6 @@ datasource db {
 //
 //
 
-enum TimezoneEnum {
-  AmericaAraguaina    @map("America/Araguaina") /// '-03:00'
-  AmericaBahia        @map("America/Bahia") /// '-03:00'
-  AmericaBelem        @map("America/Belem") /// '-03:00'
-  AmericaBoa_Vista    @map("America/Boa_Vista") /// '-04:00'
-  AmericaCampo_Grande @map("America/Campo_Grande") /// '-04:00'
-  AmericaCuiaba       @map("America/Cuiaba") /// '-04:00'
-  AmericaEirunepe     @map("America/Eirunepe") /// '-05:00'
-  AmericaFortaleza    @map("America/Fortaleza") /// '-03:00'
-  AmericaMaceio       @map("America/Maceio") /// '-03:00'
-  AmericaManaus       @map("America/Manaus") /// '-04:00'
-  AmericaNoronha      @map("America/Noronha") /// '-02:00'
-  AmericaPorto_Velho  @map("America/Porto_Velho") /// '-04:00'
-  AmericaRecife       @map("America/Recife") /// '-03:00'
-  AmericaRio_Branco   @map("America/Rio_Branco") /// '-05:00'
-  AmericaSantarem     @map("America/Santarem") /// '-03:00'
-  AmericaSao_Paulo    @map("America/Sao_Paulo") /// '-03:00'
-
-  @@map("timezone_enum")
-}
-
 enum SignInProviderEnum {
   GOOGLE
 
@@ -92,11 +71,10 @@ model SignInProvider {
 
 /// Contains user's account config
 model Config {
-  accountId       String       @id @map("account_id") @db.Char(16)
-  name            String?      @db.VarChar(20)
-  timezone        TimezoneEnum
-  currentBudgetId String?      @unique @map("current_budget_id") @db.Char(16)
-  salaryId        String?      @unique @map("salary_id") @db.Char(16)
+  accountId       String  @id @map("account_id") @db.Char(16)
+  name            String? @db.VarChar(20)
+  currentBudgetId String? @unique @map("current_budget_id") @db.Char(16)
+  salaryId        String? @unique @map("salary_id") @db.Char(16)
 
   account       Account?
   currentBudget Budget?               @relation(fields: [currentBudgetId], references: [id])

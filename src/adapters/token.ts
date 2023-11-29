@@ -1,15 +1,11 @@
-import type { TimezoneEnum } from '@prisma/client';
-
 export interface TokenPayload {
 	sub: string; // Account ID
 	terms: boolean; // Tells if the user accepted the latest terms and policies
-	tz: TimezoneEnum; // User's timezone
 }
 
 export interface UserData {
 	accountId: string;
 	hasAcceptedLatestTerms: boolean;
-	timezone: TimezoneEnum;
 }
 
 export type GenAccessInput = UserData;

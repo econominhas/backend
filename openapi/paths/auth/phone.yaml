@@ -13,14 +13,11 @@ post:
           title: Auth with phone number
           required:
             - phone
-            - timezone
           properties:
             phone:
               $ref: ../../components/fields/phone.yaml
-            timezone:
-              $ref: ../../components/fields/timezone.yaml
     required: true
   responses:
-    '204':
+    "204":
       description: |
         A magic link was sent to the user's phone

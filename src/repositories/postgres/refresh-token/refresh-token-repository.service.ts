@@ -37,17 +37,6 @@ export class RefreshTokenRepositoryService extends RefreshTokenRepository {
 		refreshToken,
 	}: GetByTokenInput): Promise<GetByTokenOutput | undefined> {
 		return this.refreshTokenRepository.findUnique({
-			include: {
-				account: {
-					include: {
-						config: {
-							select: {
-								timezone: true,
-							},
-						},
-					},
-				},
-			},
 			where: {
 				refreshToken,
 			},

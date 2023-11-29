@@ -1,4 +1,4 @@
-import type { MagicLinkCode, TimezoneEnum } from '@prisma/client';
+import type { MagicLinkCode } from '@prisma/client';
 
 /**
  *
@@ -18,13 +18,7 @@ export interface GetInput {
 	code: string;
 }
 
-export interface GetOutput extends MagicLinkCode {
-	account: {
-		config: {
-			timezone: TimezoneEnum;
-		};
-	};
-}
+export type GetOutput = MagicLinkCode;
 
 export abstract class MagicLinkCodeRepository {
 	abstract upsert(i: UpsertInput): Promise<MagicLinkCode>;
