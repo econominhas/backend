@@ -4,17 +4,23 @@ import type {
 	GenAccessOutput,
 	GenRefreshOutput,
 	TokenPayload,
+	ValidateAccessInput,
 } from '../../token';
 import { TokensAdapter } from '../../token';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { SecretAdapter } from 'src/adapters/secret';
 import { UIDAdapterService } from '../uid/uid.service';
+import { AppConfig } from 'src/config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JWTAdapterService extends TokensAdapter {
 	constructor(
 		@Inject(UIDAdapterService)
 		protected readonly secretAdapter: SecretAdapter,
+
+		@Inject(ConfigService)
+		protected readonly config: AppConfig,
 	) {
 		super();
 	}
@@ -30,12 +36,25 @@ export class JWTAdapterService extends TokensAdapter {
 
 		const expiresAt = '';
 
-		const accessToken = sign(payload, process.env['JWT_SECRET']);
+		const accessToken = sign(payload, this.config.get('JWT_SECRET'));
 
 		return {
 			accessToken,
 			expiresAt,
 		};
+	}
+
+	validateAccess({ accessToken }: ValidateAccessInput): TokenPayload {
+		try {
+			const payload = verify(
+				accessToken,
+				this.config.get('JWT_SECRET'),
+			) as TokenPayload;
+
+			return payload;
+		} catch {
+			return;
+		}
 	}
 
 	genRefresh(): GenRefreshOutput {

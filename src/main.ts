@@ -2,8 +2,10 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
-import 'reflect-metadata';
 import { AuthGuard } from './delivery/guards/auth.guard';
+import { JWTAdapterService } from './adapters/implementations/jwt/token.service';
+
+import 'reflect-metadata';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -19,7 +21,8 @@ async function bootstrap() {
 	);
 
 	const reflector = app.get(Reflector);
-	app.useGlobalGuards(new AuthGuard(reflector));
+	const tokenAdapter = app.get(JWTAdapterService);
+	app.useGlobalGuards(new AuthGuard(reflector, tokenAdapter));
 
 	app.enableShutdownHooks();
 

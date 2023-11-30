@@ -1,13 +1,16 @@
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { verify } from 'jsonwebtoken';
-import type { TokenPayload } from 'src/adapters/token';
+import { TokensAdapter } from 'src/adapters/token';
 import { SetMetadata } from '@nestjs/common';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-	constructor(private readonly reflector: Reflector) {}
+	constructor(
+		private readonly reflector: Reflector,
+
+		private readonly tokenAdapter: TokensAdapter,
+	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const isPublic = this.reflector.get<boolean>(
@@ -26,7 +29,11 @@ export class AuthGuard implements CanActivate {
 		}
 
 		try {
-			const payload = verify(token, process.env['JWT_SECRET']!) as TokenPayload;
+			const payload = this.tokenAdapter.validateAccess(token);
+
+			if (!payload) {
+				return false;
+			}
 
 			const ignoreTermsCheck = this.reflector.get<boolean>(
 				'ignoreTermsCheck',

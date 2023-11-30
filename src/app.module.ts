@@ -10,9 +10,15 @@ import { AuthModule } from './usecases/auth/auth.module';
 import { RecurrentTransactionModule } from './usecases/recurrent-transaction/recurrent-transaction.module';
 import { WalletModule } from './usecases/wallet/wallet.module';
 import { TransactionModule } from './usecases/transaction/transaction.module';
+import { ConfigModule } from '@nestjs/config';
+import { validateConfig } from './config';
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({
+			validate: validateConfig,
+			isGlobal: true,
+		}),
 		PostgresModule.forRoot(),
 		AuthModule,
 		AccountModule,

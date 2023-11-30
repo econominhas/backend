@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { FileAdapter } from '../../file';
 import type { GetInput, SaveInput } from '../../file';
 import {
@@ -7,22 +7,27 @@ import {
 	S3Client,
 } from '@aws-sdk/client-s3';
 import type { Readable } from 'stream';
+import { AppConfig } from 'src/config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class S3AdapterService extends FileAdapter {
 	private client: S3Client;
 
-	constructor() {
+	constructor(
+		@Inject(ConfigService)
+		protected readonly config: AppConfig,
+	) {
 		super();
 
 		this.client = new S3Client({
-			endpoint: process.env['AWS_ENDPOINT'],
-			region: process.env['AWS_DEFAULT_REGION'],
+			endpoint: this.config.get('AWS_ENDPOINT'),
+			region: this.config.get('AWS_DEFAULT_REGION'),
 			credentials: {
-				secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'],
-				accessKeyId: process.env['AWS_ACCESS_KEY_ID'],
+				secretAccessKey: this.config.get('AWS_SECRET_ACCESS_KEY'),
+				accessKeyId: this.config.get('AWS_ACCESS_KEY_ID'),
 			},
-			forcePathStyle: process.env['NODE_ENV'] !== 'production',
+			forcePathStyle: this.config.get('NODE_ENV') !== 'production',
 		});
 	}
 

@@ -7,6 +7,8 @@ import type {
 import { GoogleAdapter } from '../../google';
 import { DateAdapter } from 'src/adapters/date';
 import { DayjsAdapterService } from '../dayjs/dayjs.service';
+import { AppConfig } from 'src/config';
+import { ConfigService } from '@nestjs/config';
 
 interface ExchangeCodeAPIOutput {
 	access_token: string;
@@ -28,6 +30,9 @@ export class GoogleAdapterService extends GoogleAdapter {
 	constructor(
 		@Inject(DayjsAdapterService)
 		protected readonly dateAdapter: DateAdapter,
+
+		@Inject(ConfigService)
+		protected readonly config: AppConfig,
 	) {
 		super();
 	}
@@ -37,8 +42,8 @@ export class GoogleAdapterService extends GoogleAdapter {
 		originUrl,
 	}: ExchangeCodeInput): Promise<ExchangeCodeOutput> {
 		const body = new URLSearchParams();
-		body.append('client_id', process.env['GOOGLE_CLIENT_ID']!);
-		body.append('client_secret', process.env['GOOGLE_CLIENT_SECRET']!);
+		body.append('client_id', this.config.get('GOOGLE_CLIENT_ID'));
+		body.append('client_secret', this.config.get('GOOGLE_CLIENT_SECRET'));
 		body.append('grant_type', 'authorization_code');
 		body.append('code', code);
 		if (originUrl) {

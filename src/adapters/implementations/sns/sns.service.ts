@@ -1,27 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { SMS_TEMPLATES, SmsAdapter } from '../../sms';
 import type { SendInput } from '../../sms';
+import { AppConfig } from 'src/config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SNSAdapterService extends SmsAdapter {
-	private defaultPlaceholders: Record<string, string> = {
-		frontEndUrl: process.env['FRONT_URL'],
-	};
+	private defaultPlaceholders: Record<string, string>;
 
 	private client: SNSClient;
 
-	constructor() {
+	constructor(
+		@Inject(ConfigService)
+		protected config: AppConfig,
+	) {
 		super();
 
 		this.client = new SNSClient({
-			endpoint: process.env['AWS_ENDPOINT'],
-			region: process.env['AWS_DEFAULT_REGION'],
+			endpoint: this.config.get('AWS_ENDPOINT'),
+			region: this.config.get('AWS_DEFAULT_REGION'),
 			credentials: {
-				secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'],
-				accessKeyId: process.env['AWS_ACCESS_KEY_ID'],
+				secretAccessKey: this.config.get('AWS_SECRET_ACCESS_KEY'),
+				accessKeyId: this.config.get('AWS_ACCESS_KEY_ID'),
 			},
 		});
+
+		this.defaultPlaceholders = {
+			frontEndUrl: this.config.get('FRONT_URL'),
+		};
 	}
 
 	async send({

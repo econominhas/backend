@@ -15,12 +15,18 @@ export interface GenAccessOutput {
 	expiresAt: string; // ISO date
 }
 
+export interface ValidateAccessInput {
+	accessToken: string;
+}
+
 export interface GenRefreshOutput {
 	refreshToken: string;
 }
 
 export abstract class TokensAdapter {
 	abstract genAccess(i: GenAccessInput): GenAccessOutput;
+
+	abstract validateAccess(i: ValidateAccessInput): TokenPayload | undefined;
 
 	abstract genRefresh(): GenRefreshOutput;
 }
