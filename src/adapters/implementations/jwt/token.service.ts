@@ -1,16 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type {
 	GenAccessInput,
 	GenAccessOutput,
 	GenRefreshOutput,
 	TokenPayload,
-} from '../token';
-import { AuthTokensAdapter } from '../token';
+} from '../../token';
+import { TokensAdapter } from '../../token';
 import { sign } from 'jsonwebtoken';
-import { uid } from 'uid/single';
+import { SecretAdapter } from 'src/adapters/secret';
+import { UIDAdapterService } from '../uid/uid.service';
 
 @Injectable()
-export class JwtUidTokenAdapter extends AuthTokensAdapter {
+export class JWTAdapterService extends TokensAdapter {
+	constructor(
+		@Inject(UIDAdapterService)
+		protected readonly secretAdapter: SecretAdapter,
+	) {
+		super();
+	}
+
 	genAccess({
 		accountId,
 		hasAcceptedLatestTerms,
@@ -32,7 +40,7 @@ export class JwtUidTokenAdapter extends AuthTokensAdapter {
 
 	genRefresh(): GenRefreshOutput {
 		return {
-			refreshToken: uid(64),
+			refreshToken: this.secretAdapter.genSuperSecret(),
 		};
 	}
 }

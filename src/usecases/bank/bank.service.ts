@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { BankAccount, BankProvider } from '@prisma/client';
-import { UtilsAdapterImplementation } from 'src/adapters/implementations/utils.service';
+import { UtilsAdapterService } from 'src/adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'src/adapters/utils';
 import type { CreateInput } from 'src/models/bank';
 import { BankUseCase } from 'src/models/bank';
@@ -14,7 +14,7 @@ export class BankService extends BankUseCase {
 		@Inject(BankRepositoryService)
 		private readonly bankRepository: BankRepositoryService,
 
-		@Inject(UtilsAdapterImplementation)
+		@Inject(UtilsAdapterService)
 		private readonly utilsAdapter: UtilsAdapter,
 	) {
 		super();

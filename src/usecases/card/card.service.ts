@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import type { CardProvider } from '@prisma/client';
 import { CardTypeEnum } from '@prisma/client';
-import { UtilsAdapterImplementation } from 'src/adapters/implementations/utils.service';
+import { UtilsAdapterService } from 'src/adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'src/adapters/utils';
 import type { CreateInput } from 'src/models/card';
 import { CardRepository, CardUseCase } from 'src/models/card';
@@ -19,7 +19,7 @@ export class CardService extends CardUseCase {
 		@Inject(CardRepositoryService)
 		private readonly cardRepository: CardRepository,
 
-		@Inject(UtilsAdapterImplementation)
+		@Inject(UtilsAdapterService)
 		private readonly utilsAdapter: UtilsAdapter,
 	) {
 		super();

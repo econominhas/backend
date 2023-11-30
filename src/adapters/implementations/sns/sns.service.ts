@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
-import { SMS_TEMPLATES, SmsAdapter } from '../sms';
-import type { SendInput } from '../sms';
+import { SMS_TEMPLATES, SmsAdapter } from '../../sms';
+import type { SendInput } from '../../sms';
 
 @Injectable()
-export class SNSAdapter extends SmsAdapter {
+export class SNSAdapterService extends SmsAdapter {
 	private defaultPlaceholders: Record<string, string> = {
 		frontEndUrl: process.env['FRONT_URL'],
 	};

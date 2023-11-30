@@ -4,7 +4,7 @@ import type { RecurrentTransaction } from '@prisma/client';
 import type { CreateInput } from 'src/models/recurrent-transaction';
 import { RecurrentTransactionRepository } from 'src/models/recurrent-transaction';
 import { IdAdapter } from 'src/adapters/id';
-import { UIDAdapter } from 'src/adapters/implementations/uid.service';
+import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class RecurrentTransactionRepositoryService extends RecurrentTransactionRepository {
@@ -12,7 +12,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 		@InjectRepository('recurrentTransaction')
 		private readonly recurrentTransactionRepository: Repository<'recurrentTransaction'>,
 
-		@Inject(UIDAdapter)
+		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MagicLinkCodeRepositoryService } from './magic-link-code-repository.service';
 import { PostgresModule } from '..';
-import { UIDAdapter } from 'src/adapters/implementations/uid.service';
+import { UIDAdapterModule } from 'src/adapters/implementations/uid/uid.module';
 
 @Module({
-	imports: [PostgresModule.forFeature(['magicLinkCode'])],
-	providers: [MagicLinkCodeRepositoryService, UIDAdapter],
+	imports: [PostgresModule.forFeature(['magicLinkCode']), UIDAdapterModule],
+	providers: [MagicLinkCodeRepositoryService],
 	exports: [MagicLinkCodeRepositoryService],
 })
 export class MagicLinkCodeRepositoryModule {}

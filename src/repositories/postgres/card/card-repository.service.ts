@@ -16,8 +16,8 @@ import type {
 import { CardRepository } from 'src/models/card';
 import type { Card, CardProvider } from '@prisma/client';
 import { CardTypeEnum } from '@prisma/client';
-import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import { IdAdapter } from 'src/adapters/id';
+import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class CardRepositoryService extends CardRepository {
@@ -29,7 +29,7 @@ export class CardRepositoryService extends CardRepository {
 		@InjectRaw()
 		private readonly rawPostgres: RawPostgres,
 
-		@Inject(UIDAdapter)
+		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

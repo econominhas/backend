@@ -8,7 +8,7 @@ import { MagicLinkCodeRepository } from 'src/models/magic-link-code';
 import { InjectRepository, Repository } from '..';
 import type { MagicLinkCode } from '@prisma/client';
 import { SecretAdapter } from 'src/adapters/secret';
-import { UIDAdapter } from 'src/adapters/implementations/uid.service';
+import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
@@ -16,7 +16,7 @@ export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
 		@InjectRepository('magicLinkCode')
 		private readonly magicLinkCodeRepository: Repository<'magicLinkCode'>,
 
-		@Inject(UIDAdapter)
+		@Inject(UIDAdapterService)
 		private readonly secretAdapter: SecretAdapter,
 	) {
 		super();

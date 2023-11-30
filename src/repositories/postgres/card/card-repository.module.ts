@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { PostgresModule } from '..';
 import { CardRepositoryService } from './card-repository.service';
-import { UIDAdapter } from 'src/adapters/implementations/uid.service';
+import { UIDAdapterModule } from 'src/adapters/implementations/uid/uid.module';
 
 @Module({
 	imports: [
 		PostgresModule.forFeature(['cardProvider', 'card']),
 		PostgresModule.raw(),
+		UIDAdapterModule,
 	],
-	providers: [CardRepositoryService, UIDAdapter],
+	providers: [CardRepositoryService],
 	exports: [CardRepositoryService],
 })
 export class CardRepositoryModule {}

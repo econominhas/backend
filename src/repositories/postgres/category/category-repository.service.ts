@@ -4,8 +4,8 @@ import type { Category, DefaultCategory } from '@prisma/client';
 import type { CreateManyInput, GetAllByUserInput } from 'src/models/category';
 import { CategoryRepository } from 'src/models/category';
 import type { PaginatedRepository } from 'src/types/paginated-items';
-import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import { IdAdapter } from 'src/adapters/id';
+import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class CategoryRepositoryService extends CategoryRepository {
@@ -15,7 +15,7 @@ export class CategoryRepositoryService extends CategoryRepository {
 		@InjectRepository('category')
 		private readonly categoryRepository: Repository<'category'>,
 
-		@Inject(UIDAdapter)
+		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

@@ -5,7 +5,6 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import { JwtUidTokenAdapter } from 'src/adapters/implementations/token.service';
 import type {
 	AuthOutput,
 	CreateWith3rdPartyProviderInput,
@@ -16,10 +15,8 @@ import type {
 	RefreshTokenInput,
 } from 'src/models/auth';
 import { AuthRepository } from 'src/models/auth';
-import { SESAdapter } from 'src/adapters/implementations/ses.service';
 import { MagicLinkCodeRepositoryService } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.service';
 import { RefreshTokenRepositoryService } from 'src/repositories/postgres/refresh-token/refresh-token-repository.service';
-import { FetchGoogleAdapter } from 'src/adapters/implementations/google.service';
 import type { Account } from '@prisma/client';
 import { SignInProviderEnum } from '@prisma/client';
 import { TermsAndPoliciesService } from '../terms-and-policies/terms-and-policies.service';
@@ -29,10 +26,13 @@ import { TermsAndPoliciesUseCase } from 'src/models/terms-and-policies';
 import { MagicLinkCodeRepository } from 'src/models/magic-link-code';
 import { RefreshTokenRepository } from 'src/models/refresh-token';
 import { GoogleAdapter } from 'src/adapters/google';
-import { AuthTokensAdapter } from 'src/adapters/token';
+import { TokensAdapter } from 'src/adapters/token';
 import { EmailAdapter } from 'src/adapters/email';
 import { SmsAdapter } from 'src/adapters/sms';
-import { SNSAdapter } from 'src/adapters/implementations/sns.service';
+import { GoogleAdapterService } from 'src/adapters/implementations/google/google.service';
+import { JWTAdapterService } from 'src/adapters/implementations/jwt/token.service';
+import { SESAdapterService } from 'src/adapters/implementations/ses/ses.service';
+import { SNSAdapterService } from 'src/adapters/implementations/sns/sns.service';
 
 interface GenTokensInput {
 	accountId: string;
@@ -55,13 +55,13 @@ export class AuthService extends AuthUseCase {
 		@Inject(TermsAndPoliciesService)
 		private readonly termsAndPoliciesService: TermsAndPoliciesUseCase,
 
-		@Inject(FetchGoogleAdapter)
+		@Inject(GoogleAdapterService)
 		private readonly googleAdapter: GoogleAdapter,
-		@Inject(JwtUidTokenAdapter)
-		private readonly tokenAdapter: AuthTokensAdapter,
-		@Inject(SESAdapter)
+		@Inject(JWTAdapterService)
+		private readonly tokenAdapter: TokensAdapter,
+		@Inject(SESAdapterService)
 		private readonly emailAdapter: EmailAdapter,
-		@Inject(SNSAdapter)
+		@Inject(SNSAdapterService)
 		private readonly smsAdapter: SmsAdapter,
 	) {
 		super();

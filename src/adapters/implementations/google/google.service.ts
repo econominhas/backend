@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type {
 	ExchangeCodeInput,
 	ExchangeCodeOutput,
 	GetAuthenticatedUserDataOutput,
-} from '../google';
-import { GoogleAdapter } from '../google';
+} from '../../google';
+import { GoogleAdapter } from '../../google';
+import { DateAdapter } from 'src/adapters/date';
+import { DayjsAdapterService } from '../dayjs/dayjs.service';
 
 interface ExchangeCodeAPIOutput {
 	access_token: string;
@@ -22,8 +24,11 @@ interface GetUserDataAPIOutput {
 }
 
 @Injectable()
-export class FetchGoogleAdapter extends GoogleAdapter {
-	public constructor() {
+export class GoogleAdapterService extends GoogleAdapter {
+	constructor(
+		@Inject(DayjsAdapterService)
+		protected readonly dateAdapter: DateAdapter,
+	) {
 		super();
 	}
 
@@ -56,7 +61,7 @@ export class FetchGoogleAdapter extends GoogleAdapter {
 			refreshToken: result.refresh_token,
 			scopes: result.scope.split(' '),
 			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-			expiresAt: new Date(Date.now() + (result.expires_in - 60) * 1000),
+			expiresAt: this.dateAdapter.nowPlus(result.expires_in - 60, 'seconds'),
 		};
 	}
 

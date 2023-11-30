@@ -1,10 +1,10 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { Injectable } from '@nestjs/common';
-import type { SendInput } from '../email';
-import { EMAIL_TEMPLATES, EmailAdapter } from '../email';
+import type { SendInput } from '../../email';
+import { EMAIL_TEMPLATES, EmailAdapter } from '../../email';
 
 @Injectable()
-export class SESAdapter extends EmailAdapter {
+export class SESAdapterService extends EmailAdapter {
 	private defaultPlaceholders: Record<string, string> = {
 		frontEndUrl: process.env['FRONT_URL'],
 	};

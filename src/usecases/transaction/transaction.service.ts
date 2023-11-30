@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UtilsAdapterImplementation } from 'src/adapters/implementations/utils.service';
+import { UtilsAdapterService } from 'src/adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'src/adapters/utils';
 import type { GetByBudgetOutput, GetListInput } from 'src/models/transaction';
 import {
@@ -15,7 +15,7 @@ export class TransactionService extends TransactionUseCase {
 		@Inject(TransactionRepositoryService)
 		private readonly transactionRepository: TransactionRepository,
 
-		@Inject(UtilsAdapterImplementation)
+		@Inject(UtilsAdapterService)
 		private readonly utilsAdapter: UtilsAdapter,
 	) {
 		super();

@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtUidTokenAdapter } from 'src/adapters/implementations/token.service';
 import { AuthController } from 'src/delivery/auth.controller';
-import { FetchGoogleAdapter } from 'src/adapters/implementations/google.service';
-import { SESAdapter } from 'src/adapters/implementations/ses.service';
 import { TermsAndPoliciesModule } from '../terms-and-policies/terms-and-policies.module';
 import { MagicLinkCodeRepositoryModule } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.module';
 import { RefreshTokenRepositoryModule } from 'src/repositories/postgres/refresh-token/refresh-token-repository.module';
 import { AuthRepositoryModule } from 'src/repositories/postgres/auth/auth-repository.module';
-import { SNSAdapter } from 'src/adapters/implementations/sns.service';
+import { GoogleAdapterModule } from 'src/adapters/implementations/google/google.module';
+import { JWTAdapterModule } from 'src/adapters/implementations/jwt/token.module';
+import { SESAdapterModule } from 'src/adapters/implementations/ses/ses.module';
+import { SNSAdapterModule } from 'src/adapters/implementations/sns/sns.module';
 
 @Module({
 	controllers: [AuthController],
@@ -17,14 +17,13 @@ import { SNSAdapter } from 'src/adapters/implementations/sns.service';
 		MagicLinkCodeRepositoryModule,
 		RefreshTokenRepositoryModule,
 
+		GoogleAdapterModule,
+		JWTAdapterModule,
+		SESAdapterModule,
+		SNSAdapterModule,
+
 		TermsAndPoliciesModule,
 	],
-	providers: [
-		AuthService,
-		FetchGoogleAdapter,
-		JwtUidTokenAdapter,
-		SESAdapter,
-		SNSAdapter,
-	],
+	providers: [AuthService],
 })
 export class AuthModule {}

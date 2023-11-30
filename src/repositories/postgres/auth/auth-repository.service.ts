@@ -15,12 +15,12 @@ import type {
 	UpdateProviderInput,
 	GetManyByProviderOutput,
 } from 'src/models/auth';
-import { UIDAdapter } from 'src/adapters/implementations/uid.service';
 import { InjectRepository, Repository } from '..';
 import type { Account, Prisma } from '@prisma/client';
 import { SignInProviderEnum } from '@prisma/client';
 import { AuthRepository } from 'src/models/auth';
 import { IdAdapter } from 'src/adapters/id';
+import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class AuthRepositoryService extends AuthRepository {
@@ -30,7 +30,7 @@ export class AuthRepositoryService extends AuthRepository {
 		@InjectRepository('signInProvider')
 		private readonly signInProviderRepository: Repository<'signInProvider'>,
 
-		@Inject(UIDAdapter)
+		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

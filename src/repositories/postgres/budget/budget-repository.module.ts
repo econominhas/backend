@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PostgresModule } from '..';
 import { BudgetRepositoryService } from './budget-repository.service';
-import { UIDAdapter } from 'src/adapters/implementations/uid.service';
+import { UIDAdapterModule } from 'src/adapters/implementations/uid/uid.module';
 
 @Module({
-	imports: [PostgresModule.forFeature(['budget'])],
-	providers: [BudgetRepositoryService, UIDAdapter],
+	imports: [PostgresModule.forFeature(['budget']), UIDAdapterModule],
+	providers: [BudgetRepositoryService],
 	exports: [BudgetRepositoryService],
 })
 export class BudgetRepositoryModule {}
