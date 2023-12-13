@@ -3,12 +3,12 @@ import type {
 	CreateInput,
 	GetByTokenInput,
 	GetByTokenOutput,
-} from 'src/models/refresh-token';
-import { RefreshTokenRepository } from 'src/models/refresh-token';
+} from 'models/refresh-token';
+import { RefreshTokenRepository } from 'models/refresh-token';
 import { InjectRepository, Repository } from '..';
 import type { RefreshToken } from '@prisma/client';
-import { TokensAdapter } from 'src/adapters/token';
-import { JWTAdapterService } from 'src/adapters/implementations/jwt/token.service';
+import { TokensAdapter } from 'adapters/token';
+import { JWTAdapterService } from 'adapters/implementations/jwt/token.service';
 
 @Injectable()
 export class RefreshTokenRepositoryService extends RefreshTokenRepository {

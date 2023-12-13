@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { UserDataDto } from './dtos';
 import { UserData } from './decorators/user-data';
-import { BudgetService } from 'src/usecases/budget/budget.service';
+import { BudgetService } from 'usecases/budget/budget.service';
 import { CreateBasicDto, CreateDto, OverviewDtoDto } from './dtos/budget';
-import { BudgetUseCase } from 'src/models/budget';
+import { BudgetUseCase } from 'models/budget';
 
 @Controller('budgets')
 export class BudgetController {

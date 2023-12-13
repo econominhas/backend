@@ -1,4 +1,4 @@
-import { AccountRepositoryService } from 'src/repositories/postgres/account/account-repository.service';
+import { AccountRepositoryService } from 'repositories/postgres/account/account-repository.service';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import type {
 	IamInput,
@@ -6,8 +6,8 @@ import type {
 	SetBudgetInput,
 	SetSalaryInput,
 	UpdateNameInput,
-} from 'src/models/account';
-import { AccountUseCase } from 'src/models/account';
+} from 'models/account';
+import { AccountUseCase } from 'models/account';
 import { SignInProviderEnum } from '@prisma/client';
 
 @Injectable()

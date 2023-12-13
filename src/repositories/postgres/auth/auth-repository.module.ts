@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthRepositoryService } from './auth-repository.service';
 import { PostgresModule } from '..';
-import { UIDAdapterModule } from 'src/adapters/implementations/uid/uid.module';
+import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
 
 @Module({
 	imports: [

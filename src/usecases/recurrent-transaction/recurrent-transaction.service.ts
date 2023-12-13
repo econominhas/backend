@@ -7,12 +7,12 @@ import {
 	TransactionTypeEnum,
 } from '@prisma/client';
 
-import type { CreateSalaryInput } from 'src/models/recurrent-transaction';
+import type { CreateSalaryInput } from 'models/recurrent-transaction';
 import {
 	RecurrentTransactionRepository,
 	RecurrentTransactionUseCase,
-} from 'src/models/recurrent-transaction';
-import { RecurrentTransactionRepositoryService } from 'src/repositories/postgres/recurrent-transaction/recurrent-transaction-repository.service';
+} from 'models/recurrent-transaction';
+import { RecurrentTransactionRepositoryService } from 'repositories/postgres/recurrent-transaction/recurrent-transaction-repository.service';
 
 @Injectable()
 export class RecurrentTransactionService extends RecurrentTransactionUseCase {

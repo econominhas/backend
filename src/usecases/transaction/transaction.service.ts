@@ -1,13 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UtilsAdapterService } from 'src/adapters/implementations/utils/utils.service';
-import { UtilsAdapter } from 'src/adapters/utils';
-import type { GetByBudgetOutput, GetListInput } from 'src/models/transaction';
-import {
-	TransactionRepository,
-	TransactionUseCase,
-} from 'src/models/transaction';
-import { TransactionRepositoryService } from 'src/repositories/postgres/transaction/transaction-repository.service';
-import type { PaginatedItems } from 'src/types/paginated-items';
+import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
+import { UtilsAdapter } from 'adapters/utils';
+import type { GetByBudgetOutput, GetListInput } from 'models/transaction';
+import { TransactionRepository, TransactionUseCase } from 'models/transaction';
+import { TransactionRepositoryService } from 'repositories/postgres/transaction/transaction-repository.service';
+import type { PaginatedItems } from 'types/paginated-items';
 
 @Injectable()
 export class TransactionService extends TransactionUseCase {

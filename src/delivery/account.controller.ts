@@ -7,12 +7,12 @@ import {
 	Inject,
 	Patch,
 } from '@nestjs/common';
-import { AccountService } from 'src/usecases/account/account.service';
+import { AccountService } from 'usecases/account/account.service';
 import { IgnoreTermsCheck } from './guards/auth.guard';
 import { UserData } from './decorators/user-data';
 import { NameDto } from './dtos/account';
 import { UserDataDto } from './dtos';
-import { AccountUseCase } from 'src/models/account';
+import { AccountUseCase } from 'models/account';
 
 @Controller('accounts')
 export class AccountController {

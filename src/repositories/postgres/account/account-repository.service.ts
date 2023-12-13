@@ -4,8 +4,8 @@ import type {
 	GetByIdWithProvidersInput,
 	GetByIdWithProvidersOutput,
 	UpdateConfigInput,
-} from 'src/models/account';
-import { AccountRepository } from 'src/models/account';
+} from 'models/account';
+import { AccountRepository } from 'models/account';
 import { InjectRepository, Repository } from '..';
 import type { Account } from '@prisma/client';
 

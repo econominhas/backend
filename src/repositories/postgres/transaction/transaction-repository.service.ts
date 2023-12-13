@@ -5,8 +5,8 @@ import type {
 	GetByBudgetOutput,
 	GetMonthlyAmountByCategoryInput,
 	GetMonthlyAmountByCategoryOutput,
-} from 'src/models/transaction';
-import { TransactionRepository } from 'src/models/transaction';
+} from 'models/transaction';
+import { TransactionRepository } from 'models/transaction';
 
 @Injectable()
 export class TransactionRepositoryService extends TransactionRepository {

@@ -6,18 +6,18 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectRaw, InjectRepository, RawPostgres, Repository } from '..';
-import type { PaginatedRepository } from 'src/types/paginated-items';
+import type { PaginatedRepository } from 'types/paginated-items';
 import type {
 	CreateInput,
 	GetBalanceByUserInput,
 	GetBalanceByUserOutput,
 	GetProviderInput,
-} from 'src/models/card';
-import { CardRepository } from 'src/models/card';
+} from 'models/card';
+import { CardRepository } from 'models/card';
 import type { Card, CardProvider } from '@prisma/client';
 import { CardTypeEnum } from '@prisma/client';
-import { IdAdapter } from 'src/adapters/id';
-import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
+import { IdAdapter } from 'adapters/id';
+import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class CardRepositoryService extends CardRepository {

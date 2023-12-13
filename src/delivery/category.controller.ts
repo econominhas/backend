@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
-import { CategoryService } from 'src/usecases/category/category.service';
+import { CategoryService } from 'usecases/category/category.service';
 import { PaginatedDto, UserDataDto } from './dtos';
 import { UserData } from './decorators/user-data';
 import { CreateManyDto } from './dtos/category';
-import { CategoryUseCase } from 'src/models/category';
+import { CategoryUseCase } from 'models/category';
 
 @Controller('categories')
 export class CategoryController {

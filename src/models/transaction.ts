@@ -11,7 +11,7 @@ import type {
 	Paginated,
 	PaginatedItems,
 	PaginatedRepository,
-} from 'src/types/paginated-items';
+} from 'types/paginated-items';
 
 export interface GetMonthlyAmountByCategoryInput {
 	accountId: string;

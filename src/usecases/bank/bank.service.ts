@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { BankAccount, BankProvider } from '@prisma/client';
-import { UtilsAdapterService } from 'src/adapters/implementations/utils/utils.service';
-import { UtilsAdapter } from 'src/adapters/utils';
-import type { CreateInput } from 'src/models/bank';
-import { BankUseCase } from 'src/models/bank';
+import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
+import { UtilsAdapter } from 'adapters/utils';
+import type { CreateInput } from 'models/bank';
+import { BankUseCase } from 'models/bank';
 
-import { BankRepositoryService } from 'src/repositories/postgres/bank/bank-repository.service';
-import type { Paginated, PaginatedItems } from 'src/types/paginated-items';
+import { BankRepositoryService } from 'repositories/postgres/bank/bank-repository.service';
+import type { Paginated, PaginatedItems } from 'types/paginated-items';
 
 @Injectable()
 export class BankService extends BankUseCase {

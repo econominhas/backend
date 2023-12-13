@@ -1,6 +1,13 @@
 import type { ConfigService } from '@nestjs/config';
 import { Transform, plainToInstance } from 'class-transformer';
-import { IsEmail, IsIn, IsInt, IsString, validateSync } from 'class-validator';
+import {
+	IsEmail,
+	IsIn,
+	IsInt,
+	IsOptional,
+	IsString,
+	validateSync,
+} from 'class-validator';
 import { IsURL } from './delivery/validators/miscellaneous';
 
 class EnvVars {
@@ -11,10 +18,13 @@ class EnvVars {
 	@IsIn(['dev', 'test', 'production'])
 	NODE_ENV: 'dev' | 'test' | 'production';
 
+	@IsOptional()
 	@IsURL({ acceptLocalhost: false })
-	AWS_ENDPOINT: string;
+	AWS_ENDPOINT?: string;
+	@IsOptional()
 	@IsString()
 	AWS_ACCESS_KEY_ID: string;
+	@IsOptional()
 	@IsString()
 	AWS_SECRET_ACCESS_KEY: string;
 	@IsIn(['us-east-1'])
@@ -31,8 +41,6 @@ class EnvVars {
 	@IsString()
 	DATABASE_URL: string;
 
-	@IsURL({ acceptLocalhost: process.env['NODE_ENV'] === 'dev' })
-	FRONT_URL: string;
 	@IsURL({ acceptLocalhost: process.env['NODE_ENV'] === 'dev' })
 	API_URL: string;
 

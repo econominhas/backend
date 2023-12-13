@@ -2,7 +2,7 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { Inject, Injectable } from '@nestjs/common';
 import type { SendInput } from '../../email';
 import { EMAIL_TEMPLATES, EmailAdapter } from '../../email';
-import { AppConfig } from 'src/config';
+import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -26,9 +26,7 @@ export class SESAdapterService extends EmailAdapter {
 			},
 		});
 
-		this.defaultPlaceholders = {
-			frontEndUrl: this.config.get('FRONT_URL'),
-		};
+		this.defaultPlaceholders = {};
 	}
 
 	async send({

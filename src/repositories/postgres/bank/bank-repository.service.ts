@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import type { BankAccount, BankProvider } from '@prisma/client';
-import type { PaginatedRepository } from 'src/types/paginated-items';
-import type { CreateInput, GetBalanceByUserInput } from 'src/models/bank';
-import { BankRepository } from 'src/models/bank';
-import { IdAdapter } from 'src/adapters/id';
-import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
+import type { PaginatedRepository } from 'types/paginated-items';
+import type { CreateInput, GetBalanceByUserInput } from 'models/bank';
+import { BankRepository } from 'models/bank';
+import { IdAdapter } from 'adapters/id';
+import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class BankRepositoryService extends BankRepository {

@@ -14,13 +14,13 @@ import type {
 	CreateWithEmail,
 	UpdateProviderInput,
 	GetManyByProviderOutput,
-} from 'src/models/auth';
+} from 'models/auth';
 import { InjectRepository, Repository } from '..';
 import type { Account, Prisma } from '@prisma/client';
 import { SignInProviderEnum } from '@prisma/client';
-import { AuthRepository } from 'src/models/auth';
-import { IdAdapter } from 'src/adapters/id';
-import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
+import { AuthRepository } from 'models/auth';
+import { IdAdapter } from 'adapters/id';
+import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class AuthRepositoryService extends AuthRepository {

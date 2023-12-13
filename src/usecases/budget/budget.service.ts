@@ -4,16 +4,16 @@ import type {
 	CreateInput,
 	OverviewInput,
 	OverviewOutput,
-} from 'src/models/budget';
-import { BudgetRepository, BudgetUseCase } from 'src/models/budget';
-import { BudgetRepositoryService } from 'src/repositories/postgres/budget/budget-repository.service';
+} from 'models/budget';
+import { BudgetRepository, BudgetUseCase } from 'models/budget';
+import { BudgetRepositoryService } from 'repositories/postgres/budget/budget-repository.service';
 import { AccountService } from '../account/account.service';
 import type { Budget } from '@prisma/client';
-import { AccountUseCase } from 'src/models/account';
-import { TransactionRepository } from 'src/models/transaction';
-import { TransactionRepositoryService } from 'src/repositories/postgres/transaction/transaction-repository.service';
-import { CategoryRepository } from 'src/models/category';
-import { CategoryRepositoryService } from 'src/repositories/postgres/category/category-repository.service';
+import { AccountUseCase } from 'models/account';
+import { TransactionRepository } from 'models/transaction';
+import { TransactionRepositoryService } from 'repositories/postgres/transaction/transaction-repository.service';
+import { CategoryRepository } from 'models/category';
+import { CategoryRepositoryService } from 'repositories/postgres/category/category-repository.service';
 
 @Injectable()
 export class BudgetService extends BudgetUseCase {

@@ -8,9 +8,9 @@ import type {
 } from '../../token';
 import { TokensAdapter } from '../../token';
 import { sign, verify } from 'jsonwebtoken';
-import { SecretAdapter } from 'src/adapters/secret';
+import { SecretAdapter } from 'adapters/secret';
 import { UIDAdapterService } from '../uid/uid.service';
-import { AppConfig } from 'src/config';
+import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

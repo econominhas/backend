@@ -5,9 +5,9 @@ import type {
 	GetAuthenticatedUserDataOutput,
 } from '../../google';
 import { GoogleAdapter } from '../../google';
-import { DateAdapter } from 'src/adapters/date';
+import { DateAdapter } from 'adapters/date';
 import { DayjsAdapterService } from '../dayjs/dayjs.service';
-import { AppConfig } from 'src/config';
+import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
 
 interface ExchangeCodeAPIOutput {

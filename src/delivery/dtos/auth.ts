@@ -1,10 +1,9 @@
-import { IsEmail, IsOptional } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 import { IsID, IsSecretCode } from '../validators/internal';
 import { IsPhone, IsURL } from '../validators/miscellaneous';
-import { IsSingInProviderCode } from '../validators/sign-in-provider';
 
 export class CreateFromGoogleProviderDto {
-	@IsSingInProviderCode()
+	@IsString()
 	code: string;
 
 	@IsOptional()

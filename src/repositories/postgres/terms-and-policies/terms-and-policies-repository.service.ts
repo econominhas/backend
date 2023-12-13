@@ -8,8 +8,8 @@ import { InjectRepository, Repository } from '..';
 import type {
 	AcceptInput,
 	GetLatestAcceptedInput,
-} from 'src/models/terms-and-policies';
-import { TermsAndPoliciesRepository } from 'src/models/terms-and-policies';
+} from 'models/terms-and-policies';
+import { TermsAndPoliciesRepository } from 'models/terms-and-policies';
 import type {
 	TermsAndPolicies,
 	TermsAndPoliciesAccepted,

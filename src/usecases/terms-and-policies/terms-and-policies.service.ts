@@ -4,12 +4,12 @@ import type { TermsAndPolicies } from '@prisma/client';
 import type {
 	AcceptInput,
 	HasAcceptedLatestInput,
-} from 'src/models/terms-and-policies';
+} from 'models/terms-and-policies';
 import {
 	TermsAndPoliciesRepository,
 	TermsAndPoliciesUseCase,
-} from 'src/models/terms-and-policies';
-import { TermsAndPoliciesRepositoryService } from 'src/repositories/postgres/terms-and-policies/terms-and-policies-repository.service';
+} from 'models/terms-and-policies';
+import { TermsAndPoliciesRepositoryService } from 'repositories/postgres/terms-and-policies/terms-and-policies-repository.service';
 
 @Injectable()
 export class TermsAndPoliciesService extends TermsAndPoliciesUseCase {

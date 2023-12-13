@@ -2,10 +2,7 @@ import type { ExecutionContext } from '@nestjs/common';
 import { createParamDecorator } from '@nestjs/common';
 import type { Request } from 'express';
 import { decode } from 'jsonwebtoken';
-import type {
-	TokenPayload,
-	UserData as UserDataType,
-} from 'src/adapters/token';
+import type { TokenPayload, UserData as UserDataType } from 'adapters/token';
 
 export const UserData = createParamDecorator(
 	(data: undefined, ctx: ExecutionContext): UserDataType => {

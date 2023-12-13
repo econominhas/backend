@@ -15,9 +15,9 @@ import {
 	ExchangeCodeDto,
 	RefreshTokenDto,
 } from './dtos/auth';
-import { AuthService } from 'src/usecases/auth/auth.service';
+import { AuthService } from 'usecases/auth/auth.service';
 import { Public } from './guards/auth.guard';
-import { AuthUseCase } from 'src/models/auth';
+import { AuthUseCase } from 'models/auth';
 
 @Controller('auth')
 export class AuthController {

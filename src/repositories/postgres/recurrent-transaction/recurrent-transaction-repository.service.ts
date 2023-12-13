@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import type { RecurrentTransaction } from '@prisma/client';
-import type { CreateInput } from 'src/models/recurrent-transaction';
-import { RecurrentTransactionRepository } from 'src/models/recurrent-transaction';
-import { IdAdapter } from 'src/adapters/id';
-import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
+import type { CreateInput } from 'models/recurrent-transaction';
+import { RecurrentTransactionRepository } from 'models/recurrent-transaction';
+import { IdAdapter } from 'adapters/id';
+import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class RecurrentTransactionRepositoryService extends RecurrentTransactionRepository {

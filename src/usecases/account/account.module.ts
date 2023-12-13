@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AccountService } from './account.service';
-import { AccountRepositoryModule } from 'src/repositories/postgres/account/account-repository.module';
-import { AccountController } from 'src/delivery/account.controller';
+import { AccountRepositoryModule } from 'repositories/postgres/account/account-repository.module';
+import { AccountController } from 'delivery/account.controller';
 
 @Module({
 	controllers: [AccountController],

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { SMS_TEMPLATES, SmsAdapter } from '../../sms';
 import type { SendInput } from '../../sms';
-import { AppConfig } from 'src/config';
+import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -26,9 +26,7 @@ export class SNSAdapterService extends SmsAdapter {
 			},
 		});
 
-		this.defaultPlaceholders = {
-			frontEndUrl: this.config.get('FRONT_URL'),
-		};
+		this.defaultPlaceholders = {};
 	}
 
 	async send({

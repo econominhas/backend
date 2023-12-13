@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { BankService } from './bank.service';
-import { BankRepositoryModule } from 'src/repositories/postgres/bank/bank-repository.module';
-import { BankController } from 'src/delivery/bank.controller';
-import { UtilsAdapterModule } from 'src/adapters/implementations/utils/utils.module';
+import { BankRepositoryModule } from 'repositories/postgres/bank/bank-repository.module';
+import { BankController } from 'delivery/bank.controller';
+import { UtilsAdapterModule } from 'adapters/implementations/utils/utils.module';
 
 @Module({
 	controllers: [BankController],

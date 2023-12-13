@@ -13,26 +13,26 @@ import type {
 	ExchangeCodeInput,
 	RefreshOutput,
 	RefreshTokenInput,
-} from 'src/models/auth';
-import { AuthRepository } from 'src/models/auth';
-import { MagicLinkCodeRepositoryService } from 'src/repositories/postgres/magic-link-code/magic-link-code-repository.service';
-import { RefreshTokenRepositoryService } from 'src/repositories/postgres/refresh-token/refresh-token-repository.service';
+} from 'models/auth';
+import { AuthRepository } from 'models/auth';
+import { MagicLinkCodeRepositoryService } from 'repositories/postgres/magic-link-code/magic-link-code-repository.service';
+import { RefreshTokenRepositoryService } from 'repositories/postgres/refresh-token/refresh-token-repository.service';
 import type { Account } from '@prisma/client';
 import { SignInProviderEnum } from '@prisma/client';
 import { TermsAndPoliciesService } from '../terms-and-policies/terms-and-policies.service';
-import { AuthUseCase } from 'src/models/auth';
-import { AuthRepositoryService } from 'src/repositories/postgres/auth/auth-repository.service';
-import { TermsAndPoliciesUseCase } from 'src/models/terms-and-policies';
-import { MagicLinkCodeRepository } from 'src/models/magic-link-code';
-import { RefreshTokenRepository } from 'src/models/refresh-token';
-import { GoogleAdapter } from 'src/adapters/google';
-import { TokensAdapter } from 'src/adapters/token';
-import { EmailAdapter } from 'src/adapters/email';
-import { SmsAdapter } from 'src/adapters/sms';
-import { GoogleAdapterService } from 'src/adapters/implementations/google/google.service';
-import { JWTAdapterService } from 'src/adapters/implementations/jwt/token.service';
-import { SESAdapterService } from 'src/adapters/implementations/ses/ses.service';
-import { SNSAdapterService } from 'src/adapters/implementations/sns/sns.service';
+import { AuthUseCase } from 'models/auth';
+import { AuthRepositoryService } from 'repositories/postgres/auth/auth-repository.service';
+import { TermsAndPoliciesUseCase } from 'models/terms-and-policies';
+import { MagicLinkCodeRepository } from 'models/magic-link-code';
+import { RefreshTokenRepository } from 'models/refresh-token';
+import { GoogleAdapter } from 'adapters/google';
+import { TokensAdapter } from 'adapters/token';
+import { EmailAdapter } from 'adapters/email';
+import { SmsAdapter } from 'adapters/sms';
+import { GoogleAdapterService } from 'adapters/implementations/google/google.service';
+import { JWTAdapterService } from 'adapters/implementations/jwt/token.service';
+import { SESAdapterService } from 'adapters/implementations/ses/ses.service';
+import { SNSAdapterService } from 'adapters/implementations/sns/sns.service';
 
 interface GenTokensInput {
 	accountId: string;

@@ -1,8 +1,8 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { UserDataDto } from './dtos';
 import { UserData } from './decorators/user-data';
-import { WalletService } from 'src/usecases/wallet/wallet.service';
-import { WalletUseCase } from 'src/models/wallet';
+import { WalletService } from 'usecases/wallet/wallet.service';
+import { WalletUseCase } from 'models/wallet';
 
 @Controller('wallet')
 export class WalletController {

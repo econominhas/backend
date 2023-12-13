@@ -12,6 +12,9 @@
 		"type": "git",
 		"url": "git+https://github.com/econominhas/backend.git"
 	},
+	"engines": {
+		"node": ">=20"
+	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.456.0",
 		"@aws-sdk/client-ses": "^3.454.0",
@@ -20,7 +23,7 @@
 		"@nestjs/config": "^3.1.1",
 		"@nestjs/core": "^10.2.10",
 		"@nestjs/platform-express": "^10.2.10",
-		"@prisma/client": "5.6.0",
+		"@prisma/client": "^5.7.0",
 		"@techmmunity/utils": "^1.10.1",
 		"change-case": "^5.2.0",
 		"class-transformer": "^0.5.1",
@@ -55,7 +58,7 @@
 		"lint-staged": "^15.1.0",
 		"openapi-to-postmanv2": "^4.18.0",
 		"prettier": "^3.1.0",
-		"prisma": "^5.6.0",
+		"prisma": "^5.7.0",
 		"prisma-case-format": "^2.0.1",
 		"prisma-dbml-generator": "^0.10.0",
 		"source-map-support": "^0.5.21",
@@ -64,21 +67,24 @@
 		"ts-loader": "^9.5.1",
 		"ts-node": "^10.9.1",
 		"tsconfig-paths": "^4.2.0",
-		"typescript": "^5.3.2"
+		"tsconfig-paths-webpack-plugin": "^4.1.0",
+		"typescript": "^5.3.2",
+		"webpack": "^5.89.0",
+		"webpack-cli": "^5.1.4"
 	},
 	"scripts": {
-		"db:prisma": "prisma generate",
+		"prepare": "yarn db:prisma",
+		"db:prisma": "prisma generate --generator client",
 		"db:docs": "prisma generate --generator dbml && dbdocs build ./prisma/schema.dbml",
 		"openapi:serve": "redocly preview-docs",
 		"openapi:postman": "redocly bundle -o openapi/bundle.yaml && openapi2postmanv2 -s openapi/bundle.yaml -o openapi/postman.json -O folderStrategy=Tags,requestParametersResolution=Example",
-		"prepare": "husky install",
-		"build": "nest build",
+		"build": "./scripts/build.sh",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"start": "nest start",
 		"start:docker": "nest start --watch",
 		"start:dev": "docker compose up",
 		"start:debug": "nest start --debug --watch",
-		"start:prod": "node dist/main",
+		"start:prod": "node main",
 		"clean:docker": "docker container rm econominhas_api && docker image rm backend-api",
 		"lint:ts": "tsc --project tsconfig.lint.json",
 		"lint:code": "eslint \"src/**/*.ts\" --fix --quiet",

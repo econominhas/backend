@@ -43,11 +43,41 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 
 ## Useful commands
 
-| Command         | Description                                                 |
-| --------------- | ----------------------------------------------------------- |
-| `start:dev`     | Run the project with all it's dependencies locally          |
-| `openapi:serve` | Serve the API docs locally so you can validate your changes |
-| `db:prisma`     | Update the ORM types                                        |
+| Command         | Description                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------- |
+| `start:dev`     | Run the project with all it's dependencies locally                                            |
+| `openapi:serve` | Serve the API docs locally so you can validate your changes                                   |
+| `db:prisma`     | Update the ORM types (You need to run this every time that you change `prisma/schema.prisma`) |
+
+## Manual Deploy
+
+1. Connect to the EC2 instance trough [the console](https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#InstanceDetails:instanceId=i-058e2ca9b6b405219)
+2. [EC2] Stop the current execution:
+
+```sh
+pm2 stop econominhas
+pm2 delete econominhas
+```
+
+3. [EC2] Delete the old files:
+
+```
+rm -rf dist
+```
+
+4. [Locally] Send the files to the EC2:
+
+```sh
+scp -i ~/Desktop/default.pem -r dist ubuntu@ec2-54-226-253-54.compute-1.amazonaws.com:/home/ubuntu
+```
+
+5. [EC2] Execute the API:
+
+```sh
+cd dist
+yarn
+pm2 start main.js --name econominhas
+```
 
 ## Process to develop a new feature
 

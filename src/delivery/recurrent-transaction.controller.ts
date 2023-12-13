@@ -6,8 +6,8 @@ import {
 	Post,
 	Body,
 } from '@nestjs/common';
-import { RecurrentTransactionUseCase } from 'src/models/recurrent-transaction';
-import { RecurrentTransactionService } from 'src/usecases/recurrent-transaction/recurrent-transaction.service';
+import { RecurrentTransactionUseCase } from 'models/recurrent-transaction';
+import { RecurrentTransactionService } from 'usecases/recurrent-transaction/recurrent-transaction.service';
 import { UserData } from './decorators/user-data';
 import { UserDataDto } from './dtos';
 import { CreateSalaryDto } from './dtos/recurrent-transaction';

@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { PaginatedDto, UserDataDto } from './dtos';
-import { BankService } from 'src/usecases/bank/bank.service';
+import { BankService } from 'usecases/bank/bank.service';
 import { UserData } from './decorators/user-data';
 import { CreateDto } from './dtos/bank';
-import { BankUseCase } from 'src/models/bank';
+import { BankUseCase } from 'models/bank';
 
 @Controller('banks')
 export class BankController {

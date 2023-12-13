@@ -4,11 +4,11 @@ import type {
 	CreateWithItemsInput,
 	GetMonthlyByCategoryInput,
 	GetMonthlyByCategoryOutput,
-} from 'src/models/budget';
-import { BudgetRepository } from 'src/models/budget';
+} from 'models/budget';
+import { BudgetRepository } from 'models/budget';
 import type { Budget } from '@prisma/client';
-import { IdAdapter } from 'src/adapters/id';
-import { UIDAdapterService } from 'src/adapters/implementations/uid/uid.service';
+import { IdAdapter } from 'adapters/id';
+import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 
 @Injectable()
 export class BudgetRepositoryService extends BudgetRepository {
