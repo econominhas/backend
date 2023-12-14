@@ -35,6 +35,7 @@ services:
     build:
       context: '.'
       dockerfile: Dockerfile.dev
+    image: econominhas-api
     container_name: econominhas-api
     command: yarn start:docker
     depends_on:

@@ -1,0 +1,9 @@
+/.github
+/.husky
+/.vscode
+/dist
+/dist-lint
+/localstack
+/node_modules
+/openapi
+/scripts

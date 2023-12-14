@@ -277,23 +277,26 @@ model CardProvider {
 
 /// Contains the record of all the user's cards
 model Card {
-  id             String @id @db.Char(16)
-  accountId      String @map("account_id") @db.Char(16)
-  cardProviderId String @map("card_provider_id") @db.Char(16)
-  name           String @db.VarChar(30)
-  lastFourDigits String @map("last_four_digits") @db.Char(4)
+  id             String  @id @db.Char(16)
+  accountId      String  @map("account_id") @db.Char(16)
+  cardProviderId String  @map("card_provider_id") @db.Char(16)
+  name           String  @db.VarChar(30)
+  lastFourDigits String  @map("last_four_digits") @db.Char(4)
   // Postpaid cards
-  dueDay         Int?   @map("due_day") @db.SmallInt /// Only postpaid cards have this column
+  dueDay         Int?    @map("due_day") @db.SmallInt /// Only postpaid cards have this column
   limit          Int? /// Only postpaid cards have this column
+  rtBillId       String? @map("rt_bill_id") @db.Char(16) /// Only postpaid cards have this column, Used to know the ID of the recurrent transaction that generate the transactions to pay the bill
   // Prepaid cards
   balance        Int? /// Only prepaid cards have this column
 
   account               Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
   cardProvider          CardProvider           @relation(fields: [cardProviderId], references: [id], onDelete: Restrict)
   transactions          Transaction[]
+  rtBill                RecurrentTransaction?  @relation(name: "RecurrentTransactionRtBill", fields: [rtBillId], references: [id], onDelete: SetNull)
   recurrentTransactions RecurrentTransaction[]
 
   @@unique([cardProviderId, lastFourDigits])
+  @@unique([rtBillId])
   @@map("cards")
 }
 
@@ -436,9 +439,10 @@ model BudgetItem {
 //
 
 enum TransactionTypeEnum {
-  IN
-  OUT
-  TRANSFER
+  IN /// Add money to bank account
+  OUT /// Subtract from bank account immediately
+  CREDIT /// Like OUT, but subtract from bank account only after bill is paid
+  TRANSFER /// Removes money from an account and adds to another
 
   @@map("transaction_type_enum")
 }
@@ -457,23 +461,23 @@ model Transaction {
   type                   TransactionTypeEnum
   name                   String              @db.VarChar(30)
   description            String              @db.VarChar(300)
-  amount                 Int /// Can only be POSITIVE, the real amount is determined by the type (OUT = amount * -1)
+  amount                 Int /// Can only be POSITIVE, the real amount is determined by the type OUT/CREDIT, then amount * -1
   budgetDateId           String              @map("budget_date_id") @db.Char(16)
   createdAt              DateTime            @default(now()) @map("created_at")
   isSystemManaged        Boolean             @map("is_system_managed") /// Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
   recurrentTransactionId String?             @map("recurrent_transaction_id") @db.Char(16)
-  // Transaction type=IN,OUT
-  paymentMethod          PaymentMethodEnum?  @map("payment_method") /// Only type=IN,OUT transactions have this column
-  categoryId             String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
-  cardId                 String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
-  bankAccountId          String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  // Transaction type=IN,,CREDIT
+  paymentMethod          PaymentMethodEnum?  @map("payment_method") /// Only type=IN,OUT,CREDIT transactions have this column
+  categoryId             String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
+  cardId                 String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
+  bankAccountId          String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
   // Transaction type=TRANSFER
   bankAccountFromId      String?             @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
   bankAccountToId        String?             @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
 
   account         Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
   budgetDate      BudgetDate?  @relation(fields: [budgetDateId], references: [id])
-  // Transaction type=IN,OUT
+  // Transaction type=IN,OUT,CREDIT
   category        Category?    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   card            Card?        @relation(fields: [cardId], references: [id], onDelete: Restrict)
   bankAccount     BankAccount? @relation(name: "TransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
@@ -509,6 +513,7 @@ enum CaFormulaEnum {
   MBWOPM /// MULTIPLY_BY_WEEKS_OF_PREV_MONTH, the amount is multiplied by the amount of weeks of the previous month
   MBDOPM /// MULTIPLY_BY_DAYS_OF_PREV_MONTH, the amount is multiplied by the amount of days of the previous month
   DPFET // DIFFERENT_PERCENTAGES_FOR_EACH_TRANSACTION, the "params" prop is an array of percentages matching each of the transactions that should be created. Using these parameters, the amount of the transaction will be multiplied by the percentage to get the final amount
+  CCB // CREDIT_CARD_BILL, sum the value of the transactions to get the amount
 
   @@map("ca_formula_enum")
 }
@@ -523,35 +528,6 @@ enum RecurrenceFrequencyEnum {
   SEMI_ANNUALLY /// Once every 6 months
 
   @@map("recurrence_frequency_enum")
-}
-
-enum DaysOfWeekEnum {
-  Mon
-  Tue
-  Wed
-  Thu
-  Fri
-  Sat
-  Sun
-
-  @@map("days_of_week_enum")
-}
-
-enum MonthEnum {
-  Jan
-  Feb
-  Mar
-  Apr
-  May
-  Jun
-  Jul
-  Aug
-  Sep
-  Oct
-  Nov
-  Dec
-
-  @@map("month_enum")
 }
 
 enum RecurrenceConditionsEnum {
@@ -577,14 +553,14 @@ model RecurrentTransaction {
   type              TransactionTypeEnum
   name              String              @db.VarChar(30)
   description       String              @db.VarChar(300)
-  amount            Int /// Can only be POSITIVE, the real amount is determined by the type (OUT = amount * -1)
+  amount            Int /// Can only be POSITIVE, the real amount is determined by the type OUT/CREDIT, then amount * -1
   createdAt         DateTime            @default(now()) @map("created_at")
   isSystemManagedT  Boolean             @map("is_system_managed_t") /// Same as "isSystemManaged". It exists because some RecurrentTransactions may be system managed, but the Trasactions created by this RecurrentTransaction aren't. An example of it it's the salary, we have a specific interface for the user to managed it, and it shouldn't be managed directly by the user like other RecurrentTransactions, but the transactions created by it are normal Transactions, that the user can edit freely.
-  // Transaction type=IN,OUT
-  paymentMethod     PaymentMethodEnum?  @map("payment_method") /// Only type=IN,OUT transactions have this column
-  categoryId        String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
-  cardId            String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
-  bankAccountId     String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT transactions have this column
+  // Transaction type=IN,OUT,CREDIT
+  paymentMethod     PaymentMethodEnum?  @map("payment_method") /// Only type=IN,OUT,CREDIT transactions have this column
+  categoryId        String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
+  cardId            String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
+  bankAccountId     String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
   // Transaction type=TRANSFER
   bankAccountFromId String?             @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
   bankAccountToId   String?             @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
@@ -593,9 +569,10 @@ model RecurrentTransaction {
   budget                    Budget                     @relation(fields: [budgetId], references: [id], onDelete: Restrict)
   recurrentTransactionRules RecurrentTransactionRule[]
   config                    Config?
-  // Transaction type=IN,OUT
+  // Transaction type=IN,OUT,CREDIT
   category                  Category?                  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   card                      Card?                      @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  cardToPayBill             Card?                      @relation(name: "RecurrentTransactionRtBill")
   bankAccount               BankAccount?               @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
   bankAccountFrom           BankAccount?               @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
@@ -613,11 +590,9 @@ model RecurrentTransactionRule {
   caParams     String                     @map("ca_params") @db.VarChar /// JSON stringified prop to pass the params to calculate the amount
   caConditions RecurrenceConditionsEnum[] @map("ca_conditions")
 
-  frequency        RecurrenceFrequencyEnum
-  fDaysOfWeeks     DaysOfWeekEnum[]           @map("f_days_of_weeks")
-  fDaysOfTheMonths String[]                   @map("f_days_of_the_months") /// Can have the values "FIRST", "LAST" and numbers 1 to 31
-  fMonths          MonthEnum[]                @map("f_months")
-  fConditions      RecurrenceConditionsEnum[] @map("f_conditions")
+  frequency   RecurrenceFrequencyEnum
+  fParams     String                     @map("f_params") @db.VarChar /// JSON stringified prop to pass the params to calculate the frequency
+  fConditions RecurrenceConditionsEnum[] @map("f_conditions")
 
   recurrentTransaction RecurrentTransaction @relation(fields: [recurrentTransactionId], references: [id])
 

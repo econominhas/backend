@@ -1,0 +1,7 @@
+description: |
+  Pay at, says when the user wants the credit card bill to be paid
+  For card creation: Required if want to also create recurrent transaction
+type: string
+enum:
+  - STATEMENT
+  - DUE

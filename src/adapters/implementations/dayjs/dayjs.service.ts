@@ -5,7 +5,7 @@ import { DateAdapter } from '../../date';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import type { TimezoneEnum } from 'types/enums';
+import type { TimezoneEnum } from 'types/enums/timezone';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

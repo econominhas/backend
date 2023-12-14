@@ -11,10 +11,15 @@ jobs:
   openapi-validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
 
       - name: Install redocly
-        run: yarn add -D @redocly/cli
+        run: yarn add --ignore-scripts -D @redocly/cli
 
       - name: Validate openapi
-        run: yarn openapi:lint
+        run: yarn lint:openapi
