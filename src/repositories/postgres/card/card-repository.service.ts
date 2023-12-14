@@ -12,6 +12,7 @@ import type {
 	GetBalanceByUserInput,
 	GetBalanceByUserOutput,
 	GetProviderInput,
+	UpdateInput,
 } from 'models/card';
 import { CardRepository } from 'models/card';
 import type { Card, CardProvider } from '@prisma/client';
@@ -127,5 +128,16 @@ export class CardRepositoryService extends CardRepository {
 			},
 			{} as Record<CardTypeEnum, number>,
 		);
+	}
+
+	async update({ cardId, rtBillId }: UpdateInput): Promise<void> {
+		await this.cardRepository.update({
+			where: {
+				id: cardId,
+			},
+			data: {
+				rtBillId,
+			},
+		});
 	}
 }

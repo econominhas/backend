@@ -28,7 +28,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 		description,
 		amount,
 		isSystemManagedT,
-		// Transaction type=IN,OUT
+		// Transaction type=IN,OUT,CREDIT
 		paymentMethod,
 		categoryId,
 		cardId,
@@ -53,7 +53,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 				description,
 				amount,
 				isSystemManagedT,
-				// Transaction type=IN,OUT
+				// Transaction type=IN,OUT,CREDIT
 				paymentMethod,
 				categoryId,
 				cardId,
@@ -71,9 +71,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 								caConditions,
 
 								frequency,
-								fDaysOfWeeks,
-								fDaysOfTheMonths,
-								fMonths,
+								fParams,
 								fConditions,
 							}) => ({
 								id: this.idAdapter.genId(),
@@ -84,9 +82,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 								caConditions,
 
 								frequency,
-								fDaysOfWeeks,
-								fDaysOfTheMonths,
-								fMonths,
+								fParams: JSON.stringify(fParams),
 								fConditions,
 							}),
 						),

@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import type { RecurrentTransaction } from '@prisma/client';
 import {
 	CaFormulaEnum,
 	PaymentMethodEnum,
@@ -7,7 +8,10 @@ import {
 	TransactionTypeEnum,
 } from '@prisma/client';
 
-import type { CreateSalaryInput } from 'models/recurrent-transaction';
+import type {
+	CreateCreditCardBillInput,
+	CreateSalaryInput,
+} from 'models/recurrent-transaction';
 import {
 	RecurrentTransactionRepository,
 	RecurrentTransactionUseCase,
@@ -57,13 +61,58 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 					],
 
 					frequency: RecurrenceFrequencyEnum.MONTHLY,
-					fDaysOfWeeks: [],
-					fDaysOfTheMonths: installments.map((r) => String(r.dayOfTheMonth)),
-					fMonths: [],
+					fParams: {
+						daysOfTheMonth: installments.map((r) => String(r.dayOfTheMonth)),
+					},
 					fConditions: [
 						RecurrenceConditionsEnum.IN_WEEKDAY,
 						RecurrenceConditionsEnum.NOT_HOLIDAY,
 						RecurrenceConditionsEnum.IF_NOT_BEFORE,
+					],
+				},
+			],
+		});
+	}
+
+	async createCreditCardBill({
+		accountId,
+		bankAccountId,
+		card,
+		budgetId,
+		dueDay,
+		statementDays,
+		payAt,
+	}: CreateCreditCardBillInput): Promise<RecurrentTransaction> {
+		return this.recurrentTransactionRepository.create({
+			accountId,
+			budgetId,
+			isSystemManaged: true,
+			type: TransactionTypeEnum.OUT,
+			name: `Fatura do cartão ${card.name}`,
+			description: 'Pagamento da fatura do cartão de crédito',
+			amount: 1,
+			isSystemManagedT: false,
+			paymentMethod: PaymentMethodEnum.BANK_ACCOUNT,
+			bankAccountId,
+			rules: [
+				{
+					caFormula: CaFormulaEnum.CCB,
+					caParams: {
+						dueDay,
+						statementDays,
+					},
+					caConditions: [],
+
+					frequency: RecurrenceFrequencyEnum.MONTHLY,
+					fParams: {
+						payAt,
+						dueDay,
+						statementDays,
+					},
+					fConditions: [
+						RecurrenceConditionsEnum.IN_WEEKDAY,
+						RecurrenceConditionsEnum.NOT_HOLIDAY,
+						RecurrenceConditionsEnum.IF_NOT_AFTER,
 					],
 				},
 			],

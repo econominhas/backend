@@ -1,13 +1,13 @@
 import type {
-	DaysOfWeekEnum,
-	MonthEnum,
 	PaymentMethodEnum,
 	CaFormulaEnum,
 	RecurrenceConditionsEnum,
 	RecurrenceFrequencyEnum,
 	RecurrentTransaction,
 	TransactionTypeEnum,
+	Card,
 } from '@prisma/client';
+import type { PayAtEnum } from 'types/enums/pay-at';
 
 /**
  *
@@ -27,7 +27,7 @@ export interface CreateInput {
 	description: string;
 	amount: number;
 	isSystemManagedT: boolean;
-	// Transaction type=IN,OUT
+	// Transaction type=IN,OUT,CREDIT
 	paymentMethod?: PaymentMethodEnum;
 	categoryId?: string;
 	cardId?: string;
@@ -42,9 +42,7 @@ export interface CreateInput {
 		caConditions: RecurrenceConditionsEnum[];
 
 		frequency: RecurrenceFrequencyEnum;
-		fDaysOfWeeks: DaysOfWeekEnum[];
-		fDaysOfTheMonths: string[];
-		fMonths: MonthEnum[];
+		fParams: Record<string, any>;
 		fConditions: RecurrenceConditionsEnum[];
 	}>;
 }
@@ -73,6 +71,20 @@ export interface CreateSalaryInput {
 	}>;
 }
 
+export interface CreateCreditCardBillInput {
+	accountId: string;
+	bankAccountId: string;
+	card: Card;
+	budgetId: string;
+	dueDay: number;
+	statementDays: number;
+	payAt: PayAtEnum;
+}
+
 export abstract class RecurrentTransactionUseCase {
 	abstract createSalary(i: CreateSalaryInput): Promise<void>;
+
+	abstract createCreditCardBill(
+		i: CreateCreditCardBillInput,
+	): Promise<RecurrentTransaction>;
 }

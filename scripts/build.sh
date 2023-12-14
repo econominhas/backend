@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build
-npx nest build --builder webpack --webpackPath ./webpack.config.js
+npx nest build --builder webpack
 
 # Create necessary folders
 mkdir dist/prisma

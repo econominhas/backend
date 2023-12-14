@@ -1,4 +1,4 @@
-import type { TimezoneEnum } from 'types/enums';
+import type { TimezoneEnum } from 'types/enums/timezone';
 
 export interface GetTodayInfoOutput {
 	day: number;

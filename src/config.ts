@@ -41,9 +41,6 @@ class EnvVars {
 	@IsString()
 	DATABASE_URL: string;
 
-	@IsURL({ acceptLocalhost: process.env['NODE_ENV'] === 'dev' })
-	API_URL: string;
-
 	@IsEmail()
 	NOTIFICATIONS_EMAIL: string;
 }

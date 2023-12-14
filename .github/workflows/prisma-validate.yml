@@ -11,10 +11,15 @@ jobs:
   prisma-validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
 
       - name: Install prisma
-        run: yarn add -D prisma
+        run: yarn add --ignore-scripts -D prisma
 
       - name: Validate prisma
         env:
