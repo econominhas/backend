@@ -1,5 +1,4 @@
 import type {
-	PaymentMethodEnum,
 	CaFormulaEnum,
 	RecurrenceConditionsEnum,
 	RecurrenceFrequencyEnum,
@@ -28,7 +27,6 @@ export interface CreateInput {
 	amount: number;
 	isSystemManagedT: boolean;
 	// Transaction type=IN,OUT,CREDIT
-	paymentMethod?: PaymentMethodEnum;
 	categoryId?: string;
 	cardId?: string;
 	bankAccountId?: string;

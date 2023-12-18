@@ -1,4 +1,9 @@
-import type { Card, CardProvider, CardTypeEnum } from '@prisma/client';
+import type {
+	Card,
+	CardNetworkEnum,
+	CardProvider,
+	CardTypeEnum,
+} from '@prisma/client';
 import type { PayAtEnum } from 'types/enums/pay-at';
 import type {
 	Paginated,
@@ -38,6 +43,28 @@ export interface GetBalanceByUserOutput {
 	[CardTypeEnum.VT]: number;
 }
 
+export interface GetPostpaidInput extends PaginatedRepository {
+	accountId: string;
+	date: Date;
+}
+
+export type GetPostpaidOutput = Array<{
+	id: string;
+	name: string;
+	lastFourDigits: string;
+	provider: {
+		iconUrl: string;
+		color: string;
+		network: CardNetworkEnum;
+	};
+	bill: {
+		total: number;
+		startDate: Date;
+		endDate: Date;
+		dueDate: Date;
+	};
+}>;
+
 export interface UpdateInput {
 	cardId: string;
 	// name?: string;
@@ -57,6 +84,8 @@ export abstract class CardRepository {
 	abstract getBalanceByUser(
 		i: GetBalanceByUserInput,
 	): Promise<GetBalanceByUserOutput>;
+
+	abstract getPostpaid(i: GetPostpaidInput): Promise<GetPostpaidOutput>;
 
 	abstract update(i: UpdateInput): Promise<void>;
 }

@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { RecurrentTransaction } from '@prisma/client';
 import {
 	CaFormulaEnum,
-	PaymentMethodEnum,
 	RecurrenceConditionsEnum,
 	RecurrenceFrequencyEnum,
 	TransactionTypeEnum,
@@ -44,7 +43,6 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 			description: 'Valor recebido mensalmente pelo trabalho feito.',
 			amount,
 			isSystemManagedT: false,
-			paymentMethod: PaymentMethodEnum.BANK_ACCOUNT,
 			categoryId,
 			bankAccountId,
 
@@ -92,7 +90,6 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 			description: 'Pagamento da fatura do cartão de crédito',
 			amount: 1,
 			isSystemManagedT: false,
-			paymentMethod: PaymentMethodEnum.BANK_ACCOUNT,
 			bankAccountId,
 			rules: [
 				{

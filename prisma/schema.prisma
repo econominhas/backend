@@ -290,6 +290,7 @@ model Card {
   balance        Int? /// Only prepaid cards have this column
 
   account               Account                @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  bills                 CardBill[]
   cardProvider          CardProvider           @relation(fields: [cardProviderId], references: [id], onDelete: Restrict)
   transactions          Transaction[]
   rtBill                RecurrentTransaction?  @relation(name: "RecurrentTransactionRtBill", fields: [rtBillId], references: [id], onDelete: SetNull)
@@ -298,6 +299,26 @@ model Card {
   @@unique([cardProviderId, lastFourDigits])
   @@unique([rtBillId])
   @@map("cards")
+}
+
+/// Contains the record of all card's bills, we save this to have a history of the bills dates, since the user can change the dueDay of the card, and if we define it dynamically, it will be inconsistent
+model CardBill {
+  id                   String    @id @db.Char(16)
+  cardId               String    @map("card_id") @db.Char(16)
+  month                DateTime  @db.Date /// The first day of the month relative to the card's dueDay
+  startAt              DateTime  @map("start_at") @db.Date /// The day that the transactions start to count as part of this bill
+  endAt                DateTime  @map("end_at") @db.Date /// The day that the transactions stop to count as part of this bill. The day BEFORE the statement date
+  dueDate              DateTime  @map("due_date") @db.Date /// The final day to pay this bill, also use to determine from which month this bill belongs to
+  paidAt               DateTime? @map("paid_at") @db.Timestamp
+  paymentTransactionId String?   @map("payment_transaction_id")
+
+  card               Card          @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  paymentTransaction Transaction?  @relation(fields: [paymentTransactionId], references: [id], onDelete: Restrict)
+  installments       Installment[]
+
+  @@unique([paymentTransactionId])
+  @@unique([cardId, month])
+  @@map("card_bills")
 }
 
 //
@@ -447,13 +468,6 @@ enum TransactionTypeEnum {
   @@map("transaction_type_enum")
 }
 
-enum PaymentMethodEnum {
-  CARD
-  BANK_ACCOUNT
-
-  @@map("payment_method_enum")
-}
-
 /// Contains all the user's transactions
 model Transaction {
   id                     String              @id @db.Char(16)
@@ -466,8 +480,7 @@ model Transaction {
   createdAt              DateTime            @default(now()) @map("created_at")
   isSystemManaged        Boolean             @map("is_system_managed") /// Define if the transaction is automatic controlled by the system, or if it\'s created and controled by the user
   recurrentTransactionId String?             @map("recurrent_transaction_id") @db.Char(16)
-  // Transaction type=IN,,CREDIT
-  paymentMethod          PaymentMethodEnum?  @map("payment_method") /// Only type=IN,OUT,CREDIT transactions have this column
+  // Transaction type=IN,OUT,CREDIT
   categoryId             String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
   cardId                 String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
   bankAccountId          String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
@@ -479,25 +492,29 @@ model Transaction {
   budgetDate      BudgetDate?  @relation(fields: [budgetDateId], references: [id])
   // Transaction type=IN,OUT,CREDIT
   category        Category?    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  card            Card?        @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  // Transaction type=IN,OUT
   bankAccount     BankAccount? @relation(name: "TransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
+  // Transaction type=CREDIT
+  card            Card?        @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  cardBill        CardBill?
+  installment     Installment?
   // Transaction type=TRANSFER
   bankAccountFrom BankAccount? @relation(name: "TransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
   bankAccountTo   BankAccount? @relation(name: "TransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
-
-  installment Installment? @relation(fields: [id], references: [transactionId], onDelete: Restrict)
 
   @@map("transactions")
 }
 
 /// Contains the installment data of an transactions
 model Installment {
-  transactionId String   @id @map("transaction_id") @db.Char(16)
-  total         Int      @db.SmallInt
-  current       Int      @db.SmallInt
-  createdAt     DateTime @default(now()) @map("created_at")
+  transactionId      String  @id @map("transaction_id") @db.Char(16)
+  installmentGroupId String  @map("installment_group_id") @db.Char(16) /// Group that the installment belongs, doesn't has an actual table because we don't need it
+  total              Int     @db.SmallInt /// Total amount of installments
+  current            Int     @db.SmallInt /// Number of the current installment
+  cardBillId         String? @map("card_bill_id") @db.Char(16) /// The relationship is optional because a OUT transaction also can have installments (Ex: PIX Parcelado)
 
-  transaction Transaction?
+  transaction Transaction? @relation(fields: [transactionId], references: [id], onDelete: Restrict)
+  cardBill    CardBill?    @relation(fields: [cardBillId], references: [id], onDelete: Restrict)
 
   @@map("installments")
 }
@@ -557,7 +574,6 @@ model RecurrentTransaction {
   createdAt         DateTime            @default(now()) @map("created_at")
   isSystemManagedT  Boolean             @map("is_system_managed_t") /// Same as "isSystemManaged". It exists because some RecurrentTransactions may be system managed, but the Trasactions created by this RecurrentTransaction aren't. An example of it it's the salary, we have a specific interface for the user to managed it, and it shouldn't be managed directly by the user like other RecurrentTransactions, but the transactions created by it are normal Transactions, that the user can edit freely.
   // Transaction type=IN,OUT,CREDIT
-  paymentMethod     PaymentMethodEnum?  @map("payment_method") /// Only type=IN,OUT,CREDIT transactions have this column
   categoryId        String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
   cardId            String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
   bankAccountId     String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column

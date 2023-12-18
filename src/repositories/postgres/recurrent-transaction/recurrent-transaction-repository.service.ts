@@ -29,7 +29,6 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 		amount,
 		isSystemManagedT,
 		// Transaction type=IN,OUT,CREDIT
-		paymentMethod,
 		categoryId,
 		cardId,
 		bankAccountId,
@@ -54,7 +53,6 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 				amount,
 				isSystemManagedT,
 				// Transaction type=IN,OUT,CREDIT
-				paymentMethod,
 				categoryId,
 				cardId,
 				bankAccountId,
