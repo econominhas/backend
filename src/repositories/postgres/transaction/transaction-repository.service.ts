@@ -3,10 +3,13 @@ import { InjectRepository, Repository } from '..';
 import type {
 	GetByBudgetInput,
 	GetByBudgetOutput,
+	GetByCardIdBetweenDatesInput,
+	GetByCardIdBetweenDatesOutput,
 	GetMonthlyAmountByCategoryInput,
 	GetMonthlyAmountByCategoryOutput,
 } from 'models/transaction';
 import { TransactionRepository } from 'models/transaction';
+import { TransactionTypeEnum } from '@prisma/client';
 
 @Injectable()
 export class TransactionRepositoryService extends TransactionRepository {
@@ -110,6 +113,34 @@ export class TransactionRepositoryService extends TransactionRepository {
 			},
 			orderBy: {
 				createdAt: 'desc',
+			},
+			skip: offset,
+			take: limit,
+		});
+	}
+
+	getByCardIdBetweenDates({
+		cardsIds,
+		dateFrom,
+		dateTo,
+		limit,
+		offset,
+	}: GetByCardIdBetweenDatesInput): Promise<GetByCardIdBetweenDatesOutput[]> {
+		return this.transactionRepository.findMany({
+			select: {
+				cardId: true,
+				createdAt: true,
+				amount: true,
+			},
+			where: {
+				cardId: {
+					in: cardsIds,
+				},
+				createdAt: {
+					gte: dateFrom,
+					lte: dateTo,
+				},
+				type: TransactionTypeEnum.CREDIT,
 			},
 			skip: offset,
 			take: limit,

@@ -32,4 +32,14 @@ export class CardController {
 			accountId: userData.accountId,
 		});
 	}
+
+	@Get('/bills')
+	allCardsBills(
+		@UserData()
+		userData: UserDataDto,
+	) {
+		return this.cardService.allCardsBills({
+			accountId: userData.accountId,
+		});
+	}
 }

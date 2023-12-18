@@ -38,6 +38,17 @@ export interface GetBalanceByUserOutput {
 	[CardTypeEnum.VT]: number;
 }
 
+export interface GetByAccountIdAndTypeInput extends PaginatedRepository {
+	accountId: string;
+	type: CardTypeEnum;
+}
+
+export type GetByAccountIdAndTypeOutput = Array<{
+	cardId: string;
+	dueDay: number;
+	statementDays: number;
+}>;
+
 export interface UpdateInput {
 	cardId: string;
 	// name?: string;
@@ -58,6 +69,10 @@ export abstract class CardRepository {
 		i: GetBalanceByUserInput,
 	): Promise<GetBalanceByUserOutput>;
 
+	abstract getByAccountIdAndType(
+		i: GetByAccountIdAndTypeInput,
+	): Promise<GetByAccountIdAndTypeOutput>;
+
 	abstract update(i: UpdateInput): Promise<void>;
 }
 
@@ -69,14 +84,33 @@ export abstract class CardRepository {
  *
  */
 
+export type GetProvidersOutput = PaginatedItems<CardProvider>;
+
 export interface CreateCardInput extends CreateInput {
 	payAt?: PayAtEnum;
 	bankAccountId?: string;
 	budgetId?: string;
 }
 
+export interface AllCardBillsInput {
+	accountId: string;
+}
+
+export type AllCardBillsOutput = Array<{
+	cardId: string;
+	billFromDate: Date;
+	billToDate: Date;
+	amount: number;
+}>;
+
+// ALERT: When updating the card dueDay, we also need to
+// update the createdAt of all the transactions created
+// with installments, because we create every installment
+// based on the first day of the next bills
 export abstract class CardUseCase {
-	abstract getProviders(i: Paginated): Promise<PaginatedItems<CardProvider>>;
+	abstract getProviders(i: Paginated): Promise<GetProvidersOutput>;
 
 	abstract create(i: CreateCardInput): Promise<void>;
+
+	abstract allCardsBills(i: AllCardBillsInput): Promise<AllCardBillsOutput>;
 }

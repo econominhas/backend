@@ -4,13 +4,17 @@ import { CardRepositoryModule } from 'repositories/postgres/card/card-repository
 import { CardController } from 'delivery/card.controller';
 import { UtilsAdapterModule } from 'adapters/implementations/utils/utils.module';
 import { RecurrentTransactionModule } from 'usecases/recurrent-transaction/recurrent-transaction.module';
+import { TransactionRepositoryModule } from 'repositories/postgres/transaction/transaction-repository.module';
+import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module';
 
 @Module({
 	controllers: [CardController],
 	imports: [
 		CardRepositoryModule,
+		TransactionRepositoryModule,
 		RecurrentTransactionModule,
 		UtilsAdapterModule,
+		DayJsAdapterModule,
 	],
 	providers: [CardService],
 	exports: [CardService],

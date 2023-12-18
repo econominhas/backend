@@ -11,6 +11,8 @@ import type {
 	CreateInput,
 	GetBalanceByUserInput,
 	GetBalanceByUserOutput,
+	GetByAccountIdAndTypeInput,
+	GetByAccountIdAndTypeOutput,
 	GetProviderInput,
 	UpdateInput,
 } from 'models/card';
@@ -139,5 +141,38 @@ export class CardRepositoryService extends CardRepository {
 				rtBillId,
 			},
 		});
+	}
+
+	async getByAccountIdAndType({
+		accountId,
+		type,
+		limit,
+		offset,
+	}: GetByAccountIdAndTypeInput): Promise<GetByAccountIdAndTypeOutput> {
+		const cards = await this.cardRepository.findMany({
+			select: {
+				id: true,
+				dueDay: true,
+				cardProvider: {
+					select: {
+						statementDays: true,
+					},
+				},
+			},
+			where: {
+				accountId,
+				cardProvider: {
+					type,
+				},
+			},
+			skip: offset,
+			take: limit,
+		});
+
+		return cards.map((c) => ({
+			cardId: c.id,
+			dueDay: c.dueDay,
+			statementDays: c.cardProvider.statementDays,
+		}));
 	}
 }

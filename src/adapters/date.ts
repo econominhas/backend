@@ -13,8 +13,34 @@ export type DateManipulationUnit =
 	| 'months'
 	| 'years';
 
+export interface GetStatementDatesInput {
+	initialDate: Date;
+	dueDay: number;
+	statementDays: number;
+	timezone?: TimezoneEnum;
+}
+
+export interface GetStatementDatesOutput {
+	start: Date;
+	end: Date;
+}
+
 export abstract class DateAdapter {
 	abstract getTodayInfo(timezone?: TimezoneEnum): GetTodayInfoOutput;
 
+	abstract isBefore(date: Date, otherDate: Date): boolean;
+
+	abstract isAfter(date: Date, otherDate: Date): boolean;
+
+	abstract isBetween(
+		dateToCompare: Date,
+		startDate: Date,
+		endDate: Date,
+	): boolean;
+
 	abstract nowPlus(amount: number, unit: DateManipulationUnit): Date;
+
+	abstract getStatementDates(
+		i: GetStatementDatesInput,
+	): GetStatementDatesOutput;
 }

@@ -47,12 +47,28 @@ export interface GetByBudgetOutput {
 	};
 }
 
+export interface GetByCardIdBetweenDatesInput extends PaginatedRepository {
+	cardsIds: Array<string>;
+	dateFrom: Date;
+	dateTo: Date;
+}
+
+export interface GetByCardIdBetweenDatesOutput {
+	cardId: string;
+	createdAt: Date;
+	amount: number;
+}
+
 export abstract class TransactionRepository {
 	abstract getMonthlyAmountByCategory(
 		i: GetMonthlyAmountByCategoryInput,
 	): Promise<GetMonthlyAmountByCategoryOutput>;
 
 	abstract getByBudget(i: GetByBudgetInput): Promise<Array<GetByBudgetOutput>>;
+
+	abstract getByCardIdBetweenDates(
+		i: GetByCardIdBetweenDatesInput,
+	): Promise<Array<GetByCardIdBetweenDatesOutput>>;
 }
 
 /**
