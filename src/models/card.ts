@@ -3,8 +3,8 @@ import type {
 	CardNetworkEnum,
 	CardProvider,
 	CardTypeEnum,
+	PayAtEnum,
 } from '@prisma/client';
-import type { PayAtEnum } from 'types/enums/pay-at';
 import type {
 	Paginated,
 	PaginatedItems,
@@ -31,6 +31,8 @@ export interface CreateInput {
 	dueDay?: number;
 	limit?: number;
 	balance?: number;
+	payAt?: PayAtEnum;
+	payWithId?: string;
 }
 
 export interface GetBalanceByUserInput {
@@ -65,15 +67,6 @@ export type GetPostpaidOutput = Array<{
 	};
 }>;
 
-export interface UpdateInput {
-	cardId: string;
-	// name?: string;
-	// dueDay?: number;
-	// limit?: number;
-	// balance?: number;
-	rtBillId?: string;
-}
-
 export abstract class CardRepository {
 	abstract getProviders(i: PaginatedRepository): Promise<Array<CardProvider>>;
 
@@ -86,8 +79,6 @@ export abstract class CardRepository {
 	): Promise<GetBalanceByUserOutput>;
 
 	abstract getPostpaid(i: GetPostpaidInput): Promise<GetPostpaidOutput>;
-
-	abstract update(i: UpdateInput): Promise<void>;
 }
 
 /**
@@ -98,14 +89,8 @@ export abstract class CardRepository {
  *
  */
 
-export interface CreateCardInput extends CreateInput {
-	payAt?: PayAtEnum;
-	bankAccountId?: string;
-	budgetId?: string;
-}
-
 export abstract class CardUseCase {
 	abstract getProviders(i: Paginated): Promise<PaginatedItems<CardProvider>>;
 
-	abstract create(i: CreateCardInput): Promise<void>;
+	abstract create(i: CreateInput): Promise<void>;
 }

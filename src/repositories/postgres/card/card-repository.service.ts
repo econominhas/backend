@@ -14,7 +14,6 @@ import type {
 	GetPostpaidInput,
 	GetPostpaidOutput,
 	GetProviderInput,
-	UpdateInput,
 } from 'models/card';
 import { CardRepository } from 'models/card';
 import type { Card, CardNetworkEnum, CardProvider } from '@prisma/client';
@@ -213,16 +212,5 @@ export class CardRepositoryService extends CardRepository {
 				dueDate: data.due_date,
 			},
 		}));
-	}
-
-	async update({ cardId, rtBillId }: UpdateInput): Promise<void> {
-		await this.cardRepository.update({
-			where: {
-				id: cardId,
-			},
-			data: {
-				rtBillId,
-			},
-		});
 	}
 }

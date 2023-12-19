@@ -8,21 +8,16 @@ import type { CardProvider } from '@prisma/client';
 import { CardTypeEnum } from '@prisma/client';
 import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'adapters/utils';
-import type { CreateCardInput } from 'models/card';
+import type { CreateInput } from 'models/card';
 import { CardRepository, CardUseCase } from 'models/card';
-import { RecurrentTransactionUseCase } from 'models/recurrent-transaction';
 import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
 import type { Paginated, PaginatedItems } from 'types/paginated-items';
-import { RecurrentTransactionService } from 'usecases/recurrent-transaction/recurrent-transaction.service';
 
 @Injectable()
 export class CardService extends CardUseCase {
 	constructor(
 		@Inject(CardRepositoryService)
 		private readonly cardRepository: CardRepository,
-
-		@Inject(RecurrentTransactionService)
-		private readonly recurrentTransactionService: RecurrentTransactionUseCase,
 
 		@Inject(UtilsAdapterService)
 		private readonly utilsAdapter: UtilsAdapter,
@@ -41,7 +36,7 @@ export class CardService extends CardUseCase {
 		};
 	}
 
-	async create(i: CreateCardInput): Promise<void> {
+	async create(i: CreateInput): Promise<void> {
 		const provider = await this.cardRepository.getProvider({
 			cardProviderId: i.cardProviderId,
 		});
@@ -59,6 +54,15 @@ export class CardService extends CardUseCase {
 			if (typeof i.balance !== 'undefined') {
 				throw new BadRequestException('Postpaid cards can\'t have "balance"');
 			}
+			if (
+				(typeof i.payAt !== 'undefined' &&
+					typeof i.payWithId === 'undefined') ||
+				(typeof i.payAt === 'undefined' && typeof i.payWithId !== 'undefined')
+			) {
+				throw new BadRequestException(
+					'Both "payAt" and "payWithId" must exist or not exist',
+				);
+			}
 		}
 
 		if (this.isPrepaid(provider.type)) {
@@ -70,33 +74,17 @@ export class CardService extends CardUseCase {
 					'Prepaid cards can\'t have "dueDay" and "limit"',
 				);
 			}
+			if (
+				typeof i.payAt !== 'undefined' ||
+				typeof i.payWithId !== 'undefined'
+			) {
+				throw new BadRequestException(
+					'Only postpaid cards can have "payAt" and "payWithId"',
+				);
+			}
 		}
 
-		const card = await this.cardRepository.create(i);
-
-		// Creates the recurrent transaction to pay the bill of the credit card
-		if (
-			this.isPostpaid(provider.type) &&
-			i.bankAccountId &&
-			i.budgetId &&
-			i.payAt
-		) {
-			const recurrentTransaction =
-				await this.recurrentTransactionService.createCreditCardBill({
-					accountId: i.accountId,
-					bankAccountId: i.bankAccountId,
-					card: card,
-					budgetId: i.budgetId,
-					dueDay: i.dueDay,
-					statementDays: provider.statementDays,
-					payAt: i.payAt,
-				});
-
-			await this.cardRepository.update({
-				cardId: card.id,
-				rtBillId: recurrentTransaction.id,
-			});
-		}
+		await this.cardRepository.create(i);
 	}
 
 	// Private

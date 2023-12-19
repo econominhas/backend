@@ -4,9 +4,7 @@ import type {
 	RecurrenceFrequencyEnum,
 	RecurrentTransaction,
 	TransactionTypeEnum,
-	Card,
 } from '@prisma/client';
-import type { PayAtEnum } from 'types/enums/pay-at';
 
 /**
  *
@@ -69,20 +67,6 @@ export interface CreateSalaryInput {
 	}>;
 }
 
-export interface CreateCreditCardBillInput {
-	accountId: string;
-	bankAccountId: string;
-	card: Card;
-	budgetId: string;
-	dueDay: number;
-	statementDays: number;
-	payAt: PayAtEnum;
-}
-
 export abstract class RecurrentTransactionUseCase {
 	abstract createSalary(i: CreateSalaryInput): Promise<void>;
-
-	abstract createCreditCardBill(
-		i: CreateCreditCardBillInput,
-	): Promise<RecurrentTransaction>;
 }

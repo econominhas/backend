@@ -229,6 +229,7 @@ model BankAccount {
   recurrentTransactions     RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccount")
   recurrentTransactionFroms RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountFrom")
   recurrentTransactionTos   RecurrentTransaction[] @relation(name: "RecurrentTransactionBankAccountTo")
+  cards                     Card[]
 
   @@unique([accountId, bankProviderId, accountNumber])
   @@map("bank_accounts")
@@ -247,6 +248,13 @@ enum CardTypeEnum {
   VT
 
   @@map("card_type_enum")
+}
+
+enum PayAtEnum {
+  STATEMENT
+  DUE
+
+  @@map("pay_at_enum")
 }
 
 enum CardNetworkEnum {
@@ -277,15 +285,16 @@ model CardProvider {
 
 /// Contains the record of all the user's cards
 model Card {
-  id             String  @id @db.Char(16)
-  accountId      String  @map("account_id") @db.Char(16)
-  cardProviderId String  @map("card_provider_id") @db.Char(16)
-  name           String  @db.VarChar(30)
-  lastFourDigits String  @map("last_four_digits") @db.Char(4)
+  id             String     @id @db.Char(16)
+  accountId      String     @map("account_id") @db.Char(16)
+  cardProviderId String     @map("card_provider_id") @db.Char(16)
+  name           String     @db.VarChar(30)
+  lastFourDigits String     @map("last_four_digits") @db.Char(4)
   // Postpaid cards
-  dueDay         Int?    @map("due_day") @db.SmallInt /// Only postpaid cards have this column
+  dueDay         Int?       @map("due_day") @db.SmallInt /// Only postpaid cards have this column
   limit          Int? /// Only postpaid cards have this column
-  rtBillId       String? @map("rt_bill_id") @db.Char(16) /// Only postpaid cards have this column, Used to know the ID of the recurrent transaction that generate the transactions to pay the bill
+  payAt          PayAtEnum? @map("pay_at")
+  payWithId      String?    @map("pay_with_id") /// Bank account ID to pay card bill
   // Prepaid cards
   balance        Int? /// Only prepaid cards have this column
 
@@ -293,11 +302,11 @@ model Card {
   bills                 CardBill[]
   cardProvider          CardProvider           @relation(fields: [cardProviderId], references: [id], onDelete: Restrict)
   transactions          Transaction[]
-  rtBill                RecurrentTransaction?  @relation(name: "RecurrentTransactionRtBill", fields: [rtBillId], references: [id], onDelete: SetNull)
   recurrentTransactions RecurrentTransaction[]
+  // Postpaid cards
+  payWith               BankAccount?           @relation(fields: [payWithId], references: [id], onDelete: Restrict)
 
   @@unique([cardProviderId, lastFourDigits])
-  @@unique([rtBillId])
   @@map("cards")
 }
 
@@ -308,6 +317,7 @@ model CardBill {
   month                DateTime  @db.Date /// The first day of the month relative to the card's dueDay
   startAt              DateTime  @map("start_at") @db.Date /// The day that the transactions start to count as part of this bill
   endAt                DateTime  @map("end_at") @db.Date /// The day that the transactions stop to count as part of this bill. The day BEFORE the statement date
+  statementDate        DateTime  @map("statement_date") @db.Date /// The next day of the endDate, were all expenses are added together and the bill value is defined
   dueDate              DateTime  @map("due_date") @db.Date /// The final day to pay this bill, also use to determine from which month this bill belongs to
   paidAt               DateTime? @map("paid_at") @db.Timestamp
   paymentTransactionId String?   @map("payment_transaction_id")
@@ -588,7 +598,6 @@ model RecurrentTransaction {
   // Transaction type=IN,OUT,CREDIT
   category                  Category?                  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   card                      Card?                      @relation(fields: [cardId], references: [id], onDelete: Restrict)
-  cardToPayBill             Card?                      @relation(name: "RecurrentTransactionRtBill")
   bankAccount               BankAccount?               @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
   bankAccountFrom           BankAccount?               @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)

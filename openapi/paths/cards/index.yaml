@@ -34,12 +34,8 @@ post:
               $ref: ../../components/fields/balance.yaml
             payAt:
               $ref: ../../components/fields/pay-at.yaml
-            bankAccountId:
+            payWithId:
               description: Bank account ID, required if want to also create recurrent transaction
-              type: string
-              format: uuid
-            budgetId:
-              description: Budget ID, required if want to also create recurrent transaction
               type: string
               format: uuid
     required: true
