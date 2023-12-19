@@ -73,7 +73,7 @@
 		"webpack-cli": "^5.1.4"
 	},
 	"scripts": {
-		"prepare": "yarn db:prisma",
+		"prepare": "husky install && yarn db:prisma",
 		"db:prisma": "yarn lint:prisma && prisma generate --generator client",
 		"db:docs": "yarn lint:prisma && prisma generate --generator dbml && dbdocs build ./prisma/schema.dbml",
 		"db:migrations": "yarn lint:prisma && prisma migrate dev --name",

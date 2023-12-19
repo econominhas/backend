@@ -47,3 +47,4 @@ lerna-debug.log*
 # Generated
 /prisma/*.dbml
 /openapi/bundle.yaml
+/openapi/postman.json
