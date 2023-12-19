@@ -35,6 +35,11 @@ export interface CreateInput {
 	payWithId?: string;
 }
 
+export interface UpdateBalanceInput {
+	cardId: string;
+	increment: number;
+}
+
 export interface GetBalanceByUserInput {
 	accountId: string;
 }
@@ -108,11 +113,17 @@ export interface GetBillsToBePaidOutput {
 }
 
 export abstract class CardRepository {
+	// Card provider
+
 	abstract getProviders(i: PaginatedRepository): Promise<Array<CardProvider>>;
 
 	abstract getProvider(i: GetProviderInput): Promise<CardProvider | undefined>;
 
+	// Card
+
 	abstract create(i: CreateInput): Promise<Card>;
+
+	abstract updateBalance(i: UpdateBalanceInput): Promise<void>;
 
 	abstract getBalanceByUser(
 		i: GetBalanceByUserInput,

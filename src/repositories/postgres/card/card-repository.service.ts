@@ -18,6 +18,7 @@ import type {
 	GetPrepaidInput,
 	GetPrepaidOutput,
 	GetProviderInput,
+	UpdateBalanceInput,
 } from 'models/card';
 import { CardRepository } from 'models/card';
 import type { Card, CardNetworkEnum, CardProvider } from '@prisma/client';
@@ -97,6 +98,27 @@ export class CardRepositoryService extends CardRepository {
 				`Fail to create card: ${err.message}`,
 			);
 		}
+	}
+
+	async updateBalance({
+		cardId,
+		increment,
+	}: UpdateBalanceInput): Promise<void> {
+		await this.cardRepository.update({
+			where: {
+				id: cardId,
+				cardProvider: {
+					type: {
+						in: [CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT],
+					},
+				},
+			},
+			data: {
+				balance: {
+					increment,
+				},
+			},
+		});
 	}
 
 	async getBalanceByUser({
