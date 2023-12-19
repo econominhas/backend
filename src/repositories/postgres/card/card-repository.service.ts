@@ -11,13 +11,15 @@ import type {
 	CreateInput,
 	GetBalanceByUserInput,
 	GetBalanceByUserOutput,
+	GetBillsToBePaidInput,
+	GetBillsToBePaidOutput,
 	GetPostpaidInput,
 	GetPostpaidOutput,
 	GetProviderInput,
 } from 'models/card';
 import { CardRepository } from 'models/card';
 import type { Card, CardNetworkEnum, CardProvider } from '@prisma/client';
-import { CardTypeEnum } from '@prisma/client';
+import { CardTypeEnum, PayAtEnum } from '@prisma/client';
 import { IdAdapter } from 'adapters/id';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 
@@ -210,6 +212,85 @@ export class CardRepositoryService extends CardRepository {
 				total: data.total,
 				startDate: data.start_date,
 				endDate: data.end_date,
+				statementDate: data.statement_date,
+				dueDate: data.due_date,
+			},
+		}));
+	}
+
+	async getBillsToBePaid({
+		accountId,
+		startDate,
+		endDate,
+		limit,
+		offset,
+	}: GetBillsToBePaidInput): Promise<Array<GetBillsToBePaidOutput>> {
+		const r = await this.rawPostgres<
+			Array<{
+				id: string;
+				name: string;
+				pay_at: PayAtEnum;
+				last_four_digits: string;
+				icon_url: string;
+				color: string;
+				network: CardNetworkEnum;
+				total: number;
+				statement_date: Date;
+				due_date: Date;
+			}>
+		>`
+			SELECT
+				c.id,
+				c.name,
+				c.pay_at,
+				c.last_four_digits,
+				cp.icon_url,
+				cp.color,
+				cp.network,
+				SUM(t.amount) AS total,
+				cb.statement_date,
+				cb.due_date
+			FROM
+				cards c
+			JOIN
+				card_providers cp ON c.card_provider_id = cp.id
+			JOIN
+				card_bills cb ON c.id = cb.card_id
+			JOIN
+				installments i ON cb.id = i.card_bill_id
+			JOIN
+				transactions t ON i.transaction_id = t.id
+			WHERE
+				c.account_id = ${accountId}
+				AND cp.type = ${CardTypeEnum.CREDIT}
+				AND (
+					(c.pay_at = ${PayAtEnum.STATEMENT} AND cb.statement_date >= ${startDate} AND cb.statement_date <= ${endDate}
+					OR (c.pay_at = ${PayAtEnum.DUE} AND cb.due_date >= ${startDate} AND cb.due_date <= ${endDate}
+				)
+				AND cb.paid_at IS NULL
+			GROUP BY c.id
+			ORDER BY
+				CASE
+					WHEN c.pay_at = ${PayAtEnum.STATEMENT} THEN cb.statement_date
+					WHEN c.pay_at = ${PayAtEnum.DUE} THEN cb.due_date
+					ELSE NULL
+				END DESC
+			LIMIT ${limit}
+			OFFSET ${offset};
+		`;
+
+		return r.map((data) => ({
+			id: data.id,
+			name: data.name,
+			lastFourDigits: data.last_four_digits,
+			provider: {
+				iconUrl: data.icon_url,
+				color: data.color,
+				network: data.network,
+			},
+			bill: {
+				total: data.total,
+				payAt: data.pay_at,
 				statementDate: data.statement_date,
 				dueDate: data.due_date,
 			},

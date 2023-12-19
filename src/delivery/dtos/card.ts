@@ -40,3 +40,8 @@ export class GetPostpaidDto extends PaginatedDto {
 	@IsDate()
 	date: Date;
 }
+
+export class GetBillsToBePaidDto extends PaginatedDto {
+	@IsDate()
+	date: Date;
+}

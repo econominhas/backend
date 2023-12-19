@@ -17,4 +17,6 @@ export abstract class DateAdapter {
 	abstract getTodayInfo(timezone?: TimezoneEnum): GetTodayInfoOutput;
 
 	abstract nowPlus(amount: number, unit: DateManipulationUnit): Date;
+
+	abstract endOfMonth(date: Date, timezone?: TimezoneEnum): Date;
 }

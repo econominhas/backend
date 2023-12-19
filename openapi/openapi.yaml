@@ -98,6 +98,8 @@ paths:
     $ref: paths/cards/index.yaml
   /cards/postpaid:
     $ref: paths/cards/postpaid.yaml
+  /cards/bills:
+    $ref: paths/cards/bills.yaml
 
   /categories/many:
     $ref: paths/categories/many.yaml

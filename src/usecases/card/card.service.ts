@@ -6,10 +6,14 @@ import {
 } from '@nestjs/common';
 import type { CardProvider } from '@prisma/client';
 import { CardTypeEnum } from '@prisma/client';
+import { DateAdapter } from 'adapters/date';
+import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'adapters/utils';
 import type {
 	CreateInput,
+	GetBillsToBePaidOutput,
+	GetCardBillsToBePaidInput,
 	GetPostpaidCardsInput,
 	GetPostpaidOutput,
 } from 'models/card';
@@ -25,6 +29,8 @@ export class CardService extends CardUseCase {
 
 		@Inject(UtilsAdapterService)
 		private readonly utilsAdapter: UtilsAdapter,
+		@Inject(DayjsAdapterService)
+		private readonly dateAdapter: DateAdapter,
 	) {
 		super();
 	}
@@ -101,6 +107,31 @@ export class CardService extends CardUseCase {
 		const data = await this.cardRepository.getPostpaid({
 			accountId,
 			date,
+			limit,
+			offset,
+		});
+
+		return {
+			paging,
+			data,
+		};
+	}
+
+	async getBillsToBePaid({
+		accountId,
+		date,
+		...pagination
+	}: GetCardBillsToBePaidInput): Promise<
+		PaginatedItems<GetBillsToBePaidOutput>
+	> {
+		const { limit, offset, paging } = this.utilsAdapter.pagination(pagination);
+
+		const endDate = this.dateAdapter.endOfMonth(date);
+
+		const data = await this.cardRepository.getBillsToBePaid({
+			accountId,
+			startDate: date,
+			endDate,
 			limit,
 			offset,
 		});

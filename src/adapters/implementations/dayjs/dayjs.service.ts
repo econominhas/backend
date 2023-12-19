@@ -25,4 +25,8 @@ export class DayjsAdapterService extends DateAdapter {
 	nowPlus(amount: number, unit: DateManipulationUnit): Date {
 		return dayjs.utc().add(amount, unit).toDate();
 	}
+
+	endOfMonth(date: Date, timezone?: TimezoneEnum): Date {
+		return dayjs.tz(date, timezone).endOf('month').endOf('day').toDate();
+	}
 }

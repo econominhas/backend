@@ -68,6 +68,29 @@ export interface GetPostpaidOutput {
 	};
 }
 
+export interface GetBillsToBePaidInput extends PaginatedRepository {
+	accountId: string;
+	startDate: Date;
+	endDate: Date;
+}
+
+export interface GetBillsToBePaidOutput {
+	id: string;
+	name: string;
+	lastFourDigits: string;
+	provider: {
+		iconUrl: string;
+		color: string;
+		network: CardNetworkEnum;
+	};
+	bill: {
+		total: number;
+		payAt: PayAtEnum;
+		statementDate: Date;
+		dueDate: Date;
+	};
+}
+
 export abstract class CardRepository {
 	abstract getProviders(i: PaginatedRepository): Promise<Array<CardProvider>>;
 
@@ -80,6 +103,10 @@ export abstract class CardRepository {
 	): Promise<GetBalanceByUserOutput>;
 
 	abstract getPostpaid(i: GetPostpaidInput): Promise<Array<GetPostpaidOutput>>;
+
+	abstract getBillsToBePaid(
+		i: GetBillsToBePaidInput,
+	): Promise<Array<GetBillsToBePaidOutput>>;
 }
 
 /**
@@ -95,6 +122,11 @@ export interface GetPostpaidCardsInput extends Paginated {
 	date: Date;
 }
 
+export interface GetCardBillsToBePaidInput extends Paginated {
+	accountId: string;
+	date: Date;
+}
+
 export abstract class CardUseCase {
 	abstract getProviders(i: Paginated): Promise<PaginatedItems<CardProvider>>;
 
@@ -103,4 +135,8 @@ export abstract class CardUseCase {
 	abstract getPostpaid(
 		i: GetPostpaidCardsInput,
 	): Promise<PaginatedItems<GetPostpaidOutput>>;
+
+	abstract getBillsToBePaid(
+		i: GetCardBillsToBePaidInput,
+	): Promise<PaginatedItems<GetBillsToBePaidOutput>>;
 }

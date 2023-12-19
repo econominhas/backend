@@ -50,35 +50,3 @@ post:
     "404":
       description: |
         Card provider doesn't exists
-
-get:
-  tags:
-    - Card
-  summary: Get a list of user's cards
-  description: |
-    Get user's cards
-  operationId: card-get
-  security:
-    - bearer: []
-  parameters:
-    $ref: ../../components/schemas/pagination-params.yaml
-  responses:
-    "200":
-      description: |
-        Data returned
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - paging
-              - data
-            properties:
-              paging:
-                $ref: ../../components/schemas/paging.yaml
-              data:
-                type: array
-                items:
-                  $ref: ../../components/entities/Card.yaml
-    "401":
-      $ref: ../../components/responses/unauthorized.yaml

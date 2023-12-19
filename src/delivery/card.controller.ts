@@ -2,7 +2,7 @@ import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { PaginatedDto, UserDataDto } from './dtos';
 import { CardService } from 'usecases/card/card.service';
 import { UserData } from './decorators/user-data';
-import { CreateDto, GetPostpaidDto } from './dtos/card';
+import { CreateDto, GetBillsToBePaidDto, GetPostpaidDto } from './dtos/card';
 import { CardUseCase } from 'models/card';
 
 @Controller('cards')
@@ -41,6 +41,19 @@ export class CardController {
 		query: GetPostpaidDto,
 	) {
 		return this.cardService.getPostpaid({
+			...query,
+			accountId: userData.accountId,
+		});
+	}
+
+	@Get('/bills')
+	getBillsToBePaid(
+		@UserData()
+		userData: UserDataDto,
+		@Query()
+		query: GetBillsToBePaidDto,
+	) {
+		return this.cardService.getBillsToBePaid({
 			...query,
 			accountId: userData.accountId,
 		});

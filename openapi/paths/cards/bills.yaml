@@ -1,10 +1,10 @@
 get:
   tags:
     - Card
-  summary: Get user's postpaid cards
+  summary: Get user's cards bills to be paid
   description: |
-    Get a list of the user's postpaid cards, ordered by card name.
-  operationId: card-postpaid
+    Get a list of the user's cards bills to be paid, ordered by payment date (newest -> oldest).
+  operationId: card
   security:
     - bearer: []
   parameters:
@@ -30,7 +30,7 @@ get:
   responses:
     "200":
       description: |
-        List user's postpaid cards
+        List user's cards bills to be paid
       content:
         application/json:
           schema:
@@ -44,6 +44,6 @@ get:
               data:
                 type: array
                 items:
-                  $ref: ../../components/entities/CardPostpaid.yaml
+                  $ref: ../../components/entities/CardGetBillsToBePaid.yaml
     "401":
       $ref: ../../components/responses/unauthorized.yaml

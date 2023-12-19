@@ -1,0 +1,46 @@
+type: object
+title: CardPostpaidEntity
+required:
+  - id
+  - name
+  - lastFourDigits
+  - provider
+  - bill
+properties:
+  id:
+    description: Card ID
+    type: string
+    format: uuid
+  name:
+    $ref: ../fields/name.yaml
+  lastFourDigits:
+    $ref: ../fields/last-four-digits.yaml
+  provider:
+    type: object
+    required:
+      - iconUrl
+      - color
+      - network
+    properties:
+      iconUrl:
+        $ref: ../fields/icon-url.yaml
+      color:
+        $ref: ../fields/color.yaml
+      network:
+        $ref: ../fields/card-network.yaml
+  bill:
+    type: object
+    required:
+      - total
+      - payAt
+      - statementDate
+      - dueDate
+    properties:
+      total:
+        $ref: ../fields/amount.yaml
+      payAt:
+        $ref: ../fields/pay-at.yaml
+      statementDate:
+        $ref: ../fields/statement-date.yaml
+      dueDate:
+        $ref: ../fields/due-date.yaml

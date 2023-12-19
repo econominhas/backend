@@ -1,7 +1,7 @@
 get:
   tags:
     - Card
-  summary: Get a list of card providers
+  summary: Get card providers
   description: |
     Get a list of card providers
   operationId: card-providers
