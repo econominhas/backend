@@ -136,7 +136,7 @@ export class CardRepositoryService extends CardRepository {
 		date,
 		limit,
 		offset,
-	}: GetPostpaidInput): Promise<GetPostpaidOutput> {
+	}: GetPostpaidInput): Promise<Array<GetPostpaidOutput>> {
 		const r = await this.rawPostgres<
 			Array<{
 				id: string;
@@ -148,6 +148,7 @@ export class CardRepositoryService extends CardRepository {
 				total: number;
 				start_date: Date;
 				end_date: Date;
+				statement_date: Date;
 				due_date: Date;
 			}>
 		>`
@@ -209,6 +210,7 @@ export class CardRepositoryService extends CardRepository {
 				total: data.total,
 				startDate: data.start_date,
 				endDate: data.end_date,
+				statementDate: data.statement_date,
 				dueDate: data.due_date,
 			},
 		}));

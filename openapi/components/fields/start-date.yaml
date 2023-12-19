@@ -1,0 +1,4 @@
+description: |
+  First day that the transactions started to be part of the bill
+type: string
+format: date-time

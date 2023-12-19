@@ -1,8 +1,9 @@
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsDate, IsEnum, IsOptional } from 'class-validator';
 import { IsAmount, IsID, IsName } from '../validators/internal';
 import { IsDay } from '../validators/date';
 import { IsNumberString } from '../validators/miscellaneous';
 import { PayAtEnum } from '@prisma/client';
+import { PaginatedDto } from '.';
 
 export class CreateDto {
 	@IsID()
@@ -33,4 +34,9 @@ export class CreateDto {
 	@IsOptional()
 	@IsID()
 	bankAccountId?: string;
+}
+
+export class GetPostpaidDto extends PaginatedDto {
+	@IsDate()
+	date: Date;
 }

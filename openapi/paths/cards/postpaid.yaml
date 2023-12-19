@@ -1,0 +1,49 @@
+get:
+  tags:
+    - Card
+  summary: Get a list of the user's postpaid cards
+  description: |
+    Get a list of the user's postpaid cards
+  operationId: card-postpaid
+  security:
+    - bearer: []
+  parameters:
+    - in: query
+      name: date
+      schema:
+        type: string
+        format: date-time
+      description: Date relative to the open bills, usually the current date
+      required: true
+    - in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+      description: Page for the pagination
+    - in: query
+      name: limit
+      schema:
+        type: integer
+        default: 10
+      description: Limit of items to bring per page
+  responses:
+    "200":
+      description: |
+        List user's postpaid cards
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - paging
+              - data
+            properties:
+              paging:
+                $ref: ../../components/schemas/paging.yaml
+              data:
+                type: array
+                items:
+                  $ref: ../../components/entities/CardPostpaid.yaml
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml

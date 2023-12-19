@@ -1,0 +1,4 @@
+description: |
+  First day to pay the bill
+type: string
+format: date-time

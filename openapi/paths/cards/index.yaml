@@ -60,6 +60,8 @@ get:
   operationId: card-get
   security:
     - bearer: []
+  parameters:
+    $ref: ../../components/schemas/pagination-params.yaml
   responses:
     "200":
       description: |

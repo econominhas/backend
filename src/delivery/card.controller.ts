@@ -2,7 +2,7 @@ import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { PaginatedDto, UserDataDto } from './dtos';
 import { CardService } from 'usecases/card/card.service';
 import { UserData } from './decorators/user-data';
-import { CreateDto } from './dtos/card';
+import { CreateDto, GetPostpaidDto } from './dtos/card';
 import { CardUseCase } from 'models/card';
 
 @Controller('cards')
@@ -13,7 +13,7 @@ export class CardController {
 	) {}
 
 	@Get('/providers')
-	getDefault(
+	getProviders(
 		@Query()
 		pagination: PaginatedDto,
 	) {
@@ -29,6 +29,19 @@ export class CardController {
 	) {
 		return this.cardService.create({
 			...body,
+			accountId: userData.accountId,
+		});
+	}
+
+	@Get('/postpaid')
+	getPostpaid(
+		@UserData()
+		userData: UserDataDto,
+		@Query()
+		query: GetPostpaidDto,
+	) {
+		return this.cardService.getPostpaid({
+			...query,
 			accountId: userData.accountId,
 		});
 	}

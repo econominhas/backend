@@ -1,0 +1,4 @@
+description: |
+  Last day that the transactions are part of the bill
+type: string
+format: date-time

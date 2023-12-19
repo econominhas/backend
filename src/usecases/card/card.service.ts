@@ -8,7 +8,11 @@ import type { CardProvider } from '@prisma/client';
 import { CardTypeEnum } from '@prisma/client';
 import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'adapters/utils';
-import type { CreateInput } from 'models/card';
+import type {
+	CreateInput,
+	GetPostpaidCardsInput,
+	GetPostpaidOutput,
+} from 'models/card';
 import { CardRepository, CardUseCase } from 'models/card';
 import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
 import type { Paginated, PaginatedItems } from 'types/paginated-items';
@@ -85,6 +89,26 @@ export class CardService extends CardUseCase {
 		}
 
 		await this.cardRepository.create(i);
+	}
+
+	async getPostpaid({
+		accountId,
+		date,
+		...pagination
+	}: GetPostpaidCardsInput): Promise<PaginatedItems<GetPostpaidOutput>> {
+		const { limit, offset, paging } = this.utilsAdapter.pagination(pagination);
+
+		const data = await this.cardRepository.getPostpaid({
+			accountId,
+			date,
+			limit,
+			offset,
+		});
+
+		return {
+			paging,
+			data,
+		};
 	}
 
 	// Private

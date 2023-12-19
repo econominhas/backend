@@ -50,7 +50,7 @@ export interface GetPostpaidInput extends PaginatedRepository {
 	date: Date;
 }
 
-export type GetPostpaidOutput = Array<{
+export interface GetPostpaidOutput {
 	id: string;
 	name: string;
 	lastFourDigits: string;
@@ -63,9 +63,10 @@ export type GetPostpaidOutput = Array<{
 		total: number;
 		startDate: Date;
 		endDate: Date;
+		statementDate: Date;
 		dueDate: Date;
 	};
-}>;
+}
 
 export abstract class CardRepository {
 	abstract getProviders(i: PaginatedRepository): Promise<Array<CardProvider>>;
@@ -78,7 +79,7 @@ export abstract class CardRepository {
 		i: GetBalanceByUserInput,
 	): Promise<GetBalanceByUserOutput>;
 
-	abstract getPostpaid(i: GetPostpaidInput): Promise<GetPostpaidOutput>;
+	abstract getPostpaid(i: GetPostpaidInput): Promise<Array<GetPostpaidOutput>>;
 }
 
 /**
@@ -89,8 +90,17 @@ export abstract class CardRepository {
  *
  */
 
+export interface GetPostpaidCardsInput extends Paginated {
+	accountId: string;
+	date: Date;
+}
+
 export abstract class CardUseCase {
 	abstract getProviders(i: Paginated): Promise<PaginatedItems<CardProvider>>;
 
 	abstract create(i: CreateInput): Promise<void>;
+
+	abstract getPostpaid(
+		i: GetPostpaidCardsInput,
+	): Promise<PaginatedItems<GetPostpaidOutput>>;
 }

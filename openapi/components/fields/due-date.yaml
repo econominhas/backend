@@ -1,0 +1,4 @@
+description: |
+  Final date to pay the bill
+type: string
+format: date-time

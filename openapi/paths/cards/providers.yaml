@@ -7,8 +7,10 @@ get:
   operationId: card-providers
   security:
     - bearer: []
+  parameters:
+    $ref: ../../components/schemas/pagination-params.yaml
   responses:
-    '200':
+    "200":
       description: |
         List of card providers
       content:
@@ -25,5 +27,5 @@ get:
                 type: array
                 items:
                   $ref: ../../components/entities/CardProvider.yaml
-    '401':
+    "401":
       $ref: ../../components/responses/unauthorized.yaml
