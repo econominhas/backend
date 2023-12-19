@@ -46,6 +46,19 @@ export class CardController {
 		});
 	}
 
+	@Get('/prepaid')
+	getPrepaid(
+		@UserData()
+		userData: UserDataDto,
+		@Query()
+		pagination: PaginatedDto,
+	) {
+		return this.cardService.getPrepaid({
+			...pagination,
+			accountId: userData.accountId,
+		});
+	}
+
 	@Get('/bills')
 	getBillsToBePaid(
 		@UserData()

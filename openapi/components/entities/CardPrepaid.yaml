@@ -1,0 +1,32 @@
+type: object
+title: CardPrepaidEntity
+required:
+  - id
+  - name
+  - lastFourDigits
+  - balance
+  - provider
+properties:
+  id:
+    description: Card ID
+    type: string
+    format: uuid
+  name:
+    $ref: ../fields/name.yaml
+  lastFourDigits:
+    $ref: ../fields/last-four-digits.yaml
+  balance:
+    $ref: ../fields/balance.yaml
+  provider:
+    type: object
+    required:
+      - iconUrl
+      - color
+      - network
+    properties:
+      iconUrl:
+        $ref: ../fields/icon-url.yaml
+      color:
+        $ref: ../fields/color.yaml
+      network:
+        $ref: ../fields/card-network.yaml

@@ -45,5 +45,7 @@ get:
                 type: array
                 items:
                   $ref: ../../components/entities/CardPostpaid.yaml
+    "400":
+      $ref: ../../components/responses/bad-request.yaml
     "401":
       $ref: ../../components/responses/unauthorized.yaml

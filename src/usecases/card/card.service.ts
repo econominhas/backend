@@ -16,6 +16,8 @@ import type {
 	GetCardBillsToBePaidInput,
 	GetPostpaidCardsInput,
 	GetPostpaidOutput,
+	GetPrepaidCardsInput,
+	GetPrepaidOutput,
 } from 'models/card';
 import { CardRepository, CardUseCase } from 'models/card';
 import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
@@ -107,6 +109,24 @@ export class CardService extends CardUseCase {
 		const data = await this.cardRepository.getPostpaid({
 			accountId,
 			date,
+			limit,
+			offset,
+		});
+
+		return {
+			paging,
+			data,
+		};
+	}
+
+	async getPrepaid({
+		accountId,
+		...pagination
+	}: GetPrepaidCardsInput): Promise<PaginatedItems<GetPrepaidOutput>> {
+		const { limit, offset, paging } = this.utilsAdapter.pagination(pagination);
+
+		const data = await this.cardRepository.getPrepaid({
+			accountId,
 			limit,
 			offset,
 		});

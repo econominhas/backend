@@ -15,6 +15,8 @@ import type {
 	GetBillsToBePaidOutput,
 	GetPostpaidInput,
 	GetPostpaidOutput,
+	GetPrepaidInput,
+	GetPrepaidOutput,
 	GetProviderInput,
 } from 'models/card';
 import { CardRepository } from 'models/card';
@@ -215,6 +217,43 @@ export class CardRepositoryService extends CardRepository {
 				statementDate: data.statement_date,
 				dueDate: data.due_date,
 			},
+		}));
+	}
+
+	async getPrepaid({
+		accountId,
+		limit,
+		offset,
+	}: GetPrepaidInput): Promise<GetPrepaidOutput[]> {
+		const r = await this.cardRepository.findMany({
+			where: {
+				accountId,
+				cardProvider: {
+					type: {
+						in: [CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT],
+					},
+				},
+			},
+			select: {
+				id: true,
+				name: true,
+				lastFourDigits: true,
+				balance: true,
+				cardProvider: {
+					select: {
+						iconUrl: true,
+						color: true,
+						network: true,
+					},
+				},
+			},
+			take: limit,
+			skip: offset,
+		});
+
+		return r.map(({ cardProvider, ...card }) => ({
+			...card,
+			provider: cardProvider,
 		}));
 	}
 

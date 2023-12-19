@@ -1,10 +1,10 @@
 get:
   tags:
     - Card
-  summary: Get card providers
+  summary: Get user's prepaid cards
   description: |
-    Get a list of card providers
-  operationId: card-providers
+    Get a list of the user's prepaid cards, ordered by card name.
+  operationId: card-prepaid
   security:
     - bearer: []
   parameters:
@@ -12,7 +12,7 @@ get:
   responses:
     "200":
       description: |
-        List of card providers
+        List user's prepaid cards
       content:
         application/json:
           schema:
@@ -26,7 +26,7 @@ get:
               data:
                 type: array
                 items:
-                  $ref: ../../components/entities/CardProvider.yaml
+                  $ref: ../../components/entities/CardPrepaid.yaml
     "400":
       $ref: ../../components/responses/bad-request.yaml
     "401":
