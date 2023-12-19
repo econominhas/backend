@@ -96,7 +96,11 @@ export class BudgetService extends BudgetUseCase {
 
 	async overview(i: OverviewInput): Promise<OverviewOutput> {
 		const [categories, budgets, expenses] = await Promise.all([
-			this.categoryRepository.getAllByUser({ accountId: i.accountId }),
+			this.categoryRepository.getByUser({
+				accountId: i.accountId,
+				limit: 10000,
+				offset: 0,
+			}),
 			this.budgetRepository.getMonthlyByCategory(i),
 			this.transactionRepository.getMonthlyAmountByCategory(i),
 		]);

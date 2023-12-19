@@ -4,11 +4,14 @@ import {
 	ArrayMaxSize,
 	ArrayMinSize,
 	IsArray,
+	IsBoolean,
 	IsEnum,
 	IsHexColor,
+	IsOptional,
 	ValidateNested,
 } from 'class-validator';
 import { IsDescription, IsName } from '../validators/internal';
+import { PaginatedDto } from '.';
 
 class CreateCategoryDto {
 	@IsName()
@@ -31,4 +34,10 @@ export class CreateManyDto {
 	@ArrayMaxSize(50)
 	@Type(() => CreateCategoryDto)
 	categories: Array<CreateCategoryDto>;
+}
+
+export class GetByUserDto extends PaginatedDto {
+	@IsOptional()
+	@IsBoolean()
+	onlyActive?: boolean;
 }

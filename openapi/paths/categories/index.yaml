@@ -30,27 +30,45 @@ patch:
               $ref: ../../components/fields/color.yaml
     required: true
   responses:
-    '204':
+    "204":
       description: |
         Category updated
-    '400':
+    "400":
       $ref: ../../components/responses/bad-request.yaml
-    '401':
+    "401":
       $ref: ../../components/responses/unauthorized.yaml
 
 get:
   tags:
     - Category
-  summary: Get a list of user's categories
+  summary: Get user's categories
   description: |
-    Get user's categories
+    Get a list of the user's categories
   operationId: category-get
   security:
     - bearer: []
+  parameters:
+    - in: query
+      name: onlyActive
+      schema:
+        type: boolean
+      description: Flag to tell if only active categories should be returned
+    - in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+      description: Page for the pagination
+    - in: query
+      name: limit
+      schema:
+        type: integer
+        default: 10
+      description: Limit of items to bring per page
   responses:
-    '200':
+    "200":
       description: |
-        Data returned
+        List of the user's categories
       content:
         application/json:
           schema:
@@ -65,7 +83,9 @@ get:
                 type: array
                 items:
                   $ref: ../../components/entities/Category.yaml
-    '401':
+    "400":
+      $ref: ../../components/responses/bad-request.yaml
+    "401":
       $ref: ../../components/responses/unauthorized.yaml
 
 delete:
@@ -92,8 +112,10 @@ delete:
               format: uuid
     required: true
   responses:
-    '204':
+    "204":
       description: |
         Category deleted
-    '401':
+    "400":
+      $ref: ../../components/responses/bad-request.yaml
+    "401":
       $ref: ../../components/responses/unauthorized.yaml

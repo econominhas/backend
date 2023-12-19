@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { DefaultCategory } from '@prisma/client';
+import type { Category, DefaultCategory } from '@prisma/client';
 import { UtilsAdapter } from 'adapters/utils';
 
-import type { CreateManyInput } from 'models/category';
+import type {
+	CreateManyInput,
+	GetCategoriesByUserInput,
+} from 'models/category';
 import { CategoryRepository, CategoryUseCase } from 'models/category';
 import { CategoryRepositoryService } from 'repositories/postgres/category/category-repository.service';
 import type { Paginated, PaginatedItems } from 'types/paginated-items';
@@ -33,5 +36,25 @@ export class CategoryService extends CategoryUseCase {
 
 	async createMany(i: CreateManyInput): Promise<void> {
 		await this.categoryRepository.createMany(i);
+	}
+
+	async getByUser({
+		accountId,
+		onlyActive,
+		...pagination
+	}: GetCategoriesByUserInput): Promise<PaginatedItems<Category>> {
+		const { limit, offset, paging } = this.utilsAdapter.pagination(pagination);
+
+		const data = await this.categoryRepository.getByUser({
+			accountId,
+			onlyActive,
+			limit,
+			offset,
+		});
+
+		return {
+			paging,
+			data,
+		};
 	}
 }
