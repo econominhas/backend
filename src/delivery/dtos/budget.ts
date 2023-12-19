@@ -5,7 +5,7 @@ import {
 	ValidateNested,
 } from 'class-validator';
 import { IsAmount, IsDescription, IsID, IsName } from '../validators/internal';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsMonth, IsYear } from '../validators/date';
 
 class CreateItem {
@@ -74,10 +74,8 @@ export class OverviewDtoDto {
 	budgetId: string;
 
 	@IsMonth()
-	@Transform(({ value }) => parseFloat(value))
 	month: number;
 
 	@IsYear()
-	@Transform(({ value }) => parseFloat(value))
 	year: number;
 }
