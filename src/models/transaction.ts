@@ -47,12 +47,25 @@ export interface GetByBudgetOutput {
 	};
 }
 
+export interface CreateTransferInput {
+	accountId: string;
+	name: string;
+	amount: number;
+	bankAccountFromId: string;
+	bankAccountToId: string;
+	budgetDateId: string;
+	description: string;
+	createdAt: Date;
+}
+
 export abstract class TransactionRepository {
 	abstract getMonthlyAmountByCategory(
 		i: GetMonthlyAmountByCategoryInput,
 	): Promise<GetMonthlyAmountByCategoryOutput>;
 
 	abstract getByBudget(i: GetByBudgetInput): Promise<Array<GetByBudgetOutput>>;
+
+	abstract createTransfer(i: CreateTransferInput): Promise<void>;
 }
 
 /**
@@ -70,6 +83,19 @@ export interface GetListInput extends Paginated {
 	month: number;
 }
 
+export interface TransferInput {
+	accountId: string;
+	name: string;
+	amount: number;
+	bankAccountFromId: string;
+	bankAccountToId: string;
+	budgetDateId: string;
+	description: string;
+	createdAt: Date;
+}
+
 export abstract class TransactionUseCase {
 	abstract getList(i: GetListInput): Promise<PaginatedItems<GetByBudgetOutput>>;
+
+	abstract transfer(i: TransferInput): Promise<void>;
 }

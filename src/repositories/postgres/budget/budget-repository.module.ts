@@ -4,7 +4,10 @@ import { BudgetRepositoryService } from './budget-repository.service';
 import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
 
 @Module({
-	imports: [PostgresModule.forFeature(['budget']), UIDAdapterModule],
+	imports: [
+		PostgresModule.forFeature(['budget', 'budgetDate']),
+		UIDAdapterModule,
+	],
 	providers: [BudgetRepositoryService],
 	exports: [BudgetRepositoryService],
 })

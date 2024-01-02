@@ -1,0 +1,51 @@
+post:
+  tags:
+    - Transaction
+  summary: Create transfer transaction
+  description: |
+    Create a transfer transaction, to transfer money from
+    one of the user's bank accounts to another
+  operationId: transaction-transfer
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - name
+            - amount
+            - bankAccountFromId
+            - bankAccountToId
+            - budgetDateId
+            - description
+            - createdAt
+          properties:
+            name:
+              $ref: ../../components/fields/name.yaml
+            amount:
+              $ref: ../../components/fields/amount.yaml
+            bankAccountFromId:
+              description: ID of the bank account that the money will be withdrawn from
+              type: string
+              format: uuid
+            bankAccountToId:
+              description: ID of the bank account that the money will be deposited to
+              type: string
+              format: uuid
+            budgetDateId:
+              description: BudgetDate ID
+              type: string
+              format: uuid
+            createdAt:
+              $ref: ../../components/fields/created-at.yaml
+    required: true
+  responses:
+    "201":
+      description: |
+        Transaction created
+    "400":
+      $ref: ../../components/responses/bad-request.yaml
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml

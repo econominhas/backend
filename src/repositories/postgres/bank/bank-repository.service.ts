@@ -11,7 +11,10 @@ import type { PaginatedRepository } from 'types/paginated-items';
 import type {
 	CreateInput,
 	GetBalanceByUserInput,
+	GetByIdInput,
 	GetByUserInput,
+	GetManyByIdInput,
+	UpdateBalanceInput,
 } from 'models/bank';
 import { BankRepository } from 'models/bank';
 import { IdAdapter } from 'adapters/id';
@@ -111,6 +114,55 @@ export class BankRepositoryService extends BankRepository {
 			},
 			take: limit,
 			skip: offset,
+		});
+	}
+
+	getById({
+		bankAccountId,
+		accountId,
+	}: GetByIdInput): Promise<BankAccount | null> {
+		return this.bankAccountRepository.findFirst({
+			where: {
+				id: bankAccountId,
+				accountId,
+			},
+		});
+	}
+
+	getManyById({
+		bankAccountsIds,
+		accountId,
+	}: GetManyByIdInput): Promise<BankAccount[] | null> {
+		return this.bankAccountRepository.findMany({
+			where: {
+				id: {
+					in: bankAccountsIds,
+				},
+				accountId,
+			},
+		});
+	}
+
+	async updateBalance({
+		bankAccountId,
+		accountId,
+		amount,
+	}: UpdateBalanceInput): Promise<void> {
+		await this.bankAccountRepository.update({
+			where: {
+				id: bankAccountId,
+				accountId,
+			},
+			data: {
+				balance:
+					amount < 0
+						? {
+								decrement: amount * -1,
+						  }
+						: {
+								increment: amount,
+						  },
+			},
 		});
 	}
 }

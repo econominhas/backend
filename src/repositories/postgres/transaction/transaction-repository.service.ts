@@ -1,18 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import type {
+	CreateTransferInput,
 	GetByBudgetInput,
 	GetByBudgetOutput,
 	GetMonthlyAmountByCategoryInput,
 	GetMonthlyAmountByCategoryOutput,
 } from 'models/transaction';
 import { TransactionRepository } from 'models/transaction';
+import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
+import { IdAdapter } from 'adapters/id';
 
 @Injectable()
 export class TransactionRepositoryService extends TransactionRepository {
 	constructor(
 		@InjectRepository('transaction')
 		private readonly transactionRepository: Repository<'transaction'>,
+
+		@Inject(UIDAdapterService)
+		private readonly idAdapter: IdAdapter,
 	) {
 		super();
 	}
@@ -113,6 +119,33 @@ export class TransactionRepositoryService extends TransactionRepository {
 			},
 			skip: offset,
 			take: limit,
+		});
+	}
+
+	async createTransfer({
+		accountId,
+		name,
+		amount,
+		bankAccountFromId,
+		bankAccountToId,
+		budgetDateId,
+		description,
+		createdAt,
+	}: CreateTransferInput): Promise<void> {
+		await this.transactionRepository.create({
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			//@ts-ignore
+			data: {
+				id: this.idAdapter.genId(),
+				accountId,
+				name,
+				amount,
+				bankAccountFromId,
+				bankAccountToId,
+				budgetDateId,
+				description,
+				createdAt,
+			},
 		});
 	}
 }

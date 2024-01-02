@@ -1,4 +1,4 @@
-import type { Budget, Category } from '@prisma/client';
+import type { Budget, BudgetDate, Category } from '@prisma/client';
 
 /**
  *
@@ -34,12 +34,21 @@ export type GetMonthlyByCategoryOutput = Array<{
 	amount: number;
 }>;
 
+export interface GetBudgetDateByIdInput {
+	budgetDateId: string;
+	accountId: string;
+}
+
 export abstract class BudgetRepository {
 	abstract createWithItems(i: CreateWithItemsInput): Promise<Budget>;
 
 	abstract getMonthlyByCategory(
 		i: GetMonthlyByCategoryInput,
 	): Promise<GetMonthlyByCategoryOutput | undefined>;
+
+	abstract getBudgetDateById(
+		i: GetBudgetDateByIdInput,
+	): Promise<BudgetDate | null>;
 }
 
 /**

@@ -2,11 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import type {
 	CreateWithItemsInput,
+	GetBudgetDateByIdInput,
 	GetMonthlyByCategoryInput,
 	GetMonthlyByCategoryOutput,
 } from 'models/budget';
 import { BudgetRepository } from 'models/budget';
-import type { Budget } from '@prisma/client';
+import type { Budget, BudgetDate } from '@prisma/client';
 import { IdAdapter } from 'adapters/id';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 
@@ -15,6 +16,8 @@ export class BudgetRepositoryService extends BudgetRepository {
 	constructor(
 		@InjectRepository('budget')
 		private readonly budgetRepository: Repository<'budget'>,
+		@InjectRepository('budgetDate')
+		private readonly budgetDateRepository: Repository<'budgetDate'>,
 
 		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
@@ -93,5 +96,19 @@ export class BudgetRepositoryService extends BudgetRepository {
 		if (!budget) return;
 
 		return budget.budgetDates.map((bd) => bd.budgetItems).flat();
+	}
+
+	getBudgetDateById({
+		budgetDateId,
+		accountId,
+	}: GetBudgetDateByIdInput): Promise<BudgetDate> {
+		return this.budgetDateRepository.findFirst({
+			where: {
+				id: budgetDateId,
+				budget: {
+					accountId,
+				},
+			},
+		});
 	}
 }

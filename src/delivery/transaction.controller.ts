@@ -1,7 +1,7 @@
-import { Controller, Inject, Get, Query } from '@nestjs/common';
+import { Controller, Inject, Get, Query, Body, Post } from '@nestjs/common';
 import { UserData } from './decorators/user-data';
 import { UserDataDto } from './dtos';
-import { GetListDto } from './dtos/transaction';
+import { GetListDto, TransferDto } from './dtos/transaction';
 import { TransactionService } from 'usecases/transaction/transaction.service';
 import { TransactionUseCase } from 'models/transaction';
 
@@ -21,6 +21,19 @@ export class TransactionController {
 	) {
 		return this.transactionService.getList({
 			...query,
+			accountId: userData.accountId,
+		});
+	}
+
+	@Post('/transfer')
+	async transfer(
+		@UserData()
+		userData: UserDataDto,
+		@Body()
+		body: TransferDto,
+	) {
+		return this.transactionService.transfer({
+			...body,
 			accountId: userData.accountId,
 		});
 	}
