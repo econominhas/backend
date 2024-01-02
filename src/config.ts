@@ -1,5 +1,5 @@
 import type { ConfigService } from '@nestjs/config';
-import { plainToInstance } from 'class-transformer';
+import { Transform, plainToInstance } from 'class-transformer';
 import {
 	IsEmail,
 	IsIn,
@@ -12,6 +12,7 @@ import { IsURL } from './delivery/validators/miscellaneous';
 
 class EnvVars {
 	@IsInt()
+	@Transform(({ value }) => parseFloat(value))
 	PORT: number;
 
 	@IsIn(['dev', 'test', 'production'])

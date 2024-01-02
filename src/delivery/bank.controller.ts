@@ -20,7 +20,7 @@ export class BankController {
 		return this.bankService.getProviders(pagination);
 	}
 
-	@Post('accounts')
+	@Post('/accounts')
 	create(
 		@UserData()
 		userData: UserDataDto,
@@ -29,6 +29,19 @@ export class BankController {
 	) {
 		return this.bankService.create({
 			...body,
+			accountId: userData.accountId,
+		});
+	}
+
+	@Get('/accounts')
+	list(
+		@UserData()
+		userData: UserDataDto,
+		@Query()
+		pagination: PaginatedDto,
+	) {
+		return this.bankService.list({
+			...pagination,
 			accountId: userData.accountId,
 		});
 	}

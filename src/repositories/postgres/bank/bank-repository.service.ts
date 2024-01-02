@@ -8,7 +8,11 @@ import {
 import { InjectRepository, Repository } from '..';
 import type { BankAccount, BankProvider } from '@prisma/client';
 import type { PaginatedRepository } from 'types/paginated-items';
-import type { CreateInput, GetBalanceByUserInput } from 'models/bank';
+import type {
+	CreateInput,
+	GetBalanceByUserInput,
+	GetByUserInput,
+} from 'models/bank';
 import { BankRepository } from 'models/bank';
 import { IdAdapter } from 'adapters/id';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
@@ -32,6 +36,9 @@ export class BankRepositoryService extends BankRepository {
 		limit,
 	}: PaginatedRepository): Promise<Array<BankProvider>> {
 		return this.bankProviderRepository.findMany({
+			orderBy: {
+				name: 'asc',
+			},
 			skip: offset,
 			take: limit,
 		});
@@ -88,5 +95,22 @@ export class BankRepositoryService extends BankRepository {
 		});
 
 		return r._sum.balance;
+	}
+
+	getByUser({
+		accountId,
+		limit,
+		offset,
+	}: GetByUserInput): Promise<BankAccount[]> {
+		return this.bankAccountRepository.findMany({
+			where: {
+				accountId,
+			},
+			orderBy: {
+				name: 'asc',
+			},
+			take: limit,
+			skip: offset,
+		});
 	}
 }

@@ -26,12 +26,18 @@ export interface GetBalanceByUserInput {
 	accountId: string;
 }
 
+export interface GetByUserInput extends PaginatedRepository {
+	accountId: string;
+}
+
 export abstract class BankRepository {
 	abstract getProviders(i: PaginatedRepository): Promise<Array<BankProvider>>;
 
 	abstract create(i: CreateInput): Promise<BankAccount>;
 
 	abstract getBalanceByUser(i: GetBalanceByUserInput): Promise<number>;
+
+	abstract getByUser(i: GetByUserInput): Promise<Array<BankAccount>>;
 }
 
 /**
@@ -42,8 +48,14 @@ export abstract class BankRepository {
  *
  */
 
+export interface ListInput extends Paginated {
+	accountId: string;
+}
+
 export abstract class BankUseCase {
 	abstract getProviders(i: Paginated): Promise<PaginatedItems<BankProvider>>;
 
 	abstract create(i: CreateInput): Promise<BankAccount>;
+
+	abstract list(i: ListInput): Promise<PaginatedItems<BankAccount>>;
 }

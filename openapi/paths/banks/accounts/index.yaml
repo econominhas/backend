@@ -33,21 +33,21 @@ post:
               $ref: ../../../components/fields/balance.yaml
     required: true
   responses:
-    '200':
+    "200":
       description: |
         Bank account created
       content:
         application/json:
           schema:
             $ref: ../../../components/entities/BankAccount.yaml
-    '400':
+    "400":
       $ref: ../../../components/responses/bad-request.yaml
-    '401':
+    "401":
       $ref: ../../../components/responses/unauthorized.yaml
-    '404':
+    "404":
       description: |
         Bank provider doesn't exists
-    '409':
+    "409":
       description: |
         Bank account already registered
 
@@ -61,7 +61,7 @@ get:
   security:
     - bearer: []
   responses:
-    '200':
+    "200":
       description: |
         Data returned
       content:
@@ -78,5 +78,7 @@ get:
                 type: array
                 items:
                   $ref: ../../../components/entities/BankAccount.yaml
-    '401':
+    "400":
+      $ref: ../../../components/responses/bad-request.yaml
+    "401":
       $ref: ../../../components/responses/unauthorized.yaml

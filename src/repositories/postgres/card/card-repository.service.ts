@@ -126,30 +126,30 @@ export class CardRepositoryService extends CardRepository {
 	}: GetBalanceByUserInput): Promise<GetBalanceByUserOutput> {
 		const r = await this.rawPostgres<
 			Array<{
-				type: CardTypeEnum;
-				balance: number;
+				card_provider_type: CardTypeEnum;
+				total_balance: number;
 			}>
 		>`
 			SELECT
-				sum(cards.balance) AS balance,
-				card_providers.type as type
+				cp.type AS card_provider_type,
+				SUM(c.balance) AS total_balance
 			FROM
-				cards
+				cards c
 			JOIN
-				card_providers
-			ON
-				card_providers.id = cards.card_provider_id
+				card_providers cp ON c.card_provider_id = cp.id
 			WHERE
-				cards.account_id = ${accountId}
-				AND
-				card_providers.type IN ${[CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT]}
+				c.account_id = ${accountId}
+			AND
+				cp.type IN ${[CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT]}
 			GROUP BY
-				card_providers.type;
+				cp.type
+			ORDER BY
+				cp.type ASC;
 		`;
 
 		return r.reduce(
 			(acc, cur) => {
-				acc[cur.type] = cur.balance;
+				acc[cur.card_provider_type] = cur.total_balance;
 
 				return acc;
 			},
