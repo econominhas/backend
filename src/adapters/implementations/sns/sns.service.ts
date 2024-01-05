@@ -19,7 +19,7 @@ export class SNSAdapterService extends SmsAdapter {
 
 		this.client = new SNSClient({
 			endpoint: this.config.get('AWS_ENDPOINT'),
-			region: this.config.get('AWS_DEFAULT_REGION'),
+			region: this.config.get('AWS_REGION'),
 			credentials: {
 				secretAccessKey: this.config.get('AWS_SECRET_ACCESS_KEY'),
 				accessKeyId: this.config.get('AWS_ACCESS_KEY_ID'),

@@ -1,7 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
 import { Transform, plainToInstance } from 'class-transformer';
 import {
-	IsEmail,
 	IsIn,
 	IsInt,
 	IsOptional,
@@ -28,7 +27,7 @@ class EnvVars {
 	@IsString()
 	AWS_SECRET_ACCESS_KEY: string;
 	@IsIn(['us-east-1'])
-	AWS_DEFAULT_REGION: string;
+	AWS_REGION: string;
 
 	@IsString()
 	GOOGLE_CLIENT_ID: string;
@@ -40,9 +39,6 @@ class EnvVars {
 
 	@IsString()
 	DATABASE_URL: string;
-
-	@IsEmail()
-	NOTIFICATIONS_EMAIL: string;
 }
 
 export type AppConfig = ConfigService<EnvVars>;

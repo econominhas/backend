@@ -1,0 +1,52 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      # - release
+    # paths:
+    #   - 'src/**'
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          file_name: .env.production
+          fail_on_empty: false
+          sort_keys: false
+          envkey_PORT: ${{ secrets.PORT }}
+          envkey_NODE_ENV: ${{ secrets.NODE_ENV }}
+          envkey_AWS_REGION: ${{ secrets.AWS_REGION }}
+          envkey_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          envkey_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Build
+        run: |
+          yarn install --ignore-scripts
+          yarn build
+
+      - name: AWS CodeBuild & CodeDeploy
+        uses: sourcetoad/aws-codedeploy-action@v1
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          codedeploy_name: Econominhas
+          codedeploy_group: development_gropup
+          s3_bucket: econominhas-dev-api-deploy
+          s3_folder: api
+          max_polling_iterations: 60
+          directory: dist
