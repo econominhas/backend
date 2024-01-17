@@ -3,6 +3,7 @@ import {
 	ConflictException,
 	Inject,
 	Injectable,
+	Logger,
 	NotFoundException,
 } from '@nestjs/common';
 import type {
@@ -42,7 +43,10 @@ interface GenTokensInput {
 
 @Injectable()
 export class AuthService extends AuthUseCase {
-	private readonly requiredGoogleScopes = ['identify', 'email'];
+	private readonly requiredGoogleScopes = [
+		'https://www.googleapis.com/auth/userinfo.profile',
+		'https://www.googleapis.com/auth/userinfo.email',
+	];
 
 	constructor(
 		@Inject(AuthRepositoryService)
@@ -73,7 +77,9 @@ export class AuthService extends AuthUseCase {
 	}: CreateWith3rdPartyProviderInput): Promise<AuthOutput> {
 		const { scopes, ...providerTokens } = await this.googleAdapter
 			.exchangeCode({ code, originUrl })
-			.catch(() => {
+			.catch((err) => {
+				Logger.error(err);
+
 				throw new BadRequestException('Invalid code');
 			});
 
@@ -279,10 +285,13 @@ export class AuthService extends AuthUseCase {
 		} else {
 			promises.push({ refreshToken: '' });
 		}
+
 		if (!isFirstAccess) {
-			this.termsAndPoliciesService.hasAcceptedLatest({
-				accountId: accountId,
-			});
+			promises.push(
+				this.termsAndPoliciesService.hasAcceptedLatest({
+					accountId: accountId,
+				}),
+			);
 		} else {
 			promises.push(false);
 		}

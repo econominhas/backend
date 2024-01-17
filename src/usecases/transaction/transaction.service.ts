@@ -123,6 +123,7 @@ export class TransactionService extends TransactionUseCase {
 			budgetDateId,
 			description,
 			createdAt,
+			isSystemManaged: false,
 		});
 	}
 }

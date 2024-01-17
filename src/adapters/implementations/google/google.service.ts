@@ -9,6 +9,7 @@ import { DateAdapter } from 'adapters/date';
 import { DayjsAdapterService } from '../dayjs/dayjs.service';
 import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 
 interface ExchangeCodeAPIOutput {
 	access_token: string;
@@ -41,25 +42,28 @@ export class GoogleAdapterService extends GoogleAdapter {
 		code,
 		originUrl,
 	}: ExchangeCodeInput): Promise<ExchangeCodeOutput> {
+		// ALERT: The order of the properties is important, don't change it!
 		const body = new URLSearchParams();
+		body.append('code', code);
 		body.append('client_id', this.config.get('GOOGLE_CLIENT_ID'));
 		body.append('client_secret', this.config.get('GOOGLE_CLIENT_SECRET'));
-		body.append('grant_type', 'authorization_code');
-		body.append('code', code);
 		if (originUrl) {
 			body.append('redirect_uri', originUrl);
 		}
+		body.append('grant_type', 'authorization_code');
+		// ALERT: The order of the properties is important, don't change it!
 
-		const result = await fetch('https://oauth2.googleapis.com/token', {
-			method: 'POST',
-			body,
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				Accept: 'application/json',
-			},
-		})
-			.then((r) => r.json())
-			.then((r) => r as ExchangeCodeAPIOutput);
+		const result = await axios
+			.post('https://oauth2.googleapis.com/token', body, {
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json',
+				},
+			})
+			.then((r) => r.data as ExchangeCodeAPIOutput)
+			.catch((err) => {
+				throw err?.response?.data;
+			});
 
 		return {
 			accessToken: result.access_token,

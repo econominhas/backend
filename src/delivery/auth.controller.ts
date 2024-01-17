@@ -31,7 +31,7 @@ export class AuthController {
 	async createFromGoogleProvider(
 		@Body()
 		body: CreateFromGoogleProviderDto,
-		@Res()
+		@Res({ passthrough: true })
 		res: Response,
 	) {
 		const { isFirstAccess, ...data } =
@@ -71,7 +71,7 @@ export class AuthController {
 	async exchangeCode(
 		@Body()
 		body: ExchangeCodeDto,
-		@Res()
+		@Res({ passthrough: true })
 		res: Response,
 	) {
 		const { isFirstAccess, ...data } =

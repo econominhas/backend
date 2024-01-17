@@ -38,8 +38,8 @@ model Account {
   phone     String?  @unique @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
 
-  config                    Config                     @relation(fields: [id], references: [accountId], map: "Config_id_fkey", onDelete: Restrict)
-  magicLinkCode             MagicLinkCode?             @relation(fields: [id], references: [accountId], map: "MagicLinkCode_id_fkey", onDelete: Restrict)
+  config                    Config?
+  magicLinkCode             MagicLinkCode?
   signInProviders           SignInProvider[]
   refreshTokens             RefreshToken[]
   userSubscriptions         UserSubscription[]
@@ -59,8 +59,8 @@ model SignInProvider {
   accountId    String             @map("account_id") @db.Char(16)
   provider     SignInProviderEnum
   providerId   String             @map("provider_id") @db.VarChar(50)
-  accessToken  String             @map("access_token") @db.VarChar(150)
-  refreshToken String             @map("refresh_token") @db.VarChar(150)
+  accessToken  String             @map("access_token") @db.VarChar(250)
+  refreshToken String             @map("refresh_token") @db.VarChar(250)
   expiresAt    DateTime           @map("expires_at")
 
   account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
@@ -71,12 +71,13 @@ model SignInProvider {
 
 /// Contains user's account config
 model Config {
-  accountId       String  @id @map("account_id") @db.Char(16)
+  id              String  @id @db.Char(16) /// Same as accountId
+  accountId       String  @unique @map("account_id") @db.Char(16)
   name            String? @db.VarChar(20)
   currentBudgetId String? @unique @map("current_budget_id") @db.Char(16)
   salaryId        String? @unique @map("salary_id") @db.Char(16)
 
-  account       Account?
+  account       Account               @relation(fields: [accountId], references: [id], onDelete: Cascade)
   currentBudget Budget?               @relation(fields: [currentBudgetId], references: [id])
   salary        RecurrentTransaction? @relation(fields: [salaryId], references: [id])
 
@@ -90,7 +91,7 @@ model MagicLinkCode {
   isFirstAccess Boolean  @map("is_first_access")
   createdAt     DateTime @default(now()) @map("created_at")
 
-  account Account?
+  account Account? @relation(fields: [accountId], references: [id], map: "MagicLinkCode_id_fkey", onDelete: Cascade)
 
   @@map("magic_link_codes")
 }

@@ -10,6 +10,7 @@ import type {
 import { TransactionRepository } from 'models/transaction';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 import { IdAdapter } from 'adapters/id';
+import { TransactionTypeEnum } from '@prisma/client';
 
 @Injectable()
 export class TransactionRepositoryService extends TransactionRepository {
@@ -131,20 +132,37 @@ export class TransactionRepositoryService extends TransactionRepository {
 		budgetDateId,
 		description,
 		createdAt,
+		isSystemManaged,
 	}: CreateTransferInput): Promise<void> {
 		await this.transactionRepository.create({
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			//@ts-ignore
 			data: {
 				id: this.idAdapter.genId(),
-				accountId,
 				name,
 				amount,
-				bankAccountFromId,
-				bankAccountToId,
-				budgetDateId,
 				description,
 				createdAt,
+				isSystemManaged,
+				type: TransactionTypeEnum.TRANSFER,
+				account: {
+					connect: {
+						id: accountId,
+					},
+				},
+				bankAccountFrom: {
+					connect: {
+						id: bankAccountFromId,
+					},
+				},
+				bankAccountTo: {
+					connect: {
+						id: bankAccountToId,
+					},
+				},
+				budgetDate: {
+					connect: {
+						id: budgetDateId,
+					},
+				},
 			},
 		});
 	}

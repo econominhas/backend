@@ -39,13 +39,11 @@ export class AuthRepositoryService extends AuthRepository {
 	async create(i: CreateInput): Promise<Account> {
 		const accountId = this.idAdapter.genId();
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		//@ts-ignore
 		const baseAccount: Prisma.AccountCreateArgs['data'] = {
 			id: accountId,
 			config: {
 				create: {
-					accountId,
+					id: accountId,
 				},
 			},
 		};
@@ -136,7 +134,7 @@ export class AuthRepositoryService extends AuthRepository {
 			where: {
 				OR: [
 					{
-						SignInProvider: {
+						signInProviders: {
 							every: {
 								provider,
 								providerId,

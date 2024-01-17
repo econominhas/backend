@@ -56,6 +56,7 @@ export interface CreateTransferInput {
 	budgetDateId: string;
 	description: string;
 	createdAt: Date;
+	isSystemManaged: boolean;
 }
 
 export abstract class TransactionRepository {

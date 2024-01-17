@@ -54,6 +54,6 @@ export class TermsAndPoliciesService extends TermsAndPoliciesUseCase {
 			this.termsAndPoliciesRepository.getLatest(),
 		]);
 
-		return latestTermsAccepted.semVer === latestTerms.semVer;
+		return latestTermsAccepted?.semVer === latestTerms?.semVer;
 	}
 }
