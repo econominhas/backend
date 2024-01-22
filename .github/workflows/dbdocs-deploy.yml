@@ -3,7 +3,7 @@ name: dbdocs-deploy
 on:
   push:
     branches:
-      - master
+      - release
     paths:
       - '**/*.prisma'
 

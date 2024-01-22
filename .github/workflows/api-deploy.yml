@@ -3,10 +3,9 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master
-      # - release
-    # paths:
-    #   - 'src/**'
+      - release
+    paths:
+      - 'src/**'
 
 jobs:
   build-deploy:
@@ -25,6 +24,7 @@ jobs:
           file_name: .env.production
           fail_on_empty: false
           sort_keys: false
+          # Ignore these erros, they are false positive
           envkey_PORT: ${{ secrets.PORT }}
           envkey_NODE_ENV: ${{ secrets.NODE_ENV }}
           envkey_AWS_REGION: ${{ secrets.AWS_REGION }}
