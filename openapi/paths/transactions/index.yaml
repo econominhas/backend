@@ -1,9 +1,9 @@
 get:
   tags:
     - Transaction
-  summary: Get user's transaction
+  summary: Get user's transactions
   description: |
-    Get user's transaction
+    Get user's transactions
   operationId: transaction-get
   security:
     - bearer: []
@@ -12,7 +12,7 @@ get:
       application/json:
         schema:
           type: object
-          title: Get user's transaction
+          title: Get user's transactions
           required:
             - budgetId
             - month

@@ -59,7 +59,8 @@ tags:
     description: To manage users wallets.
 
 servers:
-  - url: https://econominhas.com.br/api/v1
+  - url: https://econominhas.com.br/v1
+    description: Production
 
 paths:
   /auth/google:

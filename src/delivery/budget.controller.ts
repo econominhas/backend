@@ -12,7 +12,7 @@ export class BudgetController {
 		private readonly budgetService: BudgetUseCase,
 	) {}
 
-	@Post('')
+	@Post('/')
 	create(
 		@UserData()
 		userData: UserDataDto,
@@ -25,7 +25,7 @@ export class BudgetController {
 		});
 	}
 
-	@Post('basic')
+	@Post('/basic')
 	createBasic(
 		@UserData()
 		userData: UserDataDto,
@@ -38,7 +38,7 @@ export class BudgetController {
 		});
 	}
 
-	@Get('overview')
+	@Get('/overview')
 	overview(
 		@UserData()
 		userData: UserDataDto,
