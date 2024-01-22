@@ -1,6 +1,12 @@
-import { IsAmount, IsDescription, IsID, IsName } from '../validators/internal';
+import {
+	IsAmount,
+	IsDescription,
+	IsID,
+	IsTransactionName,
+} from '../validators/internal';
 import { IsMonth, IsYear } from '../validators/date';
-import { IsDate } from 'class-validator';
+import { IsDate, IsIn } from 'class-validator';
+import { TransactionTypeEnum } from '@prisma/client';
 
 export class GetListDto {
 	@IsID()
@@ -14,8 +20,11 @@ export class GetListDto {
 }
 
 export class TransferDto {
-	@IsName()
+	@IsTransactionName()
 	name: string;
+
+	@IsDescription()
+	description: string;
 
 	@IsAmount()
 	amount: number;
@@ -29,8 +38,31 @@ export class TransferDto {
 	@IsID()
 	budgetDateId: string;
 
+	@IsDate()
+	createdAt: Date;
+}
+
+export class InOutDto {
+	@IsIn([TransactionTypeEnum.IN, TransactionTypeEnum.OUT])
+	type: typeof TransactionTypeEnum.IN | typeof TransactionTypeEnum.OUT;
+
+	@IsTransactionName()
+	name: string;
+
 	@IsDescription()
 	description: string;
+
+	@IsAmount()
+	amount: number;
+
+	@IsID()
+	bankAccountId: string;
+
+	@IsID()
+	budgetDateId: string;
+
+	@IsID()
+	categoryId: string;
 
 	@IsDate()
 	createdAt: Date;

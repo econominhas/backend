@@ -59,6 +59,19 @@ export interface CreateTransferInput {
 	isSystemManaged: boolean;
 }
 
+export interface CreateInOutInput {
+	type: typeof TransactionTypeEnum.IN | typeof TransactionTypeEnum.OUT;
+	accountId: string;
+	name: string;
+	amount: number;
+	categoryId: string;
+	bankAccountId: string;
+	budgetDateId: string;
+	description: string;
+	createdAt: Date;
+	isSystemManaged: boolean;
+}
+
 export abstract class TransactionRepository {
 	abstract getMonthlyAmountByCategory(
 		i: GetMonthlyAmountByCategoryInput,
@@ -67,6 +80,8 @@ export abstract class TransactionRepository {
 	abstract getByBudget(i: GetByBudgetInput): Promise<Array<GetByBudgetOutput>>;
 
 	abstract createTransfer(i: CreateTransferInput): Promise<void>;
+
+	abstract createInOut(i: CreateInOutInput): Promise<void>;
 }
 
 /**
@@ -95,8 +110,22 @@ export interface TransferInput {
 	createdAt: Date;
 }
 
+export interface InOutInput {
+	type: typeof TransactionTypeEnum.IN | typeof TransactionTypeEnum.OUT;
+	accountId: string;
+	categoryId: string;
+	bankAccountId: string;
+	budgetDateId: string;
+	name: string;
+	amount: number;
+	description: string;
+	createdAt: Date;
+}
+
 export abstract class TransactionUseCase {
 	abstract getList(i: GetListInput): Promise<PaginatedItems<GetByBudgetOutput>>;
 
 	abstract transfer(i: TransferInput): Promise<void>;
+
+	abstract inOut(i: InOutInput): Promise<void>;
 }

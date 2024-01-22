@@ -28,12 +28,20 @@ export interface GetByUserInput extends PaginatedRepository {
 	onlyActive?: boolean;
 }
 
+export interface GetByIdInput {
+	categoryId: string;
+	accountId: string;
+	active?: boolean;
+}
+
 export abstract class CategoryRepository {
 	abstract getDefault(i: PaginatedRepository): Promise<Array<DefaultCategory>>;
 
 	abstract createMany(i: CreateManyInput): Promise<void>;
 
 	abstract getByUser(i: GetByUserInput): Promise<Array<Category>>;
+
+	abstract getById(i: GetByIdInput): Promise<Category | null>;
 }
 
 /**

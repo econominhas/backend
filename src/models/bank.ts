@@ -1,4 +1,8 @@
-import type { BankAccount, BankProvider } from '@prisma/client';
+import type {
+	BankAccount,
+	BankProvider,
+	TransactionTypeEnum,
+} from '@prisma/client';
 import type {
 	Paginated,
 	PaginatedItems,
@@ -40,7 +44,7 @@ export interface GetManyByIdInput {
 	accountId: string;
 }
 
-export interface UpdateBalanceInput {
+export interface IncrementBalanceInput {
 	bankAccountId: string;
 	accountId: string;
 	amount: number;
@@ -62,7 +66,7 @@ export abstract class BankRepository {
 	/**
 	 * Increment or decrement the balance based on the amount
 	 */
-	abstract updateBalance(i: UpdateBalanceInput): Promise<void>;
+	abstract incrementBalance(i: IncrementBalanceInput): Promise<void>;
 }
 
 /**
@@ -84,6 +88,13 @@ export interface TransferInput {
 	amount: number;
 }
 
+export interface InOutInput {
+	type: typeof TransactionTypeEnum.IN | typeof TransactionTypeEnum.OUT;
+	accountId: string;
+	bankAccountId: string;
+	amount: number;
+}
+
 export abstract class BankUseCase {
 	abstract getProviders(i: Paginated): Promise<PaginatedItems<BankProvider>>;
 
@@ -92,4 +103,6 @@ export abstract class BankUseCase {
 	abstract list(i: ListInput): Promise<PaginatedItems<BankAccount>>;
 
 	abstract transfer(i: TransferInput): Promise<void>;
+
+	abstract inOut(i: InOutInput): Promise<void>;
 }

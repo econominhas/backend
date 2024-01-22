@@ -6,6 +6,7 @@ import { UtilsAdapterModule } from 'adapters/implementations/utils/utils.module'
 import { BankModule } from 'usecases/bank/bank.module';
 import { BankRepositoryModule } from 'repositories/postgres/bank/bank-repository.module';
 import { BudgetRepositoryModule } from 'repositories/postgres/budget/budget-repository.module';
+import { CategoryRepositoryModule } from 'repositories/postgres/category/category-repository.module';
 
 @Module({
 	controllers: [TransactionController],
@@ -13,6 +14,7 @@ import { BudgetRepositoryModule } from 'repositories/postgres/budget/budget-repo
 		TransactionRepositoryModule,
 		BankRepositoryModule,
 		BudgetRepositoryModule,
+		CategoryRepositoryModule,
 		BankModule,
 		UtilsAdapterModule,
 	],

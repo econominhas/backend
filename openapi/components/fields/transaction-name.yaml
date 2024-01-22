@@ -1,0 +1,7 @@
+description: |
+  Transaction name
+type: string
+minLength: 1
+maxLength: 30
+examples:
+  - "Foo"

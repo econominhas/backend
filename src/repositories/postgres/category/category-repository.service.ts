@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import type { Category, DefaultCategory } from '@prisma/client';
-import type { CreateManyInput, GetByUserInput } from 'models/category';
+import type {
+	CreateManyInput,
+	GetByIdInput,
+	GetByUserInput,
+} from 'models/category';
 import { CategoryRepository } from 'models/category';
 import type { PaginatedRepository } from 'types/paginated-items';
 import { IdAdapter } from 'adapters/id';
@@ -64,6 +68,20 @@ export class CategoryRepositoryService extends CategoryRepository {
 			},
 			take: limit,
 			skip: offset,
+		});
+	}
+
+	getById({ categoryId, accountId, active }: GetByIdInput): Promise<Category> {
+		return this.categoryRepository.findFirst({
+			where: {
+				id: categoryId,
+				accountId,
+				...(typeof active !== 'undefined'
+					? {
+							active,
+					  }
+					: {}),
+			},
 		});
 	}
 }

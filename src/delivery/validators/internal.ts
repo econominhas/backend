@@ -87,6 +87,27 @@ export function IsDescription() {
 	};
 }
 
+export function IsTransactionName() {
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	return function (object: Object, propertyName: string) {
+		registerDecorator({
+			name: 'IsName',
+			target: object.constructor,
+			propertyName: propertyName,
+			constraints: [],
+			options: {
+				message: `${propertyName} must be a valid transaction name`,
+			},
+			validator: {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				validate(value: any, _args: ValidationArguments) {
+					return typeof value === 'string' && /^[\w\W\d\s]{1,30}$/i.test(value);
+				},
+			},
+		});
+	};
+}
+
 export function IsAmount() {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {

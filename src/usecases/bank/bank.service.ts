@@ -4,10 +4,19 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import type { BankAccount, BankProvider } from '@prisma/client';
+import {
+	TransactionTypeEnum,
+	type BankAccount,
+	type BankProvider,
+} from '@prisma/client';
 import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'adapters/utils';
-import type { CreateInput, ListInput, TransferInput } from 'models/bank';
+import type {
+	CreateInput,
+	InOutInput,
+	ListInput,
+	TransferInput,
+} from 'models/bank';
 import { BankUseCase } from 'models/bank';
 
 import { BankRepositoryService } from 'repositories/postgres/bank/bank-repository.service';
@@ -86,16 +95,45 @@ export class BankService extends BankUseCase {
 		}
 
 		await Promise.all([
-			this.bankRepository.updateBalance({
+			this.bankRepository.incrementBalance({
 				bankAccountId: bankAccountFromId,
 				accountId,
 				amount: amount * -1,
 			}),
-			this.bankRepository.updateBalance({
+			this.bankRepository.incrementBalance({
 				bankAccountId: bankAccountToId,
 				accountId,
 				amount,
 			}),
 		]);
+	}
+
+	async inOut({
+		type,
+		accountId,
+		bankAccountId,
+		amount,
+	}: InOutInput): Promise<void> {
+		/**
+		 * This is a double validation, because it's extremely
+		 * important that this value is ONLY positive
+		 */
+		if (amount <= 0) {
+			throw new BadRequestException('amount must be bigger than 0');
+		}
+
+		if (type === TransactionTypeEnum.IN) {
+			await this.bankRepository.incrementBalance({
+				bankAccountId,
+				accountId,
+				amount,
+			});
+		} else {
+			await this.bankRepository.incrementBalance({
+				bankAccountId,
+				accountId,
+				amount: amount * -1,
+			});
+		}
 	}
 }

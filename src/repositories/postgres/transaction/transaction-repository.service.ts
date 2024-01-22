@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import type {
+	CreateInOutInput,
 	CreateTransferInput,
 	GetByBudgetInput,
 	GetByBudgetOutput,
@@ -161,6 +162,51 @@ export class TransactionRepositoryService extends TransactionRepository {
 				budgetDate: {
 					connect: {
 						id: budgetDateId,
+					},
+				},
+			},
+		});
+	}
+
+	async createInOut({
+		type,
+		accountId,
+		name,
+		amount,
+		categoryId,
+		bankAccountId,
+		budgetDateId,
+		description,
+		createdAt,
+		isSystemManaged,
+	}: CreateInOutInput): Promise<void> {
+		await this.transactionRepository.create({
+			data: {
+				id: this.idAdapter.genId(),
+				name,
+				amount,
+				description,
+				createdAt,
+				isSystemManaged,
+				type,
+				account: {
+					connect: {
+						id: accountId,
+					},
+				},
+				bankAccount: {
+					connect: {
+						id: bankAccountId,
+					},
+				},
+				budgetDate: {
+					connect: {
+						id: budgetDateId,
+					},
+				},
+				category: {
+					connect: {
+						id: categoryId,
 					},
 				},
 			},

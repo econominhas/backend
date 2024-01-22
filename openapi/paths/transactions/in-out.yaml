@@ -1,11 +1,11 @@
 post:
   tags:
     - Transaction
-  summary: Create TRANSFER transaction
+  summary: Create IN or OUT transaction
   description: |
-    Create a TRANSFER transaction, to transfer money from
-    one of the user's bank accounts to another
-  operationId: transaction-transfer
+    Create a IN or OUT transaction, to add or remove money from
+    one of the user's bank accounts
+  operationId: transaction-in-out
   security:
     - bearer: []
   requestBody:
@@ -14,26 +14,34 @@ post:
         schema:
           type: object
           required:
+            - type
             - name
             - amount
-            - bankAccountFromId
-            - bankAccountToId
+            - bankAccountId
             - budgetDateId
+            - categoryId
             - description
             - createdAt
           properties:
+            type:
+              description: |
+                Transaction type
+              type: string
+              enum:
+                - IN
+                - OUT
             name:
               $ref: ../../components/fields/transaction-name.yaml
             description:
               $ref: ../../components/fields/description.yaml
             amount:
               $ref: ../../components/fields/amount.yaml
-            bankAccountFromId:
-              description: ID of the bank account that the money will be withdrawn from
+            bankAccountId:
+              description: ID of the bank account to add/remove money
               type: string
               format: uuid
-            bankAccountToId:
-              description: ID of the bank account that the money will be deposited to
+            categoryId:
+              description: Category ID
               type: string
               format: uuid
             budgetDateId:

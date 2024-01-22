@@ -14,7 +14,7 @@ import type {
 	GetByIdInput,
 	GetByUserInput,
 	GetManyByIdInput,
-	UpdateBalanceInput,
+	IncrementBalanceInput,
 } from 'models/bank';
 import { BankRepository } from 'models/bank';
 import { IdAdapter } from 'adapters/id';
@@ -143,11 +143,11 @@ export class BankRepositoryService extends BankRepository {
 		});
 	}
 
-	async updateBalance({
+	async incrementBalance({
 		bankAccountId,
 		accountId,
 		amount,
-	}: UpdateBalanceInput): Promise<void> {
+	}: IncrementBalanceInput): Promise<void> {
 		await this.bankAccountRepository.update({
 			where: {
 				id: bankAccountId,
