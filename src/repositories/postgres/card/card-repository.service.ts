@@ -13,18 +13,23 @@ import type {
 	GetBalanceByUserOutput,
 	GetBillsToBePaidInput,
 	GetBillsToBePaidOutput,
+	GetByIdInput,
+	GetByIdOutput,
 	GetPostpaidInput,
 	GetPostpaidOutput,
 	GetPrepaidInput,
 	GetPrepaidOutput,
 	GetProviderInput,
 	UpdateBalanceInput,
+	UpsertManyBillsInput,
 } from 'models/card';
 import { CardRepository } from 'models/card';
 import type { Card, CardNetworkEnum, CardProvider } from '@prisma/client';
 import { CardTypeEnum, PayAtEnum } from '@prisma/client';
 import { IdAdapter } from 'adapters/id';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
+import { DateAdapter } from 'adapters/date';
+import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 
 @Injectable()
 export class CardRepositoryService extends CardRepository {
@@ -33,11 +38,15 @@ export class CardRepositoryService extends CardRepository {
 		private readonly cardProviderRepository: Repository<'cardProvider'>,
 		@InjectRepository('card')
 		private readonly cardRepository: Repository<'card'>,
+		@InjectRepository('cardBill')
+		private readonly cardBillRepository: Repository<'cardBill'>,
 		@InjectRaw()
 		private readonly rawPostgres: RawPostgres,
 
 		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
+		@Inject(DayjsAdapterService)
+		private readonly dateAdapter: DateAdapter,
 	) {
 		super();
 	}
@@ -60,63 +69,13 @@ export class CardRepositoryService extends CardRepository {
 		});
 	}
 
-	async create({
-		accountId,
-		cardProviderId,
-		name,
-		lastFourDigits,
-		dueDay,
-		limit,
-		balance,
-	}: CreateInput): Promise<Card> {
-		try {
-			const cardAccount = await this.cardRepository.create({
-				data: {
-					id: this.idAdapter.genId(),
-					accountId,
-					cardProviderId,
-					name,
-					lastFourDigits,
-					dueDay,
-					limit,
-					balance,
-				},
-			});
-
-			return cardAccount;
-		} catch (err) {
-			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2003
-			if (err.code === 'P2003') {
-				throw new NotFoundException("Card provider doesn't exists");
-			}
-			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2004
-			if (err.code === 'P2004') {
-				throw new ConflictException('Card already exists');
-			}
-
-			throw new InternalServerErrorException(
-				`Fail to create card: ${err.message}`,
-			);
-		}
-	}
-
-	async updateBalance({
-		cardId,
-		increment,
-	}: UpdateBalanceInput): Promise<void> {
-		await this.cardRepository.update({
+	getById({ cardId }: GetByIdInput): Promise<GetByIdOutput> {
+		return this.cardRepository.findUnique({
 			where: {
 				id: cardId,
-				cardProvider: {
-					type: {
-						in: [CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT],
-					},
-				},
 			},
-			data: {
-				balance: {
-					increment,
-				},
+			include: {
+				cardProvider: true,
 			},
 		});
 	}
@@ -356,5 +315,76 @@ export class CardRepositoryService extends CardRepository {
 				dueDate: data.due_date,
 			},
 		}));
+	}
+
+	async create({
+		accountId,
+		cardProviderId,
+		name,
+		lastFourDigits,
+		dueDay,
+		limit,
+		balance,
+	}: CreateInput): Promise<Card> {
+		try {
+			const cardAccount = await this.cardRepository.create({
+				data: {
+					id: this.idAdapter.genId(),
+					accountId,
+					cardProviderId,
+					name,
+					lastFourDigits,
+					dueDay,
+					limit,
+					balance,
+				},
+			});
+
+			return cardAccount;
+		} catch (err) {
+			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2003
+			if (err.code === 'P2003') {
+				throw new NotFoundException("Card provider doesn't exists");
+			}
+			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2004
+			if (err.code === 'P2004') {
+				throw new ConflictException('Card already exists');
+			}
+
+			throw new InternalServerErrorException(
+				`Fail to create card: ${err.message}`,
+			);
+		}
+	}
+
+	async updateBalance({
+		cardId,
+		increment,
+	}: UpdateBalanceInput): Promise<void> {
+		await this.cardRepository.update({
+			where: {
+				id: cardId,
+				cardProvider: {
+					type: {
+						in: [CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT],
+					},
+				},
+			},
+			data: {
+				balance: {
+					increment,
+				},
+			},
+		});
+	}
+
+	async upsertManyBills(i: UpsertManyBillsInput[]): Promise<void> {
+		await this.cardBillRepository.createMany({
+			data: i.map((cardBill) => ({
+				...cardBill,
+				id: this.idAdapter.genId(),
+			})),
+			skipDuplicates: true,
+		});
 	}
 }

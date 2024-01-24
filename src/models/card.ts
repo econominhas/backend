@@ -5,6 +5,7 @@ import type {
 	CardTypeEnum,
 	PayAtEnum,
 } from '@prisma/client';
+import type { YearMonth } from 'adapters/date';
 import type {
 	Paginated,
 	PaginatedItems,
@@ -112,6 +113,23 @@ export interface GetBillsToBePaidOutput {
 	};
 }
 
+export interface GetByIdInput {
+	cardId: string;
+}
+
+export interface GetByIdOutput extends Card {
+	cardProvider: CardProvider;
+}
+
+export interface UpsertManyBillsInput {
+	cardId: string;
+	month: string;
+	startAt: Date;
+	endAt: Date;
+	statementDate: Date;
+	dueDate: Date;
+}
+
 export abstract class CardRepository {
 	// Card provider
 
@@ -132,6 +150,12 @@ export abstract class CardRepository {
 	abstract getPostpaid(i: GetPostpaidInput): Promise<Array<GetPostpaidOutput>>;
 
 	abstract getPrepaid(i: GetPrepaidInput): Promise<Array<GetPrepaidOutput>>;
+
+	abstract getById(i: GetByIdInput): Promise<GetByIdOutput | null>;
+
+	// CardBill
+
+	abstract upsertManyBills(i: Array<UpsertManyBillsInput>): Promise<void>;
 
 	abstract getBillsToBePaid(
 		i: GetBillsToBePaidInput,
@@ -160,6 +184,12 @@ export interface GetCardBillsToBePaidInput extends Paginated {
 	date: Date;
 }
 
+export interface UpsertCardBillsInput {
+	cardId: string;
+	startDate: YearMonth;
+	endDate: YearMonth;
+}
+
 export abstract class CardUseCase {
 	abstract getProviders(i: Paginated): Promise<PaginatedItems<CardProvider>>;
 
@@ -176,4 +206,6 @@ export abstract class CardUseCase {
 	abstract getBillsToBePaid(
 		i: GetCardBillsToBePaidInput,
 	): Promise<PaginatedItems<GetBillsToBePaidOutput>>;
+
+	abstract upsertCardBills(i: UpsertCardBillsInput): Promise<void>;
 }

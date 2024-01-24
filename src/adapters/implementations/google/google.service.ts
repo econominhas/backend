@@ -70,7 +70,7 @@ export class GoogleAdapterService extends GoogleAdapter {
 			refreshToken: result.refresh_token,
 			scopes: result.scope.split(' '),
 			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-			expiresAt: this.dateAdapter.nowPlus(result.expires_in - 60, 'seconds'),
+			expiresAt: this.dateAdapter.nowPlus(result.expires_in - 60, 'second'),
 		};
 	}
 

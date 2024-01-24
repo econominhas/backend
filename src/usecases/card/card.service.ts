@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import type { CardProvider } from '@prisma/client';
 import { CardTypeEnum } from '@prisma/client';
+import type { YearMonth } from 'adapters/date';
 import { DateAdapter } from 'adapters/date';
 import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
@@ -18,10 +19,17 @@ import type {
 	GetPostpaidOutput,
 	GetPrepaidCardsInput,
 	GetPrepaidOutput,
+	UpsertCardBillsInput,
 } from 'models/card';
 import { CardRepository, CardUseCase } from 'models/card';
 import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
 import type { Paginated, PaginatedItems } from 'types/paginated-items';
+
+interface GetBillStartDateInput {
+	month: YearMonth;
+	dueDay: number;
+	statementDays: number;
+}
 
 @Injectable()
 export class CardService extends CardUseCase {
@@ -146,7 +154,7 @@ export class CardService extends CardUseCase {
 	> {
 		const { limit, offset, paging } = this.utilsAdapter.pagination(pagination);
 
-		const endDate = this.dateAdapter.endOfMonth(date);
+		const endDate = this.dateAdapter.endOf(date, 'month');
 
 		const data = await this.cardRepository.getBillsToBePaid({
 			accountId,
@@ -162,6 +170,43 @@ export class CardService extends CardUseCase {
 		};
 	}
 
+	async upsertCardBills({
+		cardId,
+		startDate,
+		endDate,
+	}: UpsertCardBillsInput): Promise<void> {
+		const card = await this.cardRepository.getById({
+			cardId,
+		});
+
+		if (!card) {
+			throw new NotFoundException('Card not found');
+		}
+
+		const monthsBetween = this.dateAdapter.getMonthsBetween(startDate, endDate);
+
+		await this.cardRepository.upsertManyBills(
+			monthsBetween.map((month) => {
+				const date = `${month}-01`;
+
+				const { startAt, endAt, statementDate, dueDate } = this.getBillDates({
+					month,
+					statementDays: card.cardProvider.statementDays,
+					dueDay: card.dueDay,
+				});
+
+				return {
+					cardId,
+					month: date,
+					startAt,
+					endAt,
+					statementDate,
+					dueDate,
+				};
+			}),
+		);
+	}
+
 	// Private
 
 	private isPostpaid(type: CardTypeEnum) {
@@ -172,5 +217,41 @@ export class CardService extends CardUseCase {
 		return [CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT].includes(
 			type as any,
 		);
+	}
+
+	private getBillDates({
+		month,
+		dueDay,
+		statementDays,
+	}: GetBillStartDateInput) {
+		const curDueDate = `${month}-${dueDay}`;
+
+		return {
+			// startOfDay: curDueDate - statementDays
+			statementDate: this.dateAdapter.startOf(
+				this.dateAdapter.sub(curDueDate, statementDays, 'day'),
+				'day',
+			),
+
+			// endOfDay: curDueDate
+			dueDate: this.dateAdapter.endOf(curDueDate, 'day'),
+
+			// startOfDay: prevDueDate - statementDays
+			startAt: this.dateAdapter.startOf(
+				this.dateAdapter.sub(
+					this.dateAdapter.sub(curDueDate, 1, 'month'),
+					statementDays,
+					'day',
+				),
+				'day',
+			),
+
+			// endOfDay: curDueDate - (statementDays + 1)
+			// *: Because when statementDate, cardBill is already closed
+			endAt: this.dateAdapter.endOf(
+				this.dateAdapter.sub(curDueDate, statementDays + 1, 'day'),
+				'day',
+			),
+		};
 	}
 }
