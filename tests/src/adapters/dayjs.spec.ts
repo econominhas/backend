@@ -2,8 +2,7 @@ import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module';
 import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
-
-const removeMillis = (date?: Date) => date?.toISOString().split('.')[0];
+import { removeMillis } from '../../utils';
 
 describe('Adapters > DayJs', () => {
 	let service: DayjsAdapterService;

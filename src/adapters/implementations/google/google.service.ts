@@ -9,7 +9,7 @@ import { DateAdapter } from 'adapters/date';
 import { DayjsAdapterService } from '../dayjs/dayjs.service';
 import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
+import { Axios } from 'axios';
 
 interface ExchangeCodeAPIOutput {
 	access_token: string;
@@ -29,6 +29,9 @@ interface GetUserDataAPIOutput {
 @Injectable()
 export class GoogleAdapterService extends GoogleAdapter {
 	constructor(
+		@Inject('axios')
+		protected readonly axios: Axios,
+
 		@Inject(DayjsAdapterService)
 		protected readonly dateAdapter: DateAdapter,
 
@@ -53,7 +56,7 @@ export class GoogleAdapterService extends GoogleAdapter {
 		body.append('grant_type', 'authorization_code');
 		// ALERT: The order of the properties is important, don't change it!
 
-		const result = await axios
+		const result = await this.axios
 			.post('https://oauth2.googleapis.com/token', body, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
@@ -62,14 +65,13 @@ export class GoogleAdapterService extends GoogleAdapter {
 			})
 			.then((r) => r.data as ExchangeCodeAPIOutput)
 			.catch((err) => {
-				throw err?.response?.data;
+				throw new Error(JSON.stringify(err?.response?.data || {}));
 			});
 
 		return {
 			accessToken: result.access_token,
 			refreshToken: result.refresh_token,
 			scopes: result.scope.split(' '),
-			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 			expiresAt: this.dateAdapter.nowPlus(result.expires_in - 60, 'second'),
 		};
 	}
@@ -77,17 +79,16 @@ export class GoogleAdapterService extends GoogleAdapter {
 	async getAuthenticatedUserData(
 		accessToken: string,
 	): Promise<GetAuthenticatedUserDataOutput> {
-		const result = await fetch(
-			'https://openidconnect.googleapis.com/v1/userinfo',
-			{
-				method: 'GET',
+		const result = await this.axios
+			.get('https://openidconnect.googleapis.com/v1/userinfo', {
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
-			},
-		)
-			.then((r) => r.json())
-			.then((r) => r as GetUserDataAPIOutput);
+			})
+			.then((r) => r.data as GetUserDataAPIOutput)
+			.catch((err) => {
+				throw new Error(JSON.stringify(err?.response?.data || {}));
+			});
 
 		return {
 			id: result.sub,
