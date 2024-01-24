@@ -39,6 +39,13 @@ export interface GetBudgetDateByIdInput {
 	accountId: string;
 }
 
+export interface UpsertManyBudgetDatesInput {
+	budgetId: string;
+	month: number;
+	year: number;
+	date: Date;
+}
+
 export abstract class BudgetRepository {
 	abstract createWithItems(i: CreateWithItemsInput): Promise<Budget>;
 
@@ -49,6 +56,10 @@ export abstract class BudgetRepository {
 	abstract getBudgetDateById(
 		i: GetBudgetDateByIdInput,
 	): Promise<BudgetDate | null>;
+
+	abstract upsertManyBudgetDates(
+		i: Array<UpsertManyBudgetDatesInput>,
+	): Promise<Array<BudgetDate>>;
 }
 
 /**
@@ -104,10 +115,19 @@ export interface OverviewOutput {
 	>;
 }
 
+export interface CreateNextBudgetDatesInput {
+	startFrom: BudgetDate;
+	amount: number;
+}
+
 export abstract class BudgetUseCase {
 	abstract create(i: CreateInput): Promise<Budget>;
 
 	abstract createBasic(i: CreateBasicInput): Promise<Budget>;
 
 	abstract overview(i: OverviewInput): Promise<OverviewOutput>;
+
+	abstract createNextBudgetDates(
+		i: CreateNextBudgetDatesInput,
+	): Promise<Array<BudgetDate>>;
 }

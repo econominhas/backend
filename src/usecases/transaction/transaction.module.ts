@@ -7,6 +7,10 @@ import { BankModule } from 'usecases/bank/bank.module';
 import { BankRepositoryModule } from 'repositories/postgres/bank/bank-repository.module';
 import { BudgetRepositoryModule } from 'repositories/postgres/budget/budget-repository.module';
 import { CategoryRepositoryModule } from 'repositories/postgres/category/category-repository.module';
+import { CardRepositoryModule } from 'repositories/postgres/card/card-repository.module';
+import { BudgetModule } from 'usecases/budget/budget.module';
+import { CardModule } from 'usecases/card/card.module';
+import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
 
 @Module({
 	controllers: [TransactionController],
@@ -15,7 +19,13 @@ import { CategoryRepositoryModule } from 'repositories/postgres/category/categor
 		BankRepositoryModule,
 		BudgetRepositoryModule,
 		CategoryRepositoryModule,
+		CardRepositoryModule,
+
 		BankModule,
+		BudgetModule,
+		CardModule,
+
+		UIDAdapterModule,
 		UtilsAdapterModule,
 	],
 	providers: [TransactionService],

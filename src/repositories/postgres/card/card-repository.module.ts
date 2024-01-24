@@ -6,7 +6,7 @@ import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module'
 
 @Module({
 	imports: [
-		PostgresModule.forFeature(['cardProvider', 'card']),
+		PostgresModule.forFeature(['cardProvider', 'card', 'cardBill']),
 		PostgresModule.raw(),
 		UIDAdapterModule,
 		DayJsAdapterModule,

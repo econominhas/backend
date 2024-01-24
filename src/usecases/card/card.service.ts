@@ -4,31 +4,48 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import type { CardProvider } from '@prisma/client';
+import type { CardBill, CardProvider } from '@prisma/client';
 import { CardTypeEnum } from '@prisma/client';
-import type { YearMonth } from 'adapters/date';
 import { DateAdapter } from 'adapters/date';
 import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'adapters/utils';
 import type {
 	CreateInput,
+	CreateNextCardBillsInput,
 	GetBillsToBePaidOutput,
 	GetCardBillsToBePaidInput,
 	GetPostpaidCardsInput,
 	GetPostpaidOutput,
 	GetPrepaidCardsInput,
 	GetPrepaidOutput,
-	UpsertCardBillsInput,
 } from 'models/card';
 import { CardRepository, CardUseCase } from 'models/card';
 import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
 import type { Paginated, PaginatedItems } from 'types/paginated-items';
 
-interface GetBillStartDateInput {
-	month: YearMonth;
+interface GetCurBillDataInput {
 	dueDay: number;
 	statementDays: number;
+}
+
+interface GetBillDatesInput {
+	dueDate: Date;
+	statementDays: number;
+}
+
+interface GetBillDatesOutput {
+	month: Date;
+	statementDate: Date;
+	dueDate: Date;
+	startAt: Date;
+	endAt: Date;
+}
+
+interface GetNextBillsDatesInput {
+	initialDueDate: Date;
+	statementDays: number;
+	amount: number;
 }
 
 @Injectable()
@@ -170,40 +187,36 @@ export class CardService extends CardUseCase {
 		};
 	}
 
-	async upsertCardBills({
+	async createNextCardBills({
 		cardId,
-		startDate,
-		endDate,
-	}: UpsertCardBillsInput): Promise<void> {
+		accountId,
+		amount,
+	}: CreateNextCardBillsInput): Promise<CardBill[]> {
 		const card = await this.cardRepository.getById({
 			cardId,
+			accountId,
 		});
 
 		if (!card) {
-			throw new NotFoundException('Card not found');
+			throw new BadRequestException('Invalid card');
 		}
 
-		const monthsBetween = this.dateAdapter.getMonthsBetween(startDate, endDate);
+		const curBillDueDate = this.getCurBillDueDate({
+			dueDay: card.dueDay,
+			statementDays: card.cardProvider.statementDays,
+		});
 
-		await this.cardRepository.upsertManyBills(
-			monthsBetween.map((month) => {
-				const date = `${month}-01`;
+		const allBillsData = this.getNextBillsDates({
+			initialDueDate: curBillDueDate,
+			statementDays: card.cardProvider.statementDays,
+			amount,
+		});
 
-				const { startAt, endAt, statementDate, dueDate } = this.getBillDates({
-					month,
-					statementDays: card.cardProvider.statementDays,
-					dueDay: card.dueDay,
-				});
-
-				return {
-					cardId,
-					month: date,
-					startAt,
-					endAt,
-					statementDate,
-					dueDate,
-				};
-			}),
+		return this.cardRepository.upsertManyBills(
+			allBillsData.map((billDates) => ({
+				...billDates,
+				cardId,
+			})),
 		);
 	}
 
@@ -219,27 +232,63 @@ export class CardService extends CardUseCase {
 		);
 	}
 
-	private getBillDates({
-		month,
+	private getCurBillDueDate({
 		dueDay,
 		statementDays,
-	}: GetBillStartDateInput) {
-		const curDueDate = `${month}-${dueDay}`;
+	}: GetCurBillDataInput): Date {
+		const statementDate = this.dateAdapter.statementDate(dueDay, statementDays);
 
+		// If the statementDay is after the current day
+		if (this.dateAdapter.isAfterToday(statementDate)) {
+			return this.dateAdapter.dueDate(dueDay);
+		}
+
+		// If the statementDay is BEFORE the current day,
+		// the dueDate is in the next month
+		return this.dateAdapter.dueDate(dueDay, 1);
+	}
+
+	private getNextBillsDates({
+		initialDueDate,
+		statementDays,
+		amount,
+	}: GetNextBillsDatesInput) {
+		const billsDates: Array<GetBillDatesOutput> = [];
+
+		const curDueDate = initialDueDate;
+		do {
+			const billDates = this.getBillDates({
+				dueDate: curDueDate,
+				statementDays,
+			});
+
+			billsDates.push(billDates);
+		} while (billsDates.length < amount);
+
+		return billsDates;
+	}
+
+	private getBillDates({
+		dueDate,
+		statementDays,
+	}: GetBillDatesInput): GetBillDatesOutput {
 		return {
+			// First day of the month
+			month: this.dateAdapter.startOf(dueDate, 'month'),
+
 			// startOfDay: curDueDate - statementDays
 			statementDate: this.dateAdapter.startOf(
-				this.dateAdapter.sub(curDueDate, statementDays, 'day'),
+				this.dateAdapter.sub(dueDate, statementDays, 'day'),
 				'day',
 			),
 
 			// endOfDay: curDueDate
-			dueDate: this.dateAdapter.endOf(curDueDate, 'day'),
+			dueDate: this.dateAdapter.endOf(dueDate, 'day'),
 
 			// startOfDay: prevDueDate - statementDays
 			startAt: this.dateAdapter.startOf(
 				this.dateAdapter.sub(
-					this.dateAdapter.sub(curDueDate, 1, 'month'),
+					this.dateAdapter.sub(dueDate, 1, 'month'),
 					statementDays,
 					'day',
 				),
@@ -249,7 +298,7 @@ export class CardService extends CardUseCase {
 			// endOfDay: curDueDate - (statementDays + 1)
 			// *: Because when statementDate, cardBill is already closed
 			endAt: this.dateAdapter.endOf(
-				this.dateAdapter.sub(curDueDate, statementDays + 1, 'day'),
+				this.dateAdapter.sub(dueDate, statementDays + 1, 'day'),
 				'day',
 			),
 		};

@@ -72,6 +72,30 @@ export interface CreateInOutInput {
 	isSystemManaged: boolean;
 }
 
+export interface CreateCreditInput {
+	common: {
+		accountId: string;
+		name: string;
+		amount: number;
+		categoryId: string;
+		cardId: string;
+		description: string;
+		createdAt: Date;
+		isSystemManaged: boolean;
+		installment: {
+			installmentGroupId: string;
+			total: number;
+		};
+	};
+	unique: Array<{
+		budgetDateId: string;
+		installment: {
+			current: number;
+			cardBillId: string;
+		};
+	}>;
+}
+
 export abstract class TransactionRepository {
 	abstract getMonthlyAmountByCategory(
 		i: GetMonthlyAmountByCategoryInput,
@@ -82,6 +106,8 @@ export abstract class TransactionRepository {
 	abstract createTransfer(i: CreateTransferInput): Promise<void>;
 
 	abstract createInOut(i: CreateInOutInput): Promise<void>;
+
+	abstract createCredit(i: CreateCreditInput): Promise<void>;
 }
 
 /**
@@ -102,23 +128,35 @@ export interface GetListInput extends Paginated {
 export interface TransferInput {
 	accountId: string;
 	name: string;
+	description: string;
 	amount: number;
 	bankAccountFromId: string;
 	bankAccountToId: string;
 	budgetDateId: string;
-	description: string;
 	createdAt: Date;
 }
 
 export interface InOutInput {
 	type: typeof TransactionTypeEnum.IN | typeof TransactionTypeEnum.OUT;
 	accountId: string;
+	name: string;
+	description: string;
+	amount: number;
 	categoryId: string;
 	bankAccountId: string;
 	budgetDateId: string;
+	createdAt: Date;
+}
+
+export interface CreditInput {
+	accountId: string;
 	name: string;
-	amount: number;
 	description: string;
+	amount: number;
+	installments: number;
+	categoryId: string;
+	cardId: string;
+	budgetDateId: string;
 	createdAt: Date;
 }
 
@@ -128,4 +166,6 @@ export abstract class TransactionUseCase {
 	abstract transfer(i: TransferInput): Promise<void>;
 
 	abstract inOut(i: InOutInput): Promise<void>;
+
+	abstract credit(i: CreditInput): Promise<void>;
 }

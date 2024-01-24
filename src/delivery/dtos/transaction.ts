@@ -5,7 +5,7 @@ import {
 	IsTransactionName,
 } from '../validators/internal';
 import { IsMonth, IsYear } from '../validators/date';
-import { IsDate, IsIn } from 'class-validator';
+import { IsDate, IsIn, IsPositive } from 'class-validator';
 import { TransactionTypeEnum } from '@prisma/client';
 
 export class GetListDto {
@@ -63,6 +63,32 @@ export class InOutDto {
 
 	@IsID()
 	categoryId: string;
+
+	@IsDate()
+	createdAt: Date;
+}
+
+export class CreditDto {
+	@IsTransactionName()
+	name: string;
+
+	@IsDescription()
+	description: string;
+
+	@IsAmount()
+	amount: number;
+
+	@IsPositive()
+	installments: number;
+
+	@IsID()
+	categoryId: string;
+
+	@IsID()
+	cardId: string;
+
+	@IsID()
+	budgetDateId: string;
 
 	@IsDate()
 	createdAt: Date;

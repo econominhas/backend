@@ -1,10 +1,19 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	InternalServerErrorException,
+	Inject,
+	Injectable,
+} from '@nestjs/common';
+import { IdAdapter } from 'adapters/id';
+import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
 import { UtilsAdapter } from 'adapters/utils';
 import { BankRepository, BankUseCase } from 'models/bank';
-import { BudgetRepository } from 'models/budget';
+import { BudgetRepository, BudgetUseCase } from 'models/budget';
+import { CardRepository, CardUseCase } from 'models/card';
 import { CategoryRepository } from 'models/category';
 import type {
+	CreditInput,
 	GetByBudgetOutput,
 	GetListInput,
 	InOutInput,
@@ -13,10 +22,13 @@ import type {
 import { TransactionRepository, TransactionUseCase } from 'models/transaction';
 import { BankRepositoryService } from 'repositories/postgres/bank/bank-repository.service';
 import { BudgetRepositoryService } from 'repositories/postgres/budget/budget-repository.service';
+import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
 import { CategoryRepositoryService } from 'repositories/postgres/category/category-repository.service';
 import { TransactionRepositoryService } from 'repositories/postgres/transaction/transaction-repository.service';
 import type { PaginatedItems } from 'types/paginated-items';
 import { BankService } from 'usecases/bank/bank.service';
+import { BudgetService } from 'usecases/budget/budget.service';
+import { CardService } from 'usecases/card/card.service';
 
 @Injectable()
 export class TransactionService extends TransactionUseCase {
@@ -27,12 +39,20 @@ export class TransactionService extends TransactionUseCase {
 		private readonly bankRepository: BankRepository,
 		@Inject(BudgetRepositoryService)
 		private readonly budgetRepository: BudgetRepository,
+		@Inject(CardRepositoryService)
+		private readonly cardRepository: CardRepository,
 		@Inject(CategoryRepositoryService)
 		private readonly categoryRepository: CategoryRepository,
 
 		@Inject(BankService)
 		private readonly bankService: BankUseCase,
+		@Inject(BudgetService)
+		private readonly budgetService: BudgetUseCase,
+		@Inject(CardService)
+		private readonly cardService: CardUseCase,
 
+		@Inject(UIDAdapterService)
+		private readonly idAdapter: IdAdapter,
 		@Inject(UtilsAdapterService)
 		private readonly utilsAdapter: UtilsAdapter,
 	) {
@@ -197,6 +217,96 @@ export class TransactionService extends TransactionUseCase {
 			description,
 			createdAt,
 			isSystemManaged: false,
+		});
+	}
+
+	async credit({
+		accountId,
+		name,
+		description,
+		amount,
+		installments,
+		categoryId,
+		cardId,
+		budgetDateId,
+		createdAt,
+	}: CreditInput): Promise<void> {
+		const [card, category, budgetDate] = await Promise.all([
+			this.cardRepository.getById({
+				cardId,
+				accountId,
+			}),
+			this.categoryRepository.getById({
+				categoryId,
+				accountId,
+				active: true,
+			}),
+			this.budgetRepository.getBudgetDateById({
+				budgetDateId,
+				accountId,
+			}),
+		]);
+
+		if (!card) {
+			throw new BadRequestException('Invalid card');
+		}
+
+		if (!category) {
+			throw new BadRequestException('Invalid category');
+		}
+
+		if (!budgetDate) {
+			throw new BadRequestException('Invalid budgetDate');
+		}
+
+		// Create credit card bills and budgetDates if they
+		// don't exist
+		// OBS: this should be done elsewhere, but since we
+		// are poor and a very small team, we do it here
+		const [cardBills, budgetDates] = await Promise.all([
+			this.cardService.createNextCardBills({
+				cardId,
+				accountId,
+				amount: installments,
+			}),
+			this.budgetService.createNextBudgetDates({
+				startFrom: budgetDate,
+				amount: installments,
+			}),
+		]);
+
+		if (cardBills.length !== installments) {
+			throw new InternalServerErrorException('Fail to create card bills');
+		}
+
+		if (budgetDates.length !== installments) {
+			throw new InternalServerErrorException('Fail to create budgets');
+		}
+
+		// Create multiple transactions with their installment
+		const installmentGroupId = this.idAdapter.genId();
+		await this.transactionRepository.createCredit({
+			common: {
+				accountId,
+				name,
+				amount,
+				categoryId,
+				cardId,
+				description,
+				createdAt,
+				isSystemManaged: false,
+				installment: {
+					installmentGroupId,
+					total: installments,
+				},
+			},
+			unique: cardBills.map(({ id }, idx) => ({
+				budgetDateId: budgetDates[idx].id,
+				installment: {
+					current: idx + 1,
+					cardBillId: id,
+				},
+			})),
 		});
 	}
 }

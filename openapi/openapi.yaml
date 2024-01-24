@@ -124,6 +124,8 @@ paths:
     $ref: paths/transactions/transfer.yaml
   /transactions/in-out:
     $ref: paths/transactions/in-out.yaml
+  /transactions/credit:
+    $ref: paths/transactions/credit.yaml
 
   /wallet/balance:
     $ref: paths/wallet/balance.yaml

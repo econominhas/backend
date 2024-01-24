@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
 import type {
+	CreateCreditInput,
 	CreateInOutInput,
 	CreateTransferInput,
 	GetByBudgetInput,
@@ -210,6 +211,22 @@ export class TransactionRepositoryService extends TransactionRepository {
 					},
 				},
 			},
+		});
+	}
+
+	async createCredit({ common, unique }: CreateCreditInput): Promise<void> {
+		this.transactionRepository.createMany({
+			data: unique.map((u) => ({
+				...common,
+				...u,
+				installment: {
+					...common.installment,
+					...u.installment,
+				},
+				type: TransactionTypeEnum.CREDIT,
+				id: this.idAdapter.genId(),
+			})),
+			skipDuplicates: true,
 		});
 	}
 }

@@ -24,12 +24,15 @@ import type {
 	UpsertManyBillsInput,
 } from 'models/card';
 import { CardRepository } from 'models/card';
-import type { Card, CardNetworkEnum, CardProvider } from '@prisma/client';
+import type {
+	Card,
+	CardBill,
+	CardNetworkEnum,
+	CardProvider,
+} from '@prisma/client';
 import { CardTypeEnum, PayAtEnum } from '@prisma/client';
 import { IdAdapter } from 'adapters/id';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 
 @Injectable()
 export class CardRepositoryService extends CardRepository {
@@ -45,8 +48,6 @@ export class CardRepositoryService extends CardRepository {
 
 		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
-		@Inject(DayjsAdapterService)
-		private readonly dateAdapter: DateAdapter,
 	) {
 		super();
 	}
@@ -69,10 +70,11 @@ export class CardRepositoryService extends CardRepository {
 		});
 	}
 
-	getById({ cardId }: GetByIdInput): Promise<GetByIdOutput> {
+	getById({ cardId, accountId }: GetByIdInput): Promise<GetByIdOutput> {
 		return this.cardRepository.findUnique({
 			where: {
 				id: cardId,
+				accountId,
 			},
 			include: {
 				cardProvider: true,
@@ -378,13 +380,51 @@ export class CardRepositoryService extends CardRepository {
 		});
 	}
 
-	async upsertManyBills(i: UpsertManyBillsInput[]): Promise<void> {
+	async upsertManyBills(i: UpsertManyBillsInput[]): Promise<CardBill[]> {
+		const cardId = i[0]?.cardId;
+
+		if (!cardId) {
+			return [];
+		}
+
+		const alreadyExistentMonths = await this.cardBillRepository
+			.findMany({
+				where: {
+					cardId,
+					month: {
+						in: i.map((cb) => cb.month),
+					},
+				},
+				select: {
+					month: true,
+				},
+			})
+			.then((r) => r.map((cb) => cb.month.toISOString()));
+
+		const cardBills = i.filter(
+			(cb) => !alreadyExistentMonths.includes(cb.month.toISOString()),
+		);
+
 		await this.cardBillRepository.createMany({
-			data: i.map((cardBill) => ({
-				...cardBill,
-				id: this.idAdapter.genId(),
-			})),
+			data: cardBills.map((cardBill) => {
+				return {
+					...cardBill,
+					id: this.idAdapter.genId(),
+				};
+			}),
 			skipDuplicates: true,
+		});
+
+		return this.cardBillRepository.findMany({
+			where: {
+				cardId,
+				month: {
+					in: i.map((cb) => cb.month),
+				},
+			},
+			orderBy: {
+				month: 'asc',
+			},
 		});
 	}
 }

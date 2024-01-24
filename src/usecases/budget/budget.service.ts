@@ -2,18 +2,21 @@ import { Inject, Injectable } from '@nestjs/common';
 import type {
 	CreateBasicInput,
 	CreateInput,
+	CreateNextBudgetDatesInput,
 	OverviewInput,
 	OverviewOutput,
 } from 'models/budget';
 import { BudgetRepository, BudgetUseCase } from 'models/budget';
 import { BudgetRepositoryService } from 'repositories/postgres/budget/budget-repository.service';
 import { AccountService } from '../account/account.service';
-import type { Budget } from '@prisma/client';
+import type { Budget, BudgetDate } from '@prisma/client';
 import { AccountUseCase } from 'models/account';
 import { TransactionRepository } from 'models/transaction';
 import { TransactionRepositoryService } from 'repositories/postgres/transaction/transaction-repository.service';
 import { CategoryRepository } from 'models/category';
 import { CategoryRepositoryService } from 'repositories/postgres/category/category-repository.service';
+import { DateAdapter } from 'adapters/date';
+import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 
 @Injectable()
 export class BudgetService extends BudgetUseCase {
@@ -27,6 +30,9 @@ export class BudgetService extends BudgetUseCase {
 
 		@Inject(AccountService)
 		private readonly accountService: AccountUseCase,
+
+		@Inject(DayjsAdapterService)
+		private readonly dateAdapter: DateAdapter,
 	) {
 		super();
 	}
@@ -131,5 +137,21 @@ export class BudgetService extends BudgetUseCase {
 						budgetsByCategoryId[c.id] - expensesByCategoryId[c.id],
 				})),
 		};
+	}
+
+	async createNextBudgetDates({
+		startFrom,
+		amount,
+	}: CreateNextBudgetDatesInput): Promise<BudgetDate[]> {
+		const dates = this.dateAdapter.getNextMonths(startFrom.date, amount);
+
+		return this.budgetRepository.upsertManyBudgetDates(
+			dates.map((date) => ({
+				budgetId: startFrom.budgetId,
+				month: this.dateAdapter.get(date, 'month'),
+				year: this.dateAdapter.get(date, 'year'),
+				date,
+			})),
+		);
 	}
 }

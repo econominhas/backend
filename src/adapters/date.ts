@@ -6,7 +6,8 @@ export interface TodayOutput {
 	year: number;
 }
 
-export type DateManipulationUnit = 'second' | 'day' | 'week' | 'month' | 'year';
+export type DateUnit = 'second' | 'day' | 'week' | 'month' | 'year';
+export type DateUnitExceptWeek = 'second' | 'day' | 'month' | 'year';
 
 export type YearMonth = `${number}-${number}`;
 export type YearMonthDay = `${number}-${number}-${number}`;
@@ -20,17 +21,19 @@ export abstract class DateAdapter {
 
 	abstract today(timezone?: TimezoneEnum): TodayOutput;
 
-	/**
-	 * Return an array of dates ('year-month') in the space
-	 * between the start and end dates (including the start
-	 * and end dates itself).
-	 *
-	 * @returns Array of dates: ['2023-01']
-	 */
-	abstract getMonthsBetween(
-		startDate: YearMonth,
-		endDate: YearMonth,
-	): Array<YearMonth>;
+	abstract newDate(date: string, timezone?: TimezoneEnum): Date;
+
+	abstract get(date: Date | string, unit: DateUnitExceptWeek): number;
+
+	abstract getNextMonths(startDate: Date | string, amount: number): Array<Date>;
+
+	abstract statementDate(
+		dueDay: number,
+		statementDays: number,
+		monthsToAdd?: number,
+	): Date;
+
+	abstract dueDate(dueDay: number, monthsToAdd?: number): Date;
 
 	/**
 	 *
@@ -43,35 +46,29 @@ export abstract class DateAdapter {
 		anotherDate: Date | YearMonth,
 	): boolean;
 
+	abstract isAfterToday(date: Date | string): boolean;
+
 	/**
 	 *
 	 * Modifiers
 	 *
 	 */
 
-	abstract nowPlus(amount: number, unit: DateManipulationUnit): Date;
+	abstract nowPlus(amount: number, unit: DateUnit): Date;
 
-	abstract add(
-		date: Date | string,
-		amount: number,
-		unit: DateManipulationUnit,
-	): Date;
+	abstract add(date: Date | string, amount: number, unit: DateUnit): Date;
 
-	abstract sub(
-		date: Date | string,
-		amount: number,
-		unit: DateManipulationUnit,
-	): Date;
+	abstract sub(date: Date | string, amount: number, unit: DateUnit): Date;
 
 	abstract startOf(
 		date: Date | string,
-		unit: DateManipulationUnit,
+		unit: DateUnit,
 		timezone?: TimezoneEnum,
 	): Date;
 
 	abstract endOf(
 		date: Date | string,
-		unit: DateManipulationUnit,
+		unit: DateUnit,
 		timezone?: TimezoneEnum,
 	): Date;
 }

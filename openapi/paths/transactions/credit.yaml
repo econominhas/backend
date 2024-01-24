@@ -1,0 +1,64 @@
+post:
+  tags:
+    - Transaction
+  summary: Create CREDIT transaction
+  description: |
+    Create a CREDIT transaction, to add or remove money from
+    one of the user's bank accounts only when the card bill
+    is paid
+  operationId: transaction-credit
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - name
+            - description
+            - amount
+            - installments
+            - categoryId
+            - cardId
+            - budgetDateId
+            - createdAt
+          properties:
+            name:
+              $ref: ../../components/fields/transaction-name.yaml
+            description:
+              $ref: ../../components/fields/description.yaml
+            amount:
+              $ref: ../../components/fields/amount.yaml
+            installments:
+              description: |
+                Amount of installments for the transaction
+              type: integer
+              minimum: 1
+              examples:
+                - 1
+                - 12
+                - 420
+            cardId:
+              description: ID of the card used to pay the transaction
+              type: string
+              format: uuid
+            categoryId:
+              description: Category ID
+              type: string
+              format: uuid
+            budgetDateId:
+              description: BudgetDate ID
+              type: string
+              format: uuid
+            createdAt:
+              $ref: ../../components/fields/created-at.yaml
+    required: true
+  responses:
+    "201":
+      description: |
+        Transaction created
+    "400":
+      $ref: ../../components/responses/bad-request.yaml
+    "401":
+      $ref: ../../components/responses/unauthorized.yaml

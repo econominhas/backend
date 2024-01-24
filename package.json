@@ -89,6 +89,7 @@
 		"start:db": "docker compose up postgres",
 		"start:prod": "node main",
 		"clean:docker": "docker container rm econominhas-api && docker image rm econominhas-api",
+		"lint:all": "yarn lint:ts && yarn lint:code && yarn lint:prisma && yarn lint:openapi",
 		"lint:ts": "tsc --project tsconfig.lint.json",
 		"lint:code": "eslint \"src/**/*.ts\" --fix --quiet",
 		"lint:prisma": "prisma-case-format --file prisma/schema.prisma --map-table-case snake,plural --map-field-case snake --map-enum-case snake -p",

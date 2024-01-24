@@ -438,10 +438,11 @@ model Budget {
 
 /// Contains the budgets information by date (month-year)
 model BudgetDate {
-  id       String @id @db.Char(16)
-  budgetId String @map("budget_id") @db.Char(16)
-  month    Int    @db.SmallInt
-  year     Int    @db.SmallInt
+  id       String   @id @db.Char(16)
+  budgetId String   @map("budget_id") @db.Char(16)
+  month    Int      @db.SmallInt
+  year     Int      @db.SmallInt
+  date     DateTime @db.Date /// The first day of the month relative to the budgetDate
 
   budget       Budget        @relation(fields: [budgetId], references: [id], onDelete: Cascade)
   budgetItems  BudgetItem[]
@@ -493,8 +494,10 @@ model Transaction {
   recurrentTransactionId String?             @map("recurrent_transaction_id") @db.Char(16)
   // Transaction type=IN,OUT,CREDIT
   categoryId             String?             @map("category_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
-  cardId                 String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
+  // Transaction type=IN,OUT
   bankAccountId          String?             @map("bank_account_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
+  // Transaction type=CREDIT
+  cardId                 String?             @map("card_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
   // Transaction type=TRANSFER
   bankAccountFromId      String?             @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
   bankAccountToId        String?             @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column

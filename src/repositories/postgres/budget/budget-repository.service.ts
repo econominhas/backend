@@ -5,11 +5,14 @@ import type {
 	GetBudgetDateByIdInput,
 	GetMonthlyByCategoryInput,
 	GetMonthlyByCategoryOutput,
+	UpsertManyBudgetDatesInput,
 } from 'models/budget';
 import { BudgetRepository } from 'models/budget';
 import type { Budget, BudgetDate } from '@prisma/client';
 import { IdAdapter } from 'adapters/id';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
+import { DateAdapter } from 'adapters/date';
+import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 
 @Injectable()
 export class BudgetRepositoryService extends BudgetRepository {
@@ -19,6 +22,8 @@ export class BudgetRepositoryService extends BudgetRepository {
 		@InjectRepository('budgetDate')
 		private readonly budgetDateRepository: Repository<'budgetDate'>,
 
+		@Inject(DayjsAdapterService)
+		private readonly dateAdapter: DateAdapter,
 		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
@@ -48,6 +53,7 @@ export class BudgetRepositoryService extends BudgetRepository {
 							budgetId,
 							month,
 							year,
+							date: this.dateAdapter.newDate(`${year}-${month}-01`),
 							budgetItems: {
 								create: items.map(({ categoryId, amount }) => ({
 									budgetDateId: this.idAdapter.genId(),
@@ -108,6 +114,56 @@ export class BudgetRepositoryService extends BudgetRepository {
 				budget: {
 					accountId,
 				},
+			},
+		});
+	}
+
+	async upsertManyBudgetDates(
+		i: UpsertManyBudgetDatesInput[],
+	): Promise<BudgetDate[]> {
+		const budgetId = i[0]?.budgetId;
+
+		if (!budgetId) {
+			return [];
+		}
+
+		const alreadyExistentDates = await this.budgetDateRepository
+			.findMany({
+				where: {
+					budgetId,
+					date: {
+						in: i.map((bd) => bd.date),
+					},
+				},
+				select: {
+					date: true,
+				},
+			})
+			.then((r) => r.map((bd) => bd.date.toISOString()));
+
+		const budgetDates = i.filter(
+			(bd) => !alreadyExistentDates.includes(bd.date.toISOString()),
+		);
+
+		await this.budgetDateRepository.createMany({
+			data: budgetDates.map((budgetDate) => {
+				return {
+					...budgetDate,
+					id: this.idAdapter.genId(),
+				};
+			}),
+			skipDuplicates: true,
+		});
+
+		return this.budgetDateRepository.findMany({
+			where: {
+				budgetId,
+				date: {
+					in: i.map((cb) => cb.date),
+				},
+			},
+			orderBy: {
+				date: 'asc',
 			},
 		});
 	}

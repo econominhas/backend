@@ -5,6 +5,7 @@ import { BudgetController } from 'delivery/budget.controller';
 import { AccountModule } from '../account/account.module';
 import { TransactionRepositoryModule } from 'repositories/postgres/transaction/transaction-repository.module';
 import { CategoryRepositoryModule } from 'repositories/postgres/category/category-repository.module';
+import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module';
 
 @Module({
 	controllers: [BudgetController],
@@ -13,6 +14,7 @@ import { CategoryRepositoryModule } from 'repositories/postgres/category/categor
 		CategoryRepositoryModule,
 		TransactionRepositoryModule,
 		AccountModule,
+		DayJsAdapterModule,
 	],
 	providers: [BudgetService],
 	exports: [BudgetService],

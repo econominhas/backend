@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import type { DateManipulationUnit, TodayOutput, YearMonth } from '../../date';
+import type {
+	DateUnit,
+	DateUnitExceptWeek,
+	TodayOutput,
+	YearMonth,
+} from '../../date';
 import { DateAdapter } from '../../date';
 
 import dayjs from 'dayjs';
@@ -30,41 +35,41 @@ export class DayjsAdapterService extends DateAdapter {
 		};
 	}
 
-	getMonthsBetween(startDate: YearMonth, endDate: YearMonth): YearMonth[] {
-		if (this.isSameMonth(startDate, endDate)) {
-			return [startDate];
-		}
+	newDate(date: string, timezone?: TimezoneEnum): Date {
+		return dayjs.tz(date, timezone).toDate();
+	}
 
-		const startDateDayjs = dayjs(startDate);
+	get(date: string | Date, unit: DateUnitExceptWeek): number {
+		return dayjs(date).get(unit);
+	}
 
-		if (startDateDayjs.isAfter(endDate)) {
-			throw new Error('startDate must be before endDate');
-		}
+	getNextMonths(startDate: string | Date, amount: number): Date[] {
+		const months: Array<Date> = [];
 
-		const difference = startDateDayjs.diff(endDate, 'months');
-		const THIRTY_FIVE_YEARS_IN_MONTHS = 35 * 12;
-		if (difference > THIRTY_FIVE_YEARS_IN_MONTHS) {
-			throw new Error(
-				'Difference between startDate and endDate must be less than 35 years',
-			);
-		}
-
-		const dates: Array<YearMonth> = [
-			startDateDayjs.format('YYYY-MM') as YearMonth,
-		];
-
-		let reached = false;
-		const curDate = startDateDayjs;
+		let curDate = dayjs(startDate);
 		do {
-			curDate.add(1, 'months');
-			dates.push(curDate.format('YYYY-MM') as YearMonth);
+			months.push(curDate.toDate());
 
-			if (curDate.isSameOrAfter(endDate)) {
-				reached = true;
-			}
-		} while (reached);
+			curDate = curDate.add(1, 'month');
+		} while (months.length < amount);
 
-		return dates;
+		return months;
+	}
+
+	statementDate(
+		dueDay: number,
+		statementDays: number,
+		monthsToAdd: number = 0,
+	): Date {
+		return dayjs()
+			.set('day', dueDay)
+			.add(monthsToAdd, 'months')
+			.add(statementDays * -1, 'days')
+			.toDate();
+	}
+
+	dueDate(dueDay: number, monthsToAdd: number = 0): Date {
+		return dayjs().set('day', dueDay).add(monthsToAdd, 'months').toDate();
 	}
 
 	/**
@@ -88,37 +93,33 @@ export class DayjsAdapterService extends DateAdapter {
 		return isSameYear && isSameMonth;
 	}
 
+	isAfterToday(date: string | Date): boolean {
+		return dayjs(date).isAfter(dayjs());
+	}
+
 	/**
 	 *
 	 * Modifiers
 	 *
 	 */
 
-	nowPlus(amount: number, unit: DateManipulationUnit): Date {
+	nowPlus(amount: number, unit: DateUnit): Date {
 		return dayjs.utc().add(amount, unit).toDate();
 	}
 
-	add(date: string | Date, amount: number, unit: DateManipulationUnit): Date {
+	add(date: string | Date, amount: number, unit: DateUnit): Date {
 		return dayjs(date).add(amount, unit).toDate();
 	}
 
-	sub(date: string | Date, amount: number, unit: DateManipulationUnit): Date {
+	sub(date: string | Date, amount: number, unit: DateUnit): Date {
 		return this.add(date, amount * -1, unit);
 	}
 
-	startOf(
-		date: string | Date,
-		unit: DateManipulationUnit,
-		timezone?: TimezoneEnum,
-	): Date {
+	startOf(date: string | Date, unit: DateUnit, timezone?: TimezoneEnum): Date {
 		return dayjs.tz(date, timezone).startOf(unit).toDate();
 	}
 
-	endOf(
-		date: string | Date,
-		unit: DateManipulationUnit,
-		timezone?: TimezoneEnum,
-	): Date {
+	endOf(date: string | Date, unit: DateUnit, timezone?: TimezoneEnum): Date {
 		return dayjs.tz(date, timezone).endOf(unit).toDate();
 	}
 }
