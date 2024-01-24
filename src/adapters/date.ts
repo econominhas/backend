@@ -4,10 +4,10 @@ export interface TodayOutput {
 	day: number;
 	month: number;
 	year: number;
+	date: Date;
 }
 
-export type DateUnit = 'second' | 'day' | 'week' | 'month' | 'year';
-export type DateUnitExceptWeek = 'second' | 'day' | 'month' | 'year';
+export type DateUnit = 'second' | 'day' | 'month' | 'year';
 
 export type YearMonth = `${number}-${number}`;
 export type YearMonthDay = `${number}-${number}-${number}`;
@@ -21,9 +21,9 @@ export abstract class DateAdapter {
 
 	abstract today(timezone?: TimezoneEnum): TodayOutput;
 
-	abstract newDate(date: string, timezone?: TimezoneEnum): Date;
+	abstract newDate(date: string | Date, timezone?: TimezoneEnum): Date;
 
-	abstract get(date: Date | string, unit: DateUnitExceptWeek): number;
+	abstract get(date: Date | string, unit: DateUnit): number;
 
 	abstract getNextMonths(startDate: Date | string, amount: number): Array<Date>;
 
@@ -42,8 +42,8 @@ export abstract class DateAdapter {
 	 */
 
 	abstract isSameMonth(
-		date: Date | YearMonth,
-		anotherDate: Date | YearMonth,
+		date: Date | string,
+		anotherDate: Date | string,
 	): boolean;
 
 	abstract isAfterToday(date: Date | string): boolean;

@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type {
-	DateUnit,
-	DateUnitExceptWeek,
-	TodayOutput,
-	YearMonth,
-} from '../../date';
+import type { DateUnit, TodayOutput } from '../../date';
 import { DateAdapter } from '../../date';
 
 import dayjs from 'dayjs';
@@ -16,6 +11,8 @@ import type { TimezoneEnum } from 'types/enums/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isSameOrAfter);
+
+dayjs.tz.setDefault('UTC');
 
 @Injectable()
 export class DayjsAdapterService extends DateAdapter {
@@ -32,21 +29,30 @@ export class DayjsAdapterService extends DateAdapter {
 			day: today.date(),
 			month: today.month() + 1,
 			year: today.year(),
+			date: today.toDate(),
 		};
 	}
 
-	newDate(date: string, timezone?: TimezoneEnum): Date {
+	newDate(date: string | Date, timezone?: TimezoneEnum): Date {
 		return dayjs.tz(date, timezone).toDate();
 	}
 
-	get(date: string | Date, unit: DateUnitExceptWeek): number {
-		return dayjs(date).get(unit);
+	get(date: string | Date, unit: DateUnit): number {
+		if (unit === 'day') {
+			return dayjs.tz(date).get('date');
+		}
+
+		if (unit === 'month') {
+			return dayjs.tz(date).get(unit) + 1;
+		}
+
+		return dayjs.tz(date).get(unit);
 	}
 
 	getNextMonths(startDate: string | Date, amount: number): Date[] {
 		const months: Array<Date> = [];
 
-		let curDate = dayjs(startDate);
+		let curDate = dayjs.tz(startDate);
 		do {
 			months.push(curDate.toDate());
 
@@ -59,17 +65,29 @@ export class DayjsAdapterService extends DateAdapter {
 	statementDate(
 		dueDay: number,
 		statementDays: number,
-		monthsToAdd: number = 0,
+		monthsToAdd?: number,
 	): Date {
-		return dayjs()
-			.set('day', dueDay)
-			.add(monthsToAdd, 'months')
-			.add(statementDays * -1, 'days')
+		let date = dayjs.tz();
+
+		if (monthsToAdd) {
+			date = date.add(monthsToAdd, 'months');
+		}
+
+		return date
+			.set('date', dueDay)
+			.startOf('day')
+			.subtract(statementDays, 'days')
 			.toDate();
 	}
 
 	dueDate(dueDay: number, monthsToAdd: number = 0): Date {
-		return dayjs().set('day', dueDay).add(monthsToAdd, 'months').toDate();
+		let date = dayjs.tz();
+
+		if (monthsToAdd) {
+			date = date.add(monthsToAdd, 'months');
+		}
+
+		return date.set('date', dueDay).startOf('day').toDate();
 	}
 
 	/**
@@ -78,9 +96,9 @@ export class DayjsAdapterService extends DateAdapter {
 	 *
 	 */
 
-	isSameMonth(date: Date | YearMonth, anotherDate: Date | YearMonth): boolean {
-		const d1 = dayjs(date);
-		const d2 = dayjs(anotherDate);
+	isSameMonth(date: Date | string, anotherDate: Date | string): boolean {
+		const d1 = dayjs.tz(date);
+		const d2 = dayjs.tz(anotherDate);
 
 		const d1Month = d1.get('month');
 		const d1Year = d1.get('year');
@@ -94,7 +112,7 @@ export class DayjsAdapterService extends DateAdapter {
 	}
 
 	isAfterToday(date: string | Date): boolean {
-		return dayjs(date).isAfter(dayjs());
+		return dayjs.tz(date).isAfter(dayjs.tz());
 	}
 
 	/**
@@ -104,14 +122,70 @@ export class DayjsAdapterService extends DateAdapter {
 	 */
 
 	nowPlus(amount: number, unit: DateUnit): Date {
-		return dayjs.utc().add(amount, unit).toDate();
+		return dayjs.tz().add(amount, unit).toDate();
 	}
 
 	add(date: string | Date, amount: number, unit: DateUnit): Date {
-		return dayjs(date).add(amount, unit).toDate();
+		if (unit === 'month') {
+			const dateDate = this.newDate(date);
+
+			const day = this.get(dateDate, 'day');
+
+			if (day > 28) {
+				const year = this.get(dateDate, 'year');
+				const month = this.get(dateDate, 'month');
+
+				const result = dayjs
+					.tz(`${year}-${month}-28`)
+					.add(amount, unit)
+					.toDate();
+				const resultEndOfMonth = this.startOf(
+					this.endOf(result, 'month'),
+					'day',
+				);
+				const lastDayOfMonth = this.get(resultEndOfMonth, 'day');
+
+				// If the expected day exceeds the last day of the month,
+				// returns the last day of the month
+				if (day > lastDayOfMonth) {
+					return resultEndOfMonth;
+				}
+
+				return this.newDate(
+					[this.get(result, 'year'), this.get(result, 'month'), day].join('-'),
+				);
+			}
+
+			return dayjs.tz(date).add(amount, unit).set('date', day).toDate();
+		}
+
+		return dayjs.tz(date).add(amount, unit).toDate();
 	}
 
 	sub(date: string | Date, amount: number, unit: DateUnit): Date {
+		const dateDate = this.newDate(date);
+
+		const day = this.get(dateDate, 'day');
+
+		if (day > 28) {
+			const year = this.get(dateDate, 'year');
+			const month = this.get(dateDate, 'month');
+
+			const result = this.add(`${year}-${month}-28`, amount * -1, unit);
+			const resultEndOfMonth = this.startOf(this.endOf(result, 'month'), 'day');
+			const lastDayOfMonth = this.get(resultEndOfMonth, 'day');
+
+			// If the expected day exceeds the last day of the month,
+			// returns the last day of the month
+			if (day > lastDayOfMonth) {
+				return resultEndOfMonth;
+			}
+
+			return this.newDate(
+				[this.get(result, 'year'), this.get(result, 'month'), day].join('-'),
+			);
+		}
+
 		return this.add(date, amount * -1, unit);
 	}
 
