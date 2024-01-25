@@ -21,5 +21,6 @@
 	"coverageDirectory": "./coverage",
 	"testEnvironment": "node",
 	"moduleDirectories": ["node_modules", "src"],
-	"setupFiles": ["./tests/setup.ts"]
+	"setupFiles": ["./tests/setup.ts"],
+	"resetMocks": true
 }

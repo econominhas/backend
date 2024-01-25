@@ -38,10 +38,6 @@ describe('Adapters > JWT', () => {
 		}
 	});
 
-	beforeEach(() => {
-		jwtMock.resetMock();
-	});
-
 	describe('definitions', () => {
 		it('should initialize Service', () => {
 			expect(service).toBeDefined();

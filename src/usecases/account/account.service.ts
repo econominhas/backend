@@ -34,7 +34,7 @@ export class AccountService extends AccountUseCase {
 
 		return {
 			id: accountId,
-			googleId: google.providerId,
+			googleId: google?.providerId,
 		};
 	}
 

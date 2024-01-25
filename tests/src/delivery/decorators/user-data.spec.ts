@@ -58,7 +58,7 @@ describe('Delivery > Decorators', () => {
 				result = err;
 			}
 
-			expect(result).toMatchObject({});
+			expect(result).toStrictEqual({});
 		});
 	});
 });

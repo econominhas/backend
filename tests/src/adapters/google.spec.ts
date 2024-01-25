@@ -43,10 +43,6 @@ describe('Adapters > Google', () => {
 		}
 	});
 
-	beforeEach(() => {
-		axiosMock.resetMock();
-	});
-
 	describe('definitions', () => {
 		it('should initialize Service', () => {
 			expect(service).toBeDefined();

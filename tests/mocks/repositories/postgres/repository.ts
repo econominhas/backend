@@ -1,4 +1,4 @@
-export interface MockRepository {
+export interface PostgresMock {
 	find: jest.Mock<any, any>;
 	findOne: jest.Mock<any, any>;
 	findAndCount: jest.Mock<any, any>;
@@ -8,29 +8,12 @@ export interface MockRepository {
 	delete: jest.Mock<any, any>;
 }
 
-export const makeMockRepository = () => {
-	const mock = {
-		find: jest.fn(),
-		findOne: jest.fn(),
-		findAndCount: jest.fn(),
-		save: jest.fn(),
-		insert: jest.fn(),
-		update: jest.fn(),
-		delete: jest.fn(),
-	};
-
-	const resetMock = () => {
-		mock.find.mockReset();
-		mock.findOne.mockReset();
-		mock.findAndCount.mockReset();
-		mock.save.mockReset();
-		mock.insert.mockReset();
-		mock.update.mockReset();
-		mock.delete.mockReset();
-	};
-
-	return {
-		resetMock,
-		...mock,
-	};
-};
+export const makePostgresMock = () => ({
+	find: jest.fn(),
+	findOne: jest.fn(),
+	findAndCount: jest.fn(),
+	save: jest.fn(),
+	insert: jest.fn(),
+	update: jest.fn(),
+	delete: jest.fn(),
+});
