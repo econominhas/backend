@@ -33,14 +33,11 @@ export class UtilsAdapterService extends UtilsAdapter {
 			currency: 'BRL',
 		});
 
-		return formatter.format(
-			parseFloat(
-				[
-					value.substring(0, decimalsStart),
-					'.',
-					value.substring(decimalsStart),
-				].join(''),
-			),
-		);
+		const integer = value.length >= 2 ? value.substring(0, decimalsStart) : '0';
+		const cents = value.length >= 2 ? value.substring(decimalsStart) : value;
+
+		return formatter
+			.format(parseFloat([integer, '.', cents.padStart(2, '0')].join('')))
+			.replaceAll(' ', ' ');
 	}
 }
