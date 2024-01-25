@@ -7,7 +7,7 @@ import type {
 	ValidateAccessInput,
 } from '../../token';
 import { TokensAdapter } from '../../token';
-import { sign, verify } from 'jsonwebtoken';
+import type * as Jwt from 'jsonwebtoken';
 import { SecretAdapter } from 'adapters/secret';
 import { UIDAdapterService } from '../uid/uid.service';
 import { AppConfig } from 'config';
@@ -16,6 +16,9 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class JWTAdapterService extends TokensAdapter {
 	constructor(
+		@Inject('jsonwebtoken')
+		protected readonly jwt: typeof Jwt,
+
 		@Inject(UIDAdapterService)
 		protected readonly secretAdapter: SecretAdapter,
 
@@ -36,7 +39,7 @@ export class JWTAdapterService extends TokensAdapter {
 
 		const expiresAt = '';
 
-		const accessToken = sign(payload, this.config.get('JWT_SECRET'));
+		const accessToken = this.jwt.sign(payload, this.config.get('JWT_SECRET'));
 
 		return {
 			accessToken,
@@ -46,7 +49,7 @@ export class JWTAdapterService extends TokensAdapter {
 
 	validateAccess({ accessToken }: ValidateAccessInput): TokenPayload {
 		try {
-			const payload = verify(
+			const payload = this.jwt.verify(
 				accessToken,
 				this.config.get('JWT_SECRET'),
 			) as TokenPayload;

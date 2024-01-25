@@ -12,6 +12,9 @@
 		"!src/main.ts",
 		"!src/models/*.ts",
 		"!src/adapters/*.ts",
+		"!src/adapters/implementations/s3/*.ts",
+		"!src/adapters/implementations/ses/*.ts",
+		"!src/adapters/implementations/sns/*.ts",
 		"!src/repositories/postgres/*.ts",
 		"!src/types/*.ts"
 	],

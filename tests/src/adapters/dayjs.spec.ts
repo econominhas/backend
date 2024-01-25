@@ -54,9 +54,9 @@ describe('Adapters > DayJs', () => {
 			const todayDate = new Date();
 
 			expect(result).toMatchObject({
-				day: todayDate.getDate(),
-				month: todayDate.getMonth() + 1,
-				year: todayDate.getFullYear(),
+				day: todayDate.getUTCDate(),
+				month: todayDate.getUTCMonth() + 1,
+				year: todayDate.getUTCFullYear(),
 			});
 			// Removes the milliseconds so it don't create false positives
 			expect(removeMillis(result.date)).toBe(removeMillis(todayDate));
