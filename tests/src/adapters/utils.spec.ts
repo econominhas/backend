@@ -1,7 +1,7 @@
-import { Test } from '@nestjs/testing';
 import type { INestApplication } from '@nestjs/common';
 import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
 import { UtilsAdapterModule } from 'adapters/implementations/utils/utils.module';
+import { createTestModule, createTestService } from '../../utils';
 
 describe('Adapters > Utils', () => {
 	let service: UtilsAdapterService;
@@ -9,17 +9,10 @@ describe('Adapters > Utils', () => {
 
 	beforeAll(async () => {
 		try {
-			const moduleForService = await Test.createTestingModule({
-				providers: [UtilsAdapterService],
-			}).compile();
+			service =
+				await createTestService<UtilsAdapterService>(UtilsAdapterService);
 
-			service = moduleForService.get<UtilsAdapterService>(UtilsAdapterService);
-
-			const moduleForModule = await Test.createTestingModule({
-				imports: [UtilsAdapterModule],
-			}).compile();
-
-			module = moduleForModule.createNestApplication();
+			module = await createTestModule(UtilsAdapterModule);
 		} catch (err) {
 			console.error(err);
 		}

@@ -1,8 +1,7 @@
 import type { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module';
 import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
-import { removeMillis } from '../../utils';
+import { createTestModule, createTestService, removeMillis } from '../../utils';
 
 describe('Adapters > DayJs', () => {
 	let service: DayjsAdapterService;
@@ -10,17 +9,10 @@ describe('Adapters > DayJs', () => {
 
 	beforeAll(async () => {
 		try {
-			const moduleForService = await Test.createTestingModule({
-				providers: [DayjsAdapterService],
-			}).compile();
+			service =
+				await createTestService<DayjsAdapterService>(DayjsAdapterService);
 
-			service = moduleForService.get<DayjsAdapterService>(DayjsAdapterService);
-
-			const moduleForModule = await Test.createTestingModule({
-				imports: [DayJsAdapterModule],
-			}).compile();
-
-			module = moduleForModule.createNestApplication();
+			module = await createTestModule(DayJsAdapterModule);
 		} catch (err) {
 			console.error(err);
 		}

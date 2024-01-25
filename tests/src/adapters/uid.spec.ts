@@ -1,8 +1,8 @@
-import { Test } from '@nestjs/testing';
 import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
 import type { INestApplication } from '@nestjs/common';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 import { uid } from 'uid/secure';
+import { createTestModule, createTestService } from '../../utils';
 
 describe('Adapters > UID', () => {
 	let service: UIDAdapterService;
@@ -10,23 +10,16 @@ describe('Adapters > UID', () => {
 
 	beforeAll(async () => {
 		try {
-			const moduleForService = await Test.createTestingModule({
+			service = await createTestService<UIDAdapterService>(UIDAdapterService, {
 				providers: [
 					{
 						provide: 'uid/secure',
 						useValue: uid,
 					},
-					UIDAdapterService,
 				],
-			}).compile();
+			});
 
-			service = moduleForService.get<UIDAdapterService>(UIDAdapterService);
-
-			const moduleForModule = await Test.createTestingModule({
-				imports: [UIDAdapterModule],
-			}).compile();
-
-			module = moduleForModule.createNestApplication();
+			module = await createTestModule(UIDAdapterModule);
 		} catch (err) {
 			console.error(err);
 		}

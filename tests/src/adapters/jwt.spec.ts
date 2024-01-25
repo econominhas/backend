@@ -1,10 +1,10 @@
-import { Test } from '@nestjs/testing';
 import { JWTAdapterService } from 'adapters/implementations/jwt/token.service';
 import { makeJwtMock } from '../../mocks/libs/jsonwebtoken';
 import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
 import { configMock, configMockModule } from '../../mocks/config';
 import { JWTAdapterModule } from 'adapters/implementations/jwt/token.module';
 import type { INestApplication } from '@nestjs/common';
+import { createTestModule, createTestService } from '../../utils';
 
 describe('Adapters > JWT', () => {
 	let service: JWTAdapterService;
@@ -14,7 +14,7 @@ describe('Adapters > JWT', () => {
 
 	beforeAll(async () => {
 		try {
-			const moduleForService = await Test.createTestingModule({
+			service = await createTestService<JWTAdapterService>(JWTAdapterService, {
 				imports: [UIDAdapterModule],
 				providers: [
 					{
@@ -22,17 +22,10 @@ describe('Adapters > JWT', () => {
 						useValue: jwtMock,
 					},
 					configMockModule,
-					JWTAdapterService,
 				],
-			}).compile();
+			});
 
-			service = moduleForService.get<JWTAdapterService>(JWTAdapterService);
-
-			const moduleForModule = await Test.createTestingModule({
-				imports: [JWTAdapterModule],
-			}).compile();
-
-			module = moduleForModule.createNestApplication();
+			module = await createTestModule(JWTAdapterModule);
 		} catch (err) {
 			console.error(err);
 		}

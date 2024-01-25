@@ -1,10 +1,9 @@
 import type { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import { GoogleAdapterModule } from 'adapters/implementations/google/google.module';
 import { GoogleAdapterService } from 'adapters/implementations/google/google.service';
 import { makeAxiosMock } from '../../mocks/libs/axios';
 import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module';
-import { removeMillis } from '../../utils';
+import { createTestModule, createTestService, removeMillis } from '../../utils';
 import { configMock, configMockModule } from '../../mocks/config';
 
 const googleTokenUrl = 'https://oauth2.googleapis.com/token';
@@ -18,26 +17,21 @@ describe('Adapters > Google', () => {
 
 	beforeAll(async () => {
 		try {
-			const moduleForService = await Test.createTestingModule({
-				imports: [DayJsAdapterModule],
-				providers: [
-					{
-						provide: 'axios',
-						useValue: axiosMock,
-					},
-					configMockModule,
-					GoogleAdapterService,
-				],
-			}).compile();
+			service = await createTestService<GoogleAdapterService>(
+				GoogleAdapterService,
+				{
+					imports: [DayJsAdapterModule],
+					providers: [
+						{
+							provide: 'axios',
+							useValue: axiosMock,
+						},
+						configMockModule,
+					],
+				},
+			);
 
-			service =
-				moduleForService.get<GoogleAdapterService>(GoogleAdapterService);
-
-			const moduleForModule = await Test.createTestingModule({
-				imports: [GoogleAdapterModule],
-			}).compile();
-
-			module = moduleForModule.createNestApplication();
+			module = await createTestModule(GoogleAdapterModule);
 		} catch (err) {
 			console.error(err);
 		}

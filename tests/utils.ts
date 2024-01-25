@@ -7,10 +7,10 @@ export const removeMillis = (date?: Date) => date?.toISOString().split('.')[0];
 
 export const createTestService = <T>(
 	service: any,
-	{ providers, imports }: ModuleMetadata,
+	{ providers, imports }: ModuleMetadata = {},
 ): Promise<T> => {
 	return Test.createTestingModule({
-		providers: [service as any, ...providers],
+		providers: [...(providers || []), service as any],
 		imports,
 	})
 		.compile()
