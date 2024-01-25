@@ -16,7 +16,7 @@
 		"!src/adapters/implementations/ses/*.ts",
 		"!src/adapters/implementations/sns/*.ts",
 		"!src/repositories/postgres/*.ts",
-		"!src/types/*.ts"
+		"!src/types/**/*.ts"
 	],
 	"coverageDirectory": "./coverage",
 	"testEnvironment": "node",
