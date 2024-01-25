@@ -4,21 +4,24 @@ import type { Request } from 'express';
 import { decode } from 'jsonwebtoken';
 import type { TokenPayload, UserData as UserDataType } from 'adapters/token';
 
-export const UserData = createParamDecorator(
-	(data: undefined, ctx: ExecutionContext): UserDataType => {
-		const request = ctx.switchToHttp().getRequest<Request>();
+export const validate = (
+	data: undefined,
+	ctx: ExecutionContext,
+): UserDataType => {
+	const request = ctx.switchToHttp().getRequest<Request>();
 
-		const [token] = request.headers.authorization?.split(' ') ?? [];
+	const [, token] = request.headers.authorization?.split(' ') ?? [];
 
-		const payload = decode(token) as TokenPayload | undefined;
+	const payload = decode(token) as TokenPayload | undefined;
 
-		if (!payload) {
-			return {} as UserDataType;
-		}
+	if (!payload) {
+		return {} as UserDataType;
+	}
 
-		return {
-			accountId: payload.sub,
-			hasAcceptedLatestTerms: payload.terms,
-		};
-	},
-);
+	return {
+		accountId: payload.sub,
+		hasAcceptedLatestTerms: payload.terms,
+	};
+};
+
+export const UserData = createParamDecorator(validate);
