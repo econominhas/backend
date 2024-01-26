@@ -1,7 +1,12 @@
-import { IsDate, IsEnum, IsOptional } from 'class-validator';
+import {
+	IsDate,
+	IsEnum,
+	IsNumberString,
+	IsOptional,
+	Length,
+} from 'class-validator';
 import { IsAmount, IsID, IsName } from '../validators/internal';
 import { IsDay } from '../validators/date';
-import { IsNumberString } from '../validators/miscellaneous';
 import { PayAtEnum } from '@prisma/client';
 import { PaginatedDto } from '.';
 
@@ -12,7 +17,8 @@ export class CreateDto {
 	@IsName()
 	name: string;
 
-	@IsNumberString(4)
+	@IsNumberString({ no_symbols: true })
+	@Length(4)
 	lastFourDigits: string;
 
 	@IsOptional()

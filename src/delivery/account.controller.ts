@@ -10,7 +10,7 @@ import {
 import { AccountService } from 'usecases/account/account.service';
 import { IgnoreTermsCheck } from './guards/auth.guard';
 import { UserData } from './decorators/user-data';
-import { NameDto } from './dtos/account';
+import { NameDto, UpdateOnboardingDto } from './dtos/account';
 import { UserDataDto } from './dtos';
 import { AccountUseCase } from 'models/account';
 
@@ -43,6 +43,30 @@ export class AccountController {
 		return this.accountService.updateName({
 			accountId: userData.accountId,
 			name: body.name,
+		});
+	}
+
+	@Get('/onboarding')
+	getOnboarding(
+		@UserData()
+		userData: UserDataDto,
+	) {
+		return this.accountService.getOnboarding({
+			accountId: userData.accountId,
+		});
+	}
+
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Patch('/onboarding')
+	updateOnboarding(
+		@UserData()
+		userData: UserDataDto,
+		@Body()
+		body: UpdateOnboardingDto,
+	) {
+		return this.accountService.updateOnboarding({
+			...body,
+			accountId: userData.accountId,
 		});
 	}
 }

@@ -15,6 +15,8 @@ export const makeAccountRepositoryMock = () => {
 		getById: jest.fn(),
 		getByIdWithProviders: jest.fn(),
 		updateConfig: jest.fn(),
+		getOnboarding: jest.fn(),
+		updateOnboarding: jest.fn(),
 	};
 
 	const module = {

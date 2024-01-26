@@ -78,6 +78,8 @@ paths:
     $ref: paths/accounts/iam.yaml
   /accounts/name:
     $ref: paths/accounts/name.yaml
+  /accounts/onboarding:
+    $ref: paths/accounts/onboarding.yaml
 
   /banks/providers:
     $ref: paths/banks/providers.yaml

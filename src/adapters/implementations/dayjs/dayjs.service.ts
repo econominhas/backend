@@ -33,7 +33,7 @@ export class DayjsAdapterService extends DateAdapter {
 		};
 	}
 
-	newDate(date: string | Date, timezone?: TimezoneEnum): Date {
+	newDate(date?: string | Date, timezone?: TimezoneEnum): Date {
 		return dayjs.tz(date, timezone).toDate();
 	}
 

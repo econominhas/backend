@@ -1,0 +1,41 @@
+patch:
+  tags:
+    - Account
+  summary: Update user's onboarding progress
+  description: |
+    Update user's onboarding progress
+  operationId: account-update-onboarding
+  security:
+    - bearer: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          title: Update user's onboarding progress
+          properties:
+            name:
+              type: boolean
+            categories:
+              type: boolean
+            bankAccounts:
+              type: boolean
+            creditCards:
+              type: boolean
+            budget:
+              type: boolean
+            salary:
+              type: boolean
+    required: true
+  responses:
+    "204":
+      description: |
+        Onboarding progress updated
+
+    "400":
+      description: |
+        Invalid name
+
+    "401":
+      description: |
+        Unauthorized

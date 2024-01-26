@@ -1,29 +1,5 @@
 import type { ValidationArguments } from 'class-validator';
 import { registerDecorator } from 'class-validator';
-import { isDateYMD } from '@techmmunity/utils';
-
-export function IsDateYYYYMMDD() {
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	return function (object: Object, propertyName: string) {
-		registerDecorator({
-			name: 'isDateYYYYMMDD',
-			target: object.constructor,
-			propertyName: propertyName,
-			constraints: [],
-			options: {
-				message: `${propertyName} must be a valid birth date`,
-			},
-			validator: {
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				validate(value: any, _args: ValidationArguments) {
-					if (typeof value !== 'string') return false;
-
-					return isDateYMD(value);
-				},
-			},
-		});
-	};
-}
 
 interface IsURLValidationOptions {
 	acceptLocalhost: boolean;
@@ -84,23 +60,21 @@ export function IsPhone() {
 	};
 }
 
-export function IsNumberString(length: number) {
+export function IsTrue() {
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	return function (object: Object, propertyName: string) {
 		registerDecorator({
-			name: 'IsNumberString',
+			name: 'IsTrue',
 			target: object.constructor,
 			propertyName: propertyName,
 			constraints: [],
 			options: {
-				message: `${propertyName} must be a valid number string with length of ${length}.`,
+				message: `${propertyName} must be true.`,
 			},
 			validator: {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				validate(value: any, _args: ValidationArguments) {
-					if (typeof value !== 'string') return false;
-
-					return /^[0-9]*$/.test(value) && value.length === length;
+					return value === true;
 				},
 			},
 		});

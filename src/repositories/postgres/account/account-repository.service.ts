@@ -3,11 +3,14 @@ import type {
 	GetByIdInput,
 	GetByIdWithProvidersInput,
 	GetByIdWithProvidersOutput,
+	GetOnboardingRecordInput,
 	UpdateConfigInput,
+	UpdateOnboardingRecordInput,
 } from 'models/account';
 import { AccountRepository } from 'models/account';
 import { InjectRepository, Repository } from '..';
-import type { Account } from '@prisma/client';
+import type { Account, Onboarding } from '@prisma/client';
+import { cleanObj } from '@techmmunity/utils';
 
 @Injectable()
 export class AccountRepositoryService extends AccountRepository {
@@ -16,6 +19,8 @@ export class AccountRepositoryService extends AccountRepository {
 		private readonly accountRepository: Repository<'account'>,
 		@InjectRepository('config')
 		private readonly configRepository: Repository<'config'>,
+		@InjectRepository('onboarding')
+		private readonly onboardingRepository: Repository<'onboarding'>,
 	) {
 		super();
 	}
@@ -58,6 +63,28 @@ export class AccountRepositoryService extends AccountRepository {
 				currentBudgetId,
 				salaryId,
 			},
+		});
+	}
+
+	async getOnboarding({
+		accountId,
+	}: GetOnboardingRecordInput): Promise<void | Onboarding> {
+		return this.onboardingRepository.findUnique({
+			where: {
+				id: accountId,
+			},
+		});
+	}
+
+	async updateOnboarding({
+		accountId,
+		...data
+	}: UpdateOnboardingRecordInput): Promise<void> {
+		this.onboardingRepository.update({
+			where: {
+				id: accountId,
+			},
+			data: cleanObj(data),
 		});
 	}
 }

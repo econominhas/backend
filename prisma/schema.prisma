@@ -39,6 +39,7 @@ model Account {
   createdAt DateTime @default(now()) @map("created_at")
 
   config                    Config?
+  onboarding                Onboarding?
   magicLinkCode             MagicLinkCode?
   signInProviders           SignInProvider[]
   refreshTokens             RefreshToken[]
@@ -82,6 +83,22 @@ model Config {
   salary        RecurrentTransaction? @relation(fields: [salaryId], references: [id])
 
   @@map("configs")
+}
+
+/// Contains data about the user's onboarding and the steps concluded
+model Onboarding {
+  id           String    @id @db.Char(16) /// Same as accountId
+  accountId    String    @unique @map("account_id") @db.Char(16)
+  name         DateTime? @db.Timestamp
+  categories   DateTime? @db.Timestamp
+  bankAccounts DateTime? @map("bank_accounts") @db.Timestamp
+  creditCards  DateTime? @map("credit_cards") @db.Timestamp
+  budget       DateTime? @db.Timestamp
+  salary       DateTime? @db.Timestamp
+
+  account Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("onboardings")
 }
 
 /// Contains codes to be used by the users to login

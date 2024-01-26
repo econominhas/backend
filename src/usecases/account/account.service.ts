@@ -1,20 +1,34 @@
 import { AccountRepositoryService } from 'repositories/postgres/account/account-repository.service';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+	Inject,
+	Injectable,
+	NotFoundException,
+	UnauthorizedException,
+} from '@nestjs/common';
 import type {
+	GetOnboardingInput,
+	GetOnboardingOutput,
 	IamInput,
 	IamOutput,
 	SetBudgetInput,
 	SetSalaryInput,
 	UpdateNameInput,
+	UpdateOnboardingInput,
+	UpdateOnboardingRecordInput,
 } from 'models/account';
 import { AccountUseCase } from 'models/account';
 import { SignInProviderEnum } from '@prisma/client';
+import { DateAdapter } from 'adapters/date';
+import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 
 @Injectable()
 export class AccountService extends AccountUseCase {
 	constructor(
 		@Inject(AccountRepositoryService)
 		private readonly accountRepository: AccountRepositoryService,
+
+		@Inject(DayjsAdapterService)
+		private readonly dateAdapter: DateAdapter,
 	) {
 		super();
 	}
@@ -53,6 +67,50 @@ export class AccountService extends AccountUseCase {
 		await this.accountRepository.updateConfig({
 			accountId,
 			salaryId,
+		});
+	}
+
+	async getOnboarding({
+		accountId,
+	}: GetOnboardingInput): Promise<GetOnboardingOutput> {
+		const onboarding = await this.accountRepository.getOnboarding({
+			accountId,
+		});
+
+		if (!onboarding) {
+			throw new NotFoundException('User not found');
+		}
+
+		const entries = Object.entries(onboarding);
+
+		return entries.reduce((acc, [key, value]) => {
+			if (value) {
+				acc[key] = true;
+			}
+
+			return acc;
+		}, {} as GetOnboardingOutput);
+	}
+
+	async updateOnboarding({
+		accountId,
+		...data
+	}: UpdateOnboardingInput): Promise<void> {
+		const entries = Object.entries(data);
+
+		const date = this.dateAdapter.newDate();
+
+		const toUpdate = entries.reduce((acc, [key, value]) => {
+			if (value) {
+				acc[key] = date;
+			}
+
+			return acc;
+		}, {} as UpdateOnboardingRecordInput);
+
+		await this.accountRepository.updateOnboarding({
+			accountId,
+			...toUpdate,
 		});
 	}
 }

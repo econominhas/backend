@@ -4,6 +4,7 @@ import { AccountService } from 'usecases/account/account.service';
 import { makeAccountRepositoryMock } from '../../mocks/repositories/postgres/account';
 import { SignInProviderEnum } from '@prisma/client';
 import { createTestModule, createTestService } from '../../utils';
+import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 
 describe('Usecases > Account', () => {
 	let service: AccountService;
@@ -14,7 +15,13 @@ describe('Usecases > Account', () => {
 	beforeAll(async () => {
 		try {
 			service = await createTestService<AccountService>(AccountService, {
-				providers: [accountRepository.module],
+				providers: [
+					accountRepository.module,
+					{
+						provide: DayjsAdapterService,
+						useValue: DayjsAdapterService,
+					},
+				],
 			});
 
 			module = await createTestModule(AccountModule);

@@ -1,4 +1,4 @@
-import type { Account, SignInProvider } from '@prisma/client';
+import type { Account, Onboarding, SignInProvider } from '@prisma/client';
 
 /**
  *
@@ -27,6 +27,20 @@ export interface UpdateConfigInput {
 	salaryId?: string;
 }
 
+export interface GetOnboardingRecordInput {
+	accountId: string;
+}
+
+export interface UpdateOnboardingRecordInput {
+	accountId: string;
+	name?: Date;
+	categories?: Date;
+	bankAccounts?: Date;
+	creditCards?: Date;
+	budget?: Date;
+	salary?: Date;
+}
+
 export abstract class AccountRepository {
 	abstract getById(i: GetByIdInput): Promise<Account | undefined>;
 
@@ -35,6 +49,12 @@ export abstract class AccountRepository {
 	): Promise<GetByIdWithProvidersOutput | undefined>;
 
 	abstract updateConfig(i: UpdateConfigInput): Promise<void>;
+
+	abstract getOnboarding(
+		i: GetOnboardingRecordInput,
+	): Promise<Onboarding | void>;
+
+	abstract updateOnboarding(i: UpdateOnboardingRecordInput): Promise<void>;
 }
 
 /**
@@ -69,6 +89,29 @@ export interface SetSalaryInput {
 	salaryId: string;
 }
 
+export interface GetOnboardingInput {
+	accountId: string;
+}
+
+export interface GetOnboardingOutput {
+	name?: true;
+	categories?: true;
+	bankAccounts?: true;
+	creditCards?: true;
+	budget?: true;
+	salary?: true;
+}
+
+export interface UpdateOnboardingInput {
+	accountId: string;
+	name?: true;
+	categories?: true;
+	bankAccounts?: true;
+	creditCards?: true;
+	budget?: true;
+	salary?: true;
+}
+
 export abstract class AccountUseCase {
 	abstract iam(i: IamInput): Promise<IamOutput>;
 
@@ -77,4 +120,8 @@ export abstract class AccountUseCase {
 	abstract setBudget(i: SetBudgetInput): Promise<void>;
 
 	abstract setSalary(i: SetSalaryInput): Promise<void>;
+
+	abstract getOnboarding(i: GetOnboardingInput): Promise<GetOnboardingOutput>;
+
+	abstract updateOnboarding(i: UpdateOnboardingInput): Promise<void>;
 }

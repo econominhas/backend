@@ -21,7 +21,7 @@ export abstract class DateAdapter {
 
 	abstract today(timezone?: TimezoneEnum): TodayOutput;
 
-	abstract newDate(date: string | Date, timezone?: TimezoneEnum): Date;
+	abstract newDate(date?: string | Date, timezone?: TimezoneEnum): Date;
 
 	abstract get(date: Date | string, unit: DateUnit): number;
 

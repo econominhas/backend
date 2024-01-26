@@ -74,7 +74,7 @@ export class BudgetRepositoryService extends BudgetRepository {
 		month,
 		year,
 	}: GetMonthlyByCategoryInput): Promise<GetMonthlyByCategoryOutput> {
-		const budget = await this.budgetRepository.findUnique({
+		const budget = await this.budgetRepository.findFirst({
 			select: {
 				budgetDates: {
 					select: {

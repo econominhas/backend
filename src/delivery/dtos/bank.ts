@@ -1,5 +1,5 @@
+import { IsNumberString, Length } from 'class-validator';
 import { IsAmount, IsID, IsName } from '../validators/internal';
-import { IsNumberString } from '../validators/miscellaneous';
 
 export class CreateDto {
 	@IsName()
@@ -8,10 +8,12 @@ export class CreateDto {
 	@IsID()
 	bankProviderId: string;
 
-	@IsNumberString(6)
+	@IsNumberString({ no_symbols: true })
+	@Length(6)
 	accountNumber: string;
 
-	@IsNumberString(3)
+	@IsNumberString({ no_symbols: true })
+	@Length(3)
 	branch: string;
 
 	@IsAmount()
