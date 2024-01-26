@@ -9,13 +9,12 @@ describe('Usecases > Account', () => {
 	let service: AccountService;
 	let module: INestApplication;
 
-	const { baseAccount, accountRepositoryMock, accountRepositoryMockModule } =
-		makeAccountRepositoryMock();
+	const accountRepository = makeAccountRepositoryMock();
 
 	beforeAll(async () => {
 		try {
 			service = await createTestService<AccountService>(AccountService, {
-				providers: [accountRepositoryMockModule],
+				providers: [accountRepository.module],
 			});
 
 			module = await createTestModule(AccountModule);
@@ -37,11 +36,11 @@ describe('Usecases > Account', () => {
 	describe('> iam', () => {
 		it("should return the user's IDs", async () => {
 			const account = {
-				...baseAccount,
+				...accountRepository.base,
 				signInProviders: [],
 			};
 
-			accountRepositoryMock.getByIdWithProviders.mockResolvedValue(account);
+			accountRepository.mock.getByIdWithProviders.mockResolvedValue(account);
 
 			let result;
 			try {
@@ -60,10 +59,10 @@ describe('Usecases > Account', () => {
 
 		it("should return the user's IDs (with google)", async () => {
 			const account = {
-				...baseAccount,
+				...accountRepository.base,
 				signInProviders: [
 					{
-						accountId: baseAccount.id,
+						accountId: accountRepository.base.id,
 						provider: SignInProviderEnum.GOOGLE,
 						providerId: 'providerId',
 						accessToken: 'accessToken',
@@ -73,7 +72,7 @@ describe('Usecases > Account', () => {
 				],
 			};
 
-			accountRepositoryMock.getByIdWithProviders.mockResolvedValue(account);
+			accountRepository.mock.getByIdWithProviders.mockResolvedValue(account);
 
 			let result;
 			try {
@@ -91,7 +90,7 @@ describe('Usecases > Account', () => {
 		});
 
 		it('should fail id account not found', async () => {
-			accountRepositoryMock.getByIdWithProviders.mockResolvedValue(undefined);
+			accountRepository.mock.getByIdWithProviders.mockResolvedValue(undefined);
 
 			let result;
 			try {
@@ -110,7 +109,7 @@ describe('Usecases > Account', () => {
 
 	describe('> updateName', () => {
 		it("should update user's name", async () => {
-			accountRepositoryMock.updateConfig.mockResolvedValue(undefined);
+			accountRepository.mock.updateConfig.mockResolvedValue(undefined);
 
 			let result;
 			try {
@@ -123,13 +122,13 @@ describe('Usecases > Account', () => {
 			}
 
 			expect(result).toBeUndefined();
-			expect(accountRepositoryMock.updateConfig).toHaveBeenCalled();
+			expect(accountRepository.mock.updateConfig).toHaveBeenCalled();
 		});
 	});
 
 	describe('> setBudget', () => {
 		it("should update user's budget", async () => {
-			accountRepositoryMock.updateConfig.mockResolvedValue(undefined);
+			accountRepository.mock.updateConfig.mockResolvedValue(undefined);
 
 			let result;
 			try {
@@ -142,7 +141,7 @@ describe('Usecases > Account', () => {
 			}
 
 			expect(result).toBeUndefined();
-			expect(accountRepositoryMock.updateConfig).toHaveBeenCalled();
+			expect(accountRepository.mock.updateConfig).toHaveBeenCalled();
 		});
 	});
 });

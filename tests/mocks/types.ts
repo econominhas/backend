@@ -1,1 +1,1 @@
-export type RepositoryMock<Repository> = Record<keyof Repository, jest.Mock>;
+export type Mock<T> = Record<keyof T, jest.Mock>;

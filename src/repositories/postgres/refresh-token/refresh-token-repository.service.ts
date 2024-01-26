@@ -7,7 +7,7 @@ import type {
 import { RefreshTokenRepository } from 'models/refresh-token';
 import { InjectRepository, Repository } from '..';
 import type { RefreshToken } from '@prisma/client';
-import { TokensAdapter } from 'adapters/token';
+import { TokenAdapter } from 'adapters/token';
 import { JWTAdapterService } from 'adapters/implementations/jwt/token.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class RefreshTokenRepositoryService extends RefreshTokenRepository {
 		private readonly refreshTokenRepository: Repository<'refreshToken'>,
 
 		@Inject(JWTAdapterService)
-		private readonly tokenAdapter: TokensAdapter,
+		private readonly tokenAdapter: TokenAdapter,
 	) {
 		super();
 	}

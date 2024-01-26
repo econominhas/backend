@@ -1,6 +1,7 @@
 import {
 	BadRequestException,
 	ConflictException,
+	ForbiddenException,
 	Inject,
 	Injectable,
 	Logger,
@@ -27,7 +28,7 @@ import { TermsAndPoliciesUseCase } from 'models/terms-and-policies';
 import { MagicLinkCodeRepository } from 'models/magic-link-code';
 import { RefreshTokenRepository } from 'models/refresh-token';
 import { GoogleAdapter } from 'adapters/google';
-import { TokensAdapter } from 'adapters/token';
+import { TokenAdapter } from 'adapters/token';
 import { EmailAdapter } from 'adapters/email';
 import { SmsAdapter } from 'adapters/sms';
 import { GoogleAdapterService } from 'adapters/implementations/google/google.service';
@@ -38,16 +39,11 @@ import { SNSAdapterService } from 'adapters/implementations/sns/sns.service';
 interface GenTokensInput {
 	accountId: string;
 	isFirstAccess: boolean;
-	refresh?: boolean;
+	refresh: boolean;
 }
 
 @Injectable()
 export class AuthService extends AuthUseCase {
-	private readonly requiredGoogleScopes = [
-		'https://www.googleapis.com/auth/userinfo.profile',
-		'https://www.googleapis.com/auth/userinfo.email',
-	];
-
 	constructor(
 		@Inject(AuthRepositoryService)
 		private readonly authRepository: AuthRepository,
@@ -62,7 +58,7 @@ export class AuthService extends AuthUseCase {
 		@Inject(GoogleAdapterService)
 		private readonly googleAdapter: GoogleAdapter,
 		@Inject(JWTAdapterService)
-		private readonly tokenAdapter: TokensAdapter,
+		private readonly tokenAdapter: TokenAdapter,
 		@Inject(SESAdapterService)
 		private readonly emailAdapter: EmailAdapter,
 		@Inject(SNSAdapterService)
@@ -83,7 +79,7 @@ export class AuthService extends AuthUseCase {
 				throw new BadRequestException('Invalid code');
 			});
 
-		const missingScopes = this.requiredGoogleScopes.filter(
+		const missingScopes = this.googleAdapter.requiredScopes.filter(
 			(s) => !scopes.includes(s),
 		);
 
@@ -97,6 +93,10 @@ export class AuthService extends AuthUseCase {
 			providerTokens.accessToken,
 		);
 
+		if (!providerData.isEmailVerified) {
+			throw new ForbiddenException('Unverified provider email');
+		}
+
 		const relatedAccounts = await this.authRepository.getManyByProvider({
 			providerId: providerData.id,
 			email: providerData.email,
@@ -104,11 +104,11 @@ export class AuthService extends AuthUseCase {
 		});
 
 		let account: Account;
-		let isFirstAccess: true;
+		let isFirstAccess = false;
 
 		if (relatedAccounts.length > 0) {
-			const sameProviderId = relatedAccounts.find(
-				(a) => a.signInProviders[0].providerId === providerData.id,
+			const sameProviderId = relatedAccounts.find((a) =>
+				a.signInProviders.find((p) => p.providerId === providerData.id),
 			);
 			const sameEmail = relatedAccounts.find(
 				(a) => a.email === providerData.email,
@@ -116,24 +116,27 @@ export class AuthService extends AuthUseCase {
 
 			// Has an account with the same email, and it
 			// isn't linked with another provider account
-			// or it has only one account
 			if (
 				sameEmail &&
 				!sameProviderId &&
-				(!sameEmail.signInProviders[0].providerId ||
-					sameEmail.signInProviders[0].providerId ===
-						sameProviderId.signInProviders[0].providerId)
+				!sameEmail.signInProviders.find(
+					(p) => p.provider === SignInProviderEnum.GOOGLE,
+				)
 			) {
 				account = sameEmail;
 			}
+
 			// Account with same provider id (it can have a different email,
-			// in case that the user updated it in provider)
-			if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
+			// in case that the user updated it in provider or on our platform)
+			// More descriptive IF:
+			// if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
+			if (sameProviderId) {
 				account = sameProviderId;
 			}
+
 			if (!account) {
 				throw new ConflictException(
-					`Error finding account, please contact support`,
+					'Error finding account, please contact support',
 				);
 			}
 
@@ -172,7 +175,7 @@ export class AuthService extends AuthUseCase {
 		let account = await this.authRepository.getByEmail({
 			email: i.email,
 		});
-		let isFirstAccess: true = null;
+		let isFirstAccess = false;
 
 		if (!account) {
 			account = await this.authRepository.create({
@@ -203,7 +206,7 @@ export class AuthService extends AuthUseCase {
 		let account = await this.authRepository.getByPhone({
 			phone: i.phone,
 		});
-		let isFirstAccess: true = null;
+		let isFirstAccess = false;
 
 		if (!account) {
 			account = await this.authRepository.create({
@@ -259,17 +262,23 @@ export class AuthService extends AuthUseCase {
 			throw new NotFoundException('Refresh token not found');
 		}
 
-		const { isFirstAccess: _, ...authOutput } = await this.genAuthOutput({
+		return this.genAuthOutput({
 			accountId: refreshTokenData.accountId,
 			isFirstAccess: false,
+			refresh: false,
 		});
-
-		return authOutput;
 	}
 
-	// Private
+	/**
+	 * Private
+	 *
+	 * We set their accessibility to public so we can test it
+	 */
 
-	private async genAuthOutput({
+	/**
+	 * @private
+	 */
+	public async genAuthOutput({
 		accountId,
 		isFirstAccess,
 		refresh,
@@ -283,7 +292,7 @@ export class AuthService extends AuthUseCase {
 				}),
 			);
 		} else {
-			promises.push({ refreshToken: '' });
+			promises.push({ refreshToken: undefined });
 		}
 
 		if (!isFirstAccess) {

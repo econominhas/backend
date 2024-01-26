@@ -1,30 +1,30 @@
 import type { AccountRepository } from 'models/account';
-import type { RepositoryMock } from '../../types';
+import type { Mock } from '../../types';
 import { AccountRepositoryService } from 'repositories/postgres/account/account-repository.service';
 import type { Account } from '@prisma/client';
 
 export const makeAccountRepositoryMock = () => {
-	const baseAccount: Account = {
+	const base: Account = {
 		id: 'accountId',
 		email: 'foo@bar',
 		phone: null,
 		createdAt: new Date(),
 	};
 
-	const accountRepositoryMock: RepositoryMock<AccountRepository> = {
+	const mock: Mock<AccountRepository> = {
 		getById: jest.fn(),
 		getByIdWithProviders: jest.fn(),
 		updateConfig: jest.fn(),
 	};
 
-	const accountRepositoryMockModule = {
+	const module = {
 		provide: AccountRepositoryService,
-		useValue: accountRepositoryMock,
+		useValue: mock,
 	};
 
 	return {
-		baseAccount,
-		accountRepositoryMock,
-		accountRepositoryMockModule,
+		base,
+		mock,
+		module,
 	};
 };

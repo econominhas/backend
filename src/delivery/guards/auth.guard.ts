@@ -1,7 +1,7 @@
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { TokensAdapter } from 'adapters/token';
+import { TokenAdapter } from 'adapters/token';
 import { SetMetadata } from '@nestjs/common';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class AuthGuard implements CanActivate {
 	constructor(
 		private readonly reflector: Reflector,
 
-		private readonly tokenAdapter: TokensAdapter,
+		private readonly tokenAdapter: TokenAdapter,
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {

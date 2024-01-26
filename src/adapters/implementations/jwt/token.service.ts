@@ -6,7 +6,7 @@ import type {
 	TokenPayload,
 	ValidateAccessInput,
 } from '../../token';
-import { TokensAdapter } from '../../token';
+import { TokenAdapter } from '../../token';
 import type * as Jwt from 'jsonwebtoken';
 import { SecretAdapter } from 'adapters/secret';
 import { UIDAdapterService } from '../uid/uid.service';
@@ -14,7 +14,7 @@ import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class JWTAdapterService extends TokensAdapter {
+export class JWTAdapterService extends TokenAdapter {
 	constructor(
 		@Inject('jsonwebtoken')
 		protected readonly jwt: typeof Jwt,
