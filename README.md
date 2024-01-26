@@ -35,49 +35,19 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 - [API](https://wise-bulldog-88.redoc.ly/)
 - [Database](https://dbdocs.io/henriqueleite42/Econominhas?view=relationships)
 
-## Third party Urls
-
-### Dev
-
-- [Google](https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=489785083174-0rqt9bc7l9t09luor3fc16h21kdf57q7.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8081&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&access_type=offline&state=1234_purpleGoogle&prompt=consent&authuser=1&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow)
-
 ## Useful commands
 
-| Command         | Description                                                                                   |
-| --------------- | --------------------------------------------------------------------------------------------- |
-| `start:dev`     | Run the project with all it's dependencies locally                                            |
-| `openapi:serve` | Serve the API docs locally so you can validate your changes                                   |
-| `db:prisma`     | Update the ORM types (You need to run this every time that you change `prisma/schema.prisma`) |
-
-## Manual Deploy
-
-1. Connect to the EC2 instance trough [the console](https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#InstanceDetails:instanceId=i-058e2ca9b6b405219)
-2. [EC2] Stop the current execution:
-
-```sh
-pm2 stop econominhas
-pm2 delete econominhas
-```
-
-3. [EC2] Delete the old files:
-
-```
-rm -rf dist
-```
-
-4. [Locally] Send the files to the EC2:
-
-```sh
-scp -i ~/Desktop/default.pem -r dist ubuntu@ec2-54-226-253-54.compute-1.amazonaws.com:/home/ubuntu
-```
-
-5. [EC2] Execute the API:
-
-```sh
-cd dist
-yarn
-pm2 start main.js --name econominhas
-```
+| Command                   | Description                                                                                                                    |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `start:dev`               | Run the project with all it's dependencies locally                                                                             |
+| `openapi:serve`           | Serve the API docs locally so you can validate your changes                                                                    |
+| `openapi:postman`         | Generate Postman json file (at `openapi/postman.json`)                                                                         |
+| `lint:prisma`             | Lint prisma schema                                                                                                             |
+| `db:prisma`               | Update the ORM types (You need to run this every time that you change `prisma/schema.prisma`)                                  |
+| `test`                    | Run tests                                                                                                                      |
+| `test:cov`                | Run tests and collect coverage                                                                                                 |
+| `db:migrate`              | Run the migrations                                                                                                             |
+| `db:gen-migration <name>` | Generates a new migration based on the schema-database difference (you must run `start:dev` and `db:migrate` before run this!) |
 
 ## Process to develop a new feature
 
