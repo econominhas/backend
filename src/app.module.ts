@@ -12,6 +12,7 @@ import { WalletModule } from './usecases/wallet/wallet.module';
 import { TransactionModule } from './usecases/transaction/transaction.module';
 import { ConfigModule } from '@nestjs/config';
 import { validateConfig } from './config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
 	imports: [
@@ -19,6 +20,7 @@ import { validateConfig } from './config';
 			validate: validateConfig,
 			isGlobal: true,
 		}),
+		ScheduleModule.forRoot(),
 		PostgresModule.forRoot(),
 		AuthModule,
 		AccountModule,

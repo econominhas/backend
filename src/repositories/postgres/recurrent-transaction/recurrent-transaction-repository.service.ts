@@ -1,10 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from '..';
-import type { RecurrentTransaction } from '@prisma/client';
+import {
+	RecurrenceFrequencyEnum,
+	type RecurrentTransaction,
+} from '@prisma/client';
 import type { CreateInput } from 'models/recurrent-transaction';
 import { RecurrentTransactionRepository } from 'models/recurrent-transaction';
 import { IdAdapter } from 'adapters/id';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
+import type { PaginatedRepository } from 'types/paginated-items';
 
 @Injectable()
 export class RecurrentTransactionRepositoryService extends RecurrentTransactionRepository {
@@ -22,21 +26,28 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 		accountId,
 		budgetId,
 		isSystemManaged,
+		frequency,
+		formulaToUse,
+		startAt,
+		endAt,
+		baseAmounts,
+		cCreates,
+		cExcludes,
+		cTryAgains,
 		// Data to create the transaction
 		type,
 		name,
 		description,
-		amount,
 		isSystemManagedT,
 		// Transaction type=IN,OUT,CREDIT
 		categoryId,
+		// Transaction type=CREDIT
 		cardId,
+		// Transaction type=IN,OUT
 		bankAccountId,
 		// Transaction type=TRANSFER
 		bankAccountFromId,
 		bankAccountToId,
-
-		rules,
 	}: CreateInput): Promise<RecurrentTransaction> {
 		const recurrentTransactionId = this.idAdapter.genId();
 
@@ -46,47 +57,55 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 				accountId,
 				budgetId,
 				isSystemManaged,
+				frequency,
+				formulaToUse,
+				startAt,
+				endAt,
+				baseAmounts,
+				cCreates,
+				cExcludes,
+				cTryAgains,
 				// Data to create the transaction
 				type,
 				name,
 				description,
-				amount,
 				isSystemManagedT,
 				// Transaction type=IN,OUT,CREDIT
 				categoryId,
+				// Transaction type=CREDIT
 				cardId,
+				// Transaction type=IN,OUT
 				bankAccountId,
 				// Transaction type=TRANSFER
 				bankAccountFromId,
 				bankAccountToId,
-
-				recurrentTransactionRules: {
-					createMany: {
-						data: rules.map(
-							({
-								caFormula,
-								caParams,
-								caConditions,
-
-								frequency,
-								fParams,
-								fConditions,
-							}) => ({
-								id: this.idAdapter.genId(),
-								recurrentTransactionId,
-
-								caFormula,
-								caParams: JSON.stringify(caParams),
-								caConditions,
-
-								frequency,
-								fParams: JSON.stringify(fParams),
-								fConditions,
-							}),
-						),
-					},
-				},
 			},
+		});
+	}
+
+	findMonthly({
+		limit,
+		offset,
+	}: PaginatedRepository): Promise<RecurrentTransaction[]> {
+		return this.recurrentTransactionRepository.findMany({
+			where: {
+				frequency: RecurrenceFrequencyEnum.MONTHLY,
+			},
+			skip: offset,
+			take: limit,
+		});
+	}
+
+	findYearly({
+		limit,
+		offset,
+	}: PaginatedRepository): Promise<RecurrentTransaction[]> {
+		return this.recurrentTransactionRepository.findMany({
+			where: {
+				frequency: RecurrenceFrequencyEnum.YEARLY,
+			},
+			skip: offset,
+			take: limit,
 		});
 	}
 }

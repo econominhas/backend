@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { DateUnit, TodayOutput } from '../../date';
+import type { DateUnit, WeekDays, TodayOutput } from '../../date';
 import { DateAdapter } from '../../date';
 
 import dayjs from 'dayjs';
@@ -16,6 +16,16 @@ dayjs.tz.setDefault('UTC');
 
 @Injectable()
 export class DayjsAdapterService extends DateAdapter {
+	private weekDays: Array<WeekDays> = [
+		'sunday',
+		'monday',
+		'tuesday',
+		'wednesday',
+		'thursday',
+		'friday',
+		'saturday',
+	];
+
 	/**
 	 *
 	 * Info
@@ -49,6 +59,18 @@ export class DayjsAdapterService extends DateAdapter {
 		return dayjs.tz(date).get(unit);
 	}
 
+	diff(
+		startDate: string | Date,
+		endDate: string | Date,
+		unit: DateUnit,
+	): number {
+		return dayjs(endDate).diff(startDate, unit, true);
+	}
+
+	getDayOfWeek(date: string | Date): WeekDays {
+		return this.weekDays[dayjs(date).get('day')];
+	}
+
 	getNextMonths(startDate: string | Date, amount: number): Date[] {
 		const months: Array<Date> = [];
 
@@ -60,6 +82,10 @@ export class DayjsAdapterService extends DateAdapter {
 		} while (months.length < amount);
 
 		return months;
+	}
+
+	format(date: string | Date): string {
+		return dayjs.tz(date).format('YYYY-MM-DD');
 	}
 
 	statementDate(
@@ -123,6 +149,10 @@ export class DayjsAdapterService extends DateAdapter {
 
 	nowPlus(amount: number, unit: DateUnit): Date {
 		return dayjs.tz().add(amount, unit).toDate();
+	}
+
+	setDay(date: string | Date, amount: number): Date {
+		return dayjs(date).set('date', amount).toDate();
 	}
 
 	add(date: string | Date, amount: number, unit: DateUnit): Date {

@@ -115,6 +115,12 @@ export interface OverviewOutput {
 	>;
 }
 
+export interface GetOrCreateManyInput {
+	accountId: string;
+	budgetId: string;
+	dates: Array<Date>;
+}
+
 export interface CreateNextBudgetDatesInput {
 	startFrom: BudgetDate;
 	amount: number;
@@ -126,6 +132,8 @@ export abstract class BudgetUseCase {
 	abstract createBasic(i: CreateBasicInput): Promise<Budget>;
 
 	abstract overview(i: OverviewInput): Promise<OverviewOutput>;
+
+	abstract getOrCreateMany(i: GetOrCreateManyInput): Promise<Array<BudgetDate>>;
 
 	abstract createNextBudgetDates(
 		i: CreateNextBudgetDatesInput,

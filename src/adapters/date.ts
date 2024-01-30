@@ -12,6 +12,15 @@ export type DateUnit = 'second' | 'day' | 'month' | 'year';
 export type YearMonth = `${number}-${number}`;
 export type YearMonthDay = `${number}-${number}-${number}`;
 
+export type WeekDays =
+	| 'sunday'
+	| 'monday'
+	| 'tuesday'
+	| 'wednesday'
+	| 'thursday'
+	| 'friday'
+	| 'saturday';
+
 export abstract class DateAdapter {
 	/**
 	 *
@@ -25,7 +34,17 @@ export abstract class DateAdapter {
 
 	abstract get(date: Date | string, unit: DateUnit): number;
 
+	abstract diff(
+		startDate: Date | string,
+		endDate: Date | string,
+		unit: DateUnit,
+	): number;
+
+	abstract getDayOfWeek(date: string | Date): WeekDays;
+
 	abstract getNextMonths(startDate: Date | string, amount: number): Array<Date>;
+
+	abstract format(date: Date | string): string;
 
 	abstract statementDate(
 		dueDay: number,
@@ -56,9 +75,19 @@ export abstract class DateAdapter {
 
 	abstract nowPlus(amount: number, unit: DateUnit): Date;
 
-	abstract add(date: Date | string, amount: number, unit: DateUnit): Date;
+	abstract setDay(date: Date | string, amount: number): Date;
 
-	abstract sub(date: Date | string, amount: number, unit: DateUnit): Date;
+	abstract add(
+		date: Date | string,
+		amount: number,
+		unit: DateUnit | 'week',
+	): Date;
+
+	abstract sub(
+		date: Date | string,
+		amount: number,
+		unit: DateUnit | 'week',
+	): Date;
 
 	abstract startOf(
 		date: Date | string,

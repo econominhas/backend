@@ -1,10 +1,13 @@
 import type {
-	CaFormulaEnum,
-	RecurrenceConditionsEnum,
+	RecurrenceCreateEnum,
+	RecurrenceExcludeEnum,
+	RecurrenceFormulaEnum,
 	RecurrenceFrequencyEnum,
+	RecurrenceTryAgainEnum,
 	RecurrentTransaction,
 	TransactionTypeEnum,
 } from '@prisma/client';
+import type { PaginatedRepository } from 'types/paginated-items';
 
 /**
  *
@@ -18,33 +21,40 @@ export interface CreateInput {
 	accountId: string;
 	budgetId: string;
 	isSystemManaged: boolean;
+	frequency: RecurrenceFrequencyEnum;
+	formulaToUse: RecurrenceFormulaEnum;
+	startAt: Date;
+	endAt: Date;
+	baseAmounts: Array<number>;
+	cCreates: Array<RecurrenceCreateEnum>;
+	cExcludes: Array<RecurrenceExcludeEnum>;
+	cTryAgains: Array<RecurrenceTryAgainEnum>;
 	// Data to create the transaction
 	type: TransactionTypeEnum;
 	name: string;
 	description: string;
-	amount: number;
 	isSystemManagedT: boolean;
 	// Transaction type=IN,OUT,CREDIT
 	categoryId?: string;
+	// Transaction type=CREDIT
 	cardId?: string;
+	// Transaction type=IN,OUT
 	bankAccountId?: string;
 	// Transaction type=TRANSFER
 	bankAccountFromId?: string;
 	bankAccountToId?: string;
-
-	rules: Array<{
-		caFormula: CaFormulaEnum;
-		caParams: Record<string, any>;
-		caConditions: RecurrenceConditionsEnum[];
-
-		frequency: RecurrenceFrequencyEnum;
-		fParams: Record<string, any>;
-		fConditions: RecurrenceConditionsEnum[];
-	}>;
 }
 
 export abstract class RecurrentTransactionRepository {
 	abstract create(i: CreateInput): Promise<RecurrentTransaction>;
+
+	abstract findMonthly(
+		i: PaginatedRepository,
+	): Promise<Array<RecurrentTransaction>>;
+
+	abstract findYearly(
+		i: PaginatedRepository,
+	): Promise<Array<RecurrentTransaction>>;
 }
 
 /**
@@ -55,18 +65,8 @@ export abstract class RecurrentTransactionRepository {
  *
  */
 
-export interface CreateSalaryInput {
-	accountId: string;
-	bankAccountId: string;
-	budgetId: string;
-	categoryId: string;
-	amount: number;
-	installments: Array<{
-		dayOfTheMonth: number;
-		percentage: number;
-	}>;
-}
-
 export abstract class RecurrentTransactionUseCase {
-	abstract createSalary(i: CreateSalaryInput): Promise<void>;
+	abstract execMonthly(): Promise<void>;
+
+	abstract execYearly(): Promise<void>;
 }

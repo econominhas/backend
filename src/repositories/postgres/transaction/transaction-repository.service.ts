@@ -135,6 +135,7 @@ export class TransactionRepositoryService extends TransactionRepository {
 		description,
 		createdAt,
 		isSystemManaged,
+		recurrentTransactionId,
 	}: CreateTransferInput): Promise<void> {
 		await this.transactionRepository.create({
 			data: {
@@ -144,6 +145,7 @@ export class TransactionRepositoryService extends TransactionRepository {
 				description,
 				createdAt,
 				isSystemManaged,
+				recurrentTransactionId,
 				type: TransactionTypeEnum.TRANSFER,
 				account: {
 					connect: {
@@ -180,6 +182,7 @@ export class TransactionRepositoryService extends TransactionRepository {
 		description,
 		createdAt,
 		isSystemManaged,
+		recurrentTransactionId,
 	}: CreateInOutInput): Promise<void> {
 		await this.transactionRepository.create({
 			data: {
@@ -189,6 +192,7 @@ export class TransactionRepositoryService extends TransactionRepository {
 				description,
 				createdAt,
 				isSystemManaged,
+				recurrentTransactionId,
 				type,
 				account: {
 					connect: {

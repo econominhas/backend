@@ -95,6 +95,8 @@ export class TransactionService extends TransactionUseCase {
 		budgetDateId,
 		description,
 		createdAt,
+		isSystemManaged = false,
+		recurrentTransactionId,
 	}: TransferInput): Promise<void> {
 		const [bankAccounts, budgetDate] = await Promise.all([
 			this.bankRepository.getManyById({
@@ -148,7 +150,8 @@ export class TransactionService extends TransactionUseCase {
 			budgetDateId,
 			description,
 			createdAt,
-			isSystemManaged: false,
+			isSystemManaged,
+			recurrentTransactionId,
 		});
 	}
 
@@ -162,6 +165,8 @@ export class TransactionService extends TransactionUseCase {
 		budgetDateId,
 		description,
 		createdAt,
+		isSystemManaged = false,
+		recurrentTransactionId,
 	}: InOutInput): Promise<void> {
 		const [bankAccount, category, budgetDate] = await Promise.all([
 			this.bankRepository.getById({
@@ -216,7 +221,8 @@ export class TransactionService extends TransactionUseCase {
 			budgetDateId,
 			description,
 			createdAt,
-			isSystemManaged: false,
+			isSystemManaged,
+			recurrentTransactionId,
 		});
 	}
 
@@ -230,6 +236,8 @@ export class TransactionService extends TransactionUseCase {
 		cardId,
 		budgetDateId,
 		createdAt,
+		isSystemManaged = false,
+		recurrentTransactionId,
 	}: CreditInput): Promise<void> {
 		const [card, category, budgetDate] = await Promise.all([
 			this.cardRepository.getById({
@@ -294,7 +302,8 @@ export class TransactionService extends TransactionUseCase {
 				cardId,
 				description,
 				createdAt,
-				isSystemManaged: false,
+				isSystemManaged,
+				recurrentTransactionId,
 				installment: {
 					installmentGroupId,
 					total: installments,

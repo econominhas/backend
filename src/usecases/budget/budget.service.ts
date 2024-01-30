@@ -3,6 +3,7 @@ import type {
 	CreateBasicInput,
 	CreateInput,
 	CreateNextBudgetDatesInput,
+	GetOrCreateManyInput,
 	OverviewInput,
 	OverviewOutput,
 } from 'models/budget';
@@ -61,6 +62,20 @@ export class BudgetService extends BudgetUseCase {
 		});
 
 		return budget;
+	}
+
+	async getOrCreateMany({
+		budgetId,
+		dates,
+	}: GetOrCreateManyInput): Promise<BudgetDate[]> {
+		return this.budgetRepository.upsertManyBudgetDates(
+			dates.map((date) => ({
+				budgetId,
+				month: this.dateAdapter.get(date, 'month'),
+				year: this.dateAdapter.get(date, 'year'),
+				date: this.dateAdapter.startOf(date, 'month'),
+			})),
+		);
 	}
 
 	async createBasic({

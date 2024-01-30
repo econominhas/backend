@@ -57,6 +57,7 @@ export interface CreateTransferInput {
 	description: string;
 	createdAt: Date;
 	isSystemManaged: boolean;
+	recurrentTransactionId?: string;
 }
 
 export interface CreateInOutInput {
@@ -70,6 +71,7 @@ export interface CreateInOutInput {
 	description: string;
 	createdAt: Date;
 	isSystemManaged: boolean;
+	recurrentTransactionId?: string;
 }
 
 export interface CreateCreditInput {
@@ -82,6 +84,7 @@ export interface CreateCreditInput {
 		description: string;
 		createdAt: Date;
 		isSystemManaged: boolean;
+		recurrentTransactionId?: string;
 		installment: {
 			installmentGroupId: string;
 			total: number;
@@ -134,6 +137,8 @@ export interface TransferInput {
 	bankAccountToId: string;
 	budgetDateId: string;
 	createdAt: Date;
+	isSystemManaged?: boolean;
+	recurrentTransactionId?: string;
 }
 
 export interface InOutInput {
@@ -146,6 +151,8 @@ export interface InOutInput {
 	bankAccountId: string;
 	budgetDateId: string;
 	createdAt: Date;
+	isSystemManaged?: boolean;
+	recurrentTransactionId?: string;
 }
 
 export interface CreditInput {
@@ -158,6 +165,8 @@ export interface CreditInput {
 	cardId: string;
 	budgetDateId: string;
 	createdAt: Date;
+	isSystemManaged?: boolean;
+	recurrentTransactionId?: string;
 }
 
 export abstract class TransactionUseCase {
