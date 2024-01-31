@@ -82,7 +82,7 @@
 		"db:migrate": "prisma migrate deploy",
 		"openapi:serve": "redocly preview-docs",
 		"openapi:postman": "yarn lint:openapi && redocly bundle -o openapi/bundle.yaml && openapi2postmanv2 -s openapi/bundle.yaml -o openapi/postman.json -O folderStrategy=Tags,requestParametersResolution=Example",
-		"build": "./scripts/build.sh",
+		"build": "./scripts/ci-cd/build.sh",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"start": "nest start",
 		"start:docker": "nest start --watch",
@@ -99,6 +99,7 @@
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-		"test:e2e": "jest --config ./test/jest-e2e.json"
+		"test:e2e": "jest --config ./test/jest-e2e.json",
+		"script:id": "ts-node -r tsconfig-paths/register scripts/id.ts"
 	}
 }

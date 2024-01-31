@@ -19,21 +19,21 @@ permissions:
 
 hooks:
   ApplicationStop:
-    - location: scripts/cd-stop.sh
+    - location: scripts/ci-cd/stop.sh
       timeout: 300
       runas: ubuntu
 
   AfterInstall:
-    - location: scripts/cd-prepare.sh
+    - location: scripts/ci-cd/prepare.sh
       timeout: 300
       runas: ubuntu
 
   ApplicationStart:
-    - location: scripts/cd-start.sh
+    - location: scripts/ci-cd/start.sh
       timeout: 300
       runas: ubuntu
 
   ValidateService:
-    - location: scripts/cd-validate.sh
+    - location: scripts/ci-cd/validate.sh
       timeout: 300
       runas: ubuntu

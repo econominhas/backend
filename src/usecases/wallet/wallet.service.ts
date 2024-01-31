@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CardTypeEnum } from '@prisma/client';
+import { CardVariantEnum } from '@prisma/client';
 import { BankRepository } from 'models/bank';
 import { CardRepository } from 'models/card';
 import type {
@@ -32,9 +32,9 @@ export class WalletService extends WalletUseCase {
 
 		return {
 			bankAccountBalance: bankBalance,
-			vaBalance: cardsBalance[CardTypeEnum.VA],
-			vrBalance: cardsBalance[CardTypeEnum.VR],
-			vtBalance: cardsBalance[CardTypeEnum.VT],
+			vaBalance: cardsBalance[CardVariantEnum.VA],
+			vrBalance: cardsBalance[CardVariantEnum.VR],
+			vtBalance: cardsBalance[CardVariantEnum.VT],
 		};
 	}
 }

@@ -30,7 +30,7 @@ import type {
 	CardNetworkEnum,
 	CardProvider,
 } from '@prisma/client';
-import { CardTypeEnum, PayAtEnum } from '@prisma/client';
+import { CardTypeEnum, CardVariantEnum, PayAtEnum } from '@prisma/client';
 import { IdAdapter } from 'adapters/id';
 import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
 
@@ -87,13 +87,13 @@ export class CardRepositoryService extends CardRepository {
 	}: GetBalanceByUserInput): Promise<GetBalanceByUserOutput> {
 		const r = await this.rawPostgres<
 			Array<{
-				card_provider_type: CardTypeEnum;
-				total_balance: number;
+				variant: CardVariantEnum;
+				balance: number;
 			}>
 		>`
 			SELECT
-				cp.type AS card_provider_type,
-				SUM(c.balance) AS total_balance
+				cp.type AS variant,
+				SUM(c.balance) AS balance
 			FROM
 				cards c
 			JOIN
@@ -101,20 +101,20 @@ export class CardRepositoryService extends CardRepository {
 			WHERE
 				c.account_id = ${accountId}
 			AND
-				cp.type IN ${[CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT]}
+				cp.variant IN ${[CardVariantEnum.VA, CardVariantEnum.VR, CardVariantEnum.VT]}
 			GROUP BY
-				cp.type
+				cp.variant
 			ORDER BY
-				cp.type ASC;
+				cp.variant ASC;
 		`;
 
 		return r.reduce(
 			(acc, cur) => {
-				acc[cur.card_provider_type] = cur.total_balance;
+				acc[cur.variant] = cur.balance;
 
 				return acc;
 			},
-			{} as Record<CardTypeEnum, number>,
+			{} as Record<CardVariantEnum, number>,
 		);
 	}
 
@@ -212,8 +212,8 @@ export class CardRepositoryService extends CardRepository {
 			where: {
 				accountId,
 				cardProvider: {
-					type: {
-						in: [CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT],
+					variant: {
+						in: [CardVariantEnum.VA, CardVariantEnum.VR, CardVariantEnum.VT],
 					},
 				},
 			},
@@ -367,8 +367,8 @@ export class CardRepositoryService extends CardRepository {
 			where: {
 				id: cardId,
 				cardProvider: {
-					type: {
-						in: [CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT],
+					variant: {
+						in: [CardVariantEnum.VA, CardVariantEnum.VR, CardVariantEnum.VT],
 					},
 				},
 			},

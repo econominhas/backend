@@ -227,9 +227,7 @@ export class CardService extends CardUseCase {
 	}
 
 	private isPrepaid(type: CardTypeEnum) {
-		return [CardTypeEnum.VA, CardTypeEnum.VR, CardTypeEnum.VT].includes(
-			type as any,
-		);
+		return [CardTypeEnum.BENEFIT].includes(type as any);
 	}
 
 	private getCurBillDueDate({

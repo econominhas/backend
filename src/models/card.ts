@@ -3,7 +3,7 @@ import type {
 	CardBill,
 	CardNetworkEnum,
 	CardProvider,
-	CardTypeEnum,
+	CardVariantEnum,
 	PayAtEnum,
 } from '@prisma/client';
 import type {
@@ -46,9 +46,9 @@ export interface GetBalanceByUserInput {
 }
 
 export interface GetBalanceByUserOutput {
-	[CardTypeEnum.VA]: number;
-	[CardTypeEnum.VR]: number;
-	[CardTypeEnum.VT]: number;
+	[CardVariantEnum.VA]: number;
+	[CardVariantEnum.VR]: number;
+	[CardVariantEnum.VT]: number;
 }
 
 export interface GetPostpaidInput extends PaginatedRepository {

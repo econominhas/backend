@@ -216,11 +216,12 @@ model TermsAndPoliciesAccepted {
 
 /// Contains the record of all the existent banks
 model BankProvider {
-  id      String @id @db.Char(16)
-  name    String @db.VarChar(30)
-  code    String @db.Char(3)
-  iconUrl String @map("icon_url") @db.VarChar(200)
-  color   String @db.Char(7)
+  id             String   @id @db.Char(16)
+  name           String   @db.VarChar(30)
+  code           String?  @db.Char(3) /// We don't have an unique constraint because some "banks" may not have codes (ex: 99pay)
+  iconUrl        String   @map("icon_url") @db.VarChar(200)
+  color          String   @db.Char(7)
+  lastReviewedAt DateTime @default(now()) @updatedAt @map("last_reviewed_at")
 
   bankAccounts  BankAccount[]
   cardProviders CardProvider[]
@@ -261,9 +262,7 @@ model BankAccount {
 
 enum CardTypeEnum {
   CREDIT
-  VA
-  VR
-  VT
+  BENEFIT
 
   @@map("card_type_enum")
 }
@@ -276,26 +275,50 @@ enum PayAtEnum {
 }
 
 enum CardNetworkEnum {
+  // Credit
   VISA
   MASTERCARD
   ELO
   SODEXO
+  AMEX
+  // VA, VR
+  ALELO
+  PLUXEE
+  TICKET
+  VR
 
   @@map("card_network_enum")
+}
+
+enum CardVariantEnum {
+  // Credit
+  ENTRY_LEVEL // Mastercard=Standard Visa=Classic
+  MID_MARKET // Mastercard=Gold Visa=Gold Elo=Mais
+  PREMIUM // Mastercard=Platinum Visa=Platinum Elo=Grafite
+  SUPER_PREMIUM // Visa=Signature
+  ULTRA_PREMIUM // Mastercard=Black Visa=Infinite Elo=Nanquim
+  // Benefit
+  VA
+  VR
+  VT
+
+  @@map("card_variant_enum")
 }
 
 /// Contains the record of all the existent cards
 model CardProvider {
   id             String          @id @db.Char(16)
-  bankProviderId String          @map("bank_provider_id") @db.Char(16)
+  bankProviderId String?         @map("bank_provider_id") @db.Char(16)
   name           String          @db.VarChar(30)
   iconUrl        String          @map("icon_url") @db.VarChar(200)
   color          String          @db.Char(7)
   type           CardTypeEnum
   network        CardNetworkEnum
+  variant        CardVariantEnum
+  lastReviewedAt DateTime        @default(now()) @updatedAt @map("last_reviewed_at")
   statementDays  Int             @map("statement_days") @db.SmallInt /// Only postpaid cards have this column
 
-  bankProvider BankProvider @relation(fields: [bankProviderId], references: [id], onDelete: Restrict)
+  bankProvider BankProvider? @relation(fields: [bankProviderId], references: [id], onDelete: Restrict)
   cards        Card[]
 
   @@map("card_providers")
