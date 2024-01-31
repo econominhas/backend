@@ -49,6 +49,19 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 | `db:migrate`              | Run the migrations                                                                                                             |
 | `db:gen-migration <name>` | Generates a new migration based on the schema-database difference (you must run `start:dev` and `db:migrate` before run this!) |
 
+## Teams
+
+The teams names are based on different currencies around the world, but the countries that they are used don't have any influence on the things that the teams works on.
+
+| Team  | Responsible for | Full list                                                           |
+| ----- | --------------- | ------------------------------------------------------------------- |
+| Real  | Auth            | Accounts, SignInProvider, MagicLink, RefreshToken, TermsAndPolicies |
+| Franc | Profile         | Configs, Salary                                                     |
+| Yuan  | Transactions    | Transactions, Recurrent transactions                                |
+| Peso  | Cards           | Cards, Card Providers, Cards Bills                                  |
+| Rand  | Bank Accounts   | Bank Accounts, Bank Providers, Subscriptions                        |
+| Rupee | Budgets         | Budgets, Categories                                                 |
+
 ## Process to develop a new feature
 
 The following documentation is to help you to understand the development process of every feature. It's a general documentation that should **cover everything** in the feature creation process, **not all steps are required for every feature**, so make sure to only follow the ones that your context needs.
