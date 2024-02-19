@@ -11,7 +11,6 @@ import type {
 	IamInput,
 	IamOutput,
 	SetBudgetInput,
-	SetSalaryInput,
 	UpdateNameInput,
 	UpdateOnboardingInput,
 	UpdateOnboardingRecordInput,
@@ -60,13 +59,6 @@ export class AccountService extends AccountUseCase {
 		await this.accountRepository.updateConfig({
 			accountId,
 			currentBudgetId: budgetId,
-		});
-	}
-
-	async setSalary({ accountId, salaryId }: SetSalaryInput): Promise<void> {
-		await this.accountRepository.updateConfig({
-			accountId,
-			salaryId,
 		});
 	}
 
