@@ -6,6 +6,7 @@ on:
       - release
     paths:
       - 'src/**'
+  workflow_dispatch:
 
 jobs:
   build-deploy:
