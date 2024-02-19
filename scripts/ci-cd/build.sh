@@ -23,7 +23,7 @@ cp prisma/schema.prisma dist/prisma/schema.prisma
 
 # Copy deploy files
 cp appspec.yml dist/appspec.yml
-cp scripts/cd-prepare.sh dist/scripts/cd-prepare.sh
-cp scripts/cd-start.sh dist/scripts/cd-start.sh
-cp scripts/cd-stop.sh dist/scripts/cd-stop.sh
-cp scripts/cd-validate.sh dist/scripts/cd-validate.sh
+cp scripts/ci-cd/prepare.sh dist/scripts/ci-cd/prepare.sh
+cp scripts/ci-cd/start.sh dist/scripts/ci-cd/start.sh
+cp scripts/ci-cd/stop.sh dist/scripts/ci-cd/stop.sh
+cp scripts/ci-cd/validate.sh dist/scripts/ci-cd/validate.sh
