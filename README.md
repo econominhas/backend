@@ -49,6 +49,11 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 | `db:migrate`              | Run the migrations                                                                                                             |
 | `db:gen-migration <name>` | Generates a new migration based on the schema-database difference (you must run `start:dev` and `db:migrate` before run this!) |
 
+## How to create a migration
+
+- Run `yarn start:db`
+- In another tab, run `yarn db:gen-migration <migration name>`
+
 ## Teams
 
 The teams names are based on different currencies around the world, but the countries that they are used don't have any influence on the things that the teams works on.

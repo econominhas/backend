@@ -24,7 +24,6 @@ export interface UpdateConfigInput {
 	accountId: string;
 	name?: string;
 	currentBudgetId?: string;
-	salaryId?: string;
 }
 
 export interface GetOnboardingRecordInput {
@@ -84,11 +83,6 @@ export interface SetBudgetInput {
 	budgetId: string;
 }
 
-export interface SetSalaryInput {
-	accountId: string;
-	salaryId: string;
-}
-
 export interface GetOnboardingInput {
 	accountId: string;
 }
@@ -118,8 +112,6 @@ export abstract class AccountUseCase {
 	abstract updateName(i: UpdateNameInput): Promise<void>;
 
 	abstract setBudget(i: SetBudgetInput): Promise<void>;
-
-	abstract setSalary(i: SetSalaryInput): Promise<void>;
 
 	abstract getOnboarding(i: GetOnboardingInput): Promise<GetOnboardingOutput>;
 

@@ -19,11 +19,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//
+// **********************************
 //
 // Accounts
 //
-//
+// **********************************
 
 enum SignInProviderEnum {
   GOOGLE
@@ -34,11 +34,12 @@ enum SignInProviderEnum {
 /// Contains user's sign in information
 model Account {
   id        String   @id @db.Char(16)
-  email     String?  @unique @db.VarChar(150)
-  phone     String?  @unique @db.VarChar(25)
+  email     String?  @db.VarChar(150)
+  phone     String?  @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
 
   config                    Config?
+  salary                    Salary?
   onboarding                Onboarding?
   magicLinkCode             MagicLinkCode?
   signInProviders           SignInProvider[]
@@ -52,6 +53,8 @@ model Account {
   transactions              Transaction[]
   recurrentTransactions     RecurrentTransaction[]
 
+  @@unique([email])
+  @@unique([phone])
   @@map("accounts")
 }
 
@@ -73,22 +76,22 @@ model SignInProvider {
 /// Contains user's account config
 model Config {
   id              String  @id @db.Char(16) /// Same as accountId
-  accountId       String  @unique @map("account_id") @db.Char(16)
+  accountId       String  @map("account_id") @db.Char(16)
   name            String? @db.VarChar(20)
-  currentBudgetId String? @unique @map("current_budget_id") @db.Char(16)
-  salaryId        String? @unique @map("salary_id") @db.Char(16)
+  currentBudgetId String? @map("current_budget_id") @db.Char(16)
 
-  account       Account               @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  currentBudget Budget?               @relation(fields: [currentBudgetId], references: [id])
-  salary        RecurrentTransaction? @relation(fields: [salaryId], references: [id])
+  account       Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  currentBudget Budget? @relation(fields: [currentBudgetId], references: [id])
 
+  @@unique([accountId])
+  @@unique([currentBudgetId])
   @@map("configs")
 }
 
 /// Contains data about the user's onboarding and the steps concluded
 model Onboarding {
   id           String    @id @db.Char(16) /// Same as accountId
-  accountId    String    @unique @map("account_id") @db.Char(16)
+  accountId    String    @map("account_id") @db.Char(16)
   name         DateTime? @db.Timestamp
   categories   DateTime? @db.Timestamp
   bankAccounts DateTime? @map("bank_accounts") @db.Timestamp
@@ -98,6 +101,7 @@ model Onboarding {
 
   account Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
+  @@unique([accountId])
   @@map("onboardings")
 }
 
@@ -116,20 +120,68 @@ model MagicLinkCode {
 /// Contains codes to be used to refresh the access token
 model RefreshToken {
   accountId    String   @map("account_id") @db.Char(16)
-  refreshToken String   @unique @map("refresh_token") @db.Char(64)
+  refreshToken String   @map("refresh_token") @db.Char(64)
   createdAt    DateTime @default(now()) @map("created_at")
 
   account Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@id([accountId, refreshToken])
+  @@unique([refreshToken])
   @@map("refresh_tokens")
 }
 
+// **********************************
 //
+// Salary
+//
+// **********************************
+
+enum EmploymentContractTypeEnum {
+  CLT
+  PJ
+
+  @@map("employment_contract_type_enum")
+}
+
+enum SalaryTypeEnum {
+  MONEY
+  BENEFIT_VA
+  BENEFIT_VT
+
+  @@map("salary_type_enum")
+}
+
+model Salary {
+  id                     String                     @id @db.Char(16) /// Same as accountId
+  accountId              String                     @map("account_id") @db.Char(16)
+  employmentContractType EmploymentContractTypeEnum @map("employment_contract_type")
+  startAt                DateTime?                  @map("start_at")
+
+  account                     Account                      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  salaryRecurrentTransactions SalaryRecurrentTransaction[]
+
+  @@unique([accountId])
+  @@map("salaries")
+}
+
+model SalaryRecurrentTransaction {
+  id                     String         @id @db.Char(16)
+  salaryId               String         @map("salary_id") @db.Char(16)
+  recurrentTransactionId String         @map("recurrent_transaction_id") @db.Char(16)
+  type                   SalaryTypeEnum
+
+  salary               Salary               @relation(fields: [salaryId], references: [id], onDelete: Cascade)
+  recurrentTransaction RecurrentTransaction @relation(fields: [recurrentTransactionId], references: [id], onDelete: Cascade)
+
+  @@unique([salaryId, type])
+  @@map("salary_recurrent_transactions")
+}
+
+// **********************************
 //
 // Subscriptions
 //
-//
+// **********************************
 
 /// Contains information about the subscriptions
 model Subscription {
@@ -176,11 +228,11 @@ model UserSubscription {
   @@map("user_subscriptions")
 }
 
-//
+// **********************************
 //
 // Terms of service
 //
-//
+// **********************************
 
 /// Contains the terms of use and privacy policy
 model TermsAndPolicies {
@@ -208,11 +260,11 @@ model TermsAndPoliciesAccepted {
   @@map("terms_and_policies_accepteds")
 }
 
-//
+// **********************************
 //
 // Banks
 //
-//
+// **********************************
 
 /// Contains the record of all the existent banks
 model BankProvider {
@@ -254,11 +306,11 @@ model BankAccount {
   @@map("bank_accounts")
 }
 
-//
+// **********************************
 //
 // Cards
 //
-//
+// **********************************
 
 enum CardTypeEnum {
   CREDIT
@@ -372,11 +424,11 @@ model CardBill {
   @@map("card_bills")
 }
 
-//
+// **********************************
 //
 // Categories
 //
-//
+// **********************************
 
 enum IconEnum {
   house
@@ -455,11 +507,11 @@ model Category {
   @@map("categories")
 }
 
-//
+// **********************************
 //
 // Budgets
 //
-//
+// **********************************
 
 /// Contains the user's budget information
 model Budget {
@@ -505,11 +557,11 @@ model BudgetItem {
   @@map("budget_items")
 }
 
-//
+// **********************************
 //
 // Transactions
 //
-//
+// **********************************
 
 enum TransactionTypeEnum {
   IN /// Add money to bank account
@@ -573,11 +625,11 @@ model Installment {
   @@map("installments")
 }
 
-//
+// **********************************
 //
 // Recurrent Transactions
 //
-//
+// **********************************
 
 enum RecurrenceFrequencyEnum {
   DAILY /// Every day
@@ -684,16 +736,18 @@ model RecurrentTransaction {
   bankAccountFromId String?                  @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
   bankAccountToId   String?                  @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
 
-  account         Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  budget          Budget       @relation(fields: [budgetId], references: [id], onDelete: Restrict)
-  config          Config?
+  account                     Account                      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budget                      Budget                       @relation(fields: [budgetId], references: [id], onDelete: Restrict)
+  salaryRecurrentTransactions SalaryRecurrentTransaction[]
   // Transaction type=IN,OUT,CREDIT
-  category        Category?    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  card            Card?        @relation(fields: [cardId], references: [id], onDelete: Restrict)
-  bankAccount     BankAccount? @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
+  category                    Category?                    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  // Transaction type=CREDIT
+  card                        Card?                        @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  // Transaction type=IN,OUT
+  bankAccount                 BankAccount?                 @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
-  bankAccountFrom BankAccount? @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
-  bankAccountTo   BankAccount? @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
+  bankAccountFrom             BankAccount?                 @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
+  bankAccountTo               BankAccount?                 @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
 
   @@map("recurrent_transactions")
 }
