@@ -2,7 +2,7 @@ import { IsEmail, IsOptional, IsString } from 'class-validator';
 import { IsID, IsSecretCode } from '../validators/internal';
 import { IsPhone, IsURL } from '../validators/miscellaneous';
 
-export class CreateFromGoogleProviderDto {
+export class SignWith3rdPartyProviderDto {
 	@IsString()
 	code: string;
 

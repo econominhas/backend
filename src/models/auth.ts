@@ -98,7 +98,6 @@ export interface AuthOutput {
 	refreshToken: string;
 	accessToken: string;
 	expiresAt: string;
-	isFirstAccess: boolean;
 }
 
 export interface RefreshOutput {
@@ -106,7 +105,7 @@ export interface RefreshOutput {
 	expiresAt: string;
 }
 
-export interface CreateWith3rdPartyProviderInput {
+export interface SignWith3rdPartyProviderInput {
 	code: string;
 	originUrl?: string;
 }
@@ -129,8 +128,12 @@ export interface RefreshTokenInput {
 }
 
 export abstract class AuthUseCase {
-	abstract createFromGoogleProvider(
-		i: CreateWith3rdPartyProviderInput,
+	abstract signInWithGoogleProvider(
+		i: SignWith3rdPartyProviderInput,
+	): Promise<AuthOutput>;
+
+	abstract signUpWithGoogleProvider(
+		i: SignWith3rdPartyProviderInput,
 	): Promise<AuthOutput>;
 
 	abstract createFromEmailProvider(

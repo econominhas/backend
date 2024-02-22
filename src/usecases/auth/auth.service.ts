@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import type {
 	AuthOutput,
-	CreateWith3rdPartyProviderInput,
+	SignWith3rdPartyProviderInput,
 	CreateWithEmailProviderInput,
 	CreateWithPhoneProviderInput,
 	ExchangeCodeInput,
@@ -38,7 +38,6 @@ import { SNSAdapterService } from 'adapters/implementations/sns/sns.service';
 
 interface GenTokensInput {
 	accountId: string;
-	isFirstAccess: boolean;
 	refresh: boolean;
 }
 
@@ -67,10 +66,10 @@ export class AuthService extends AuthUseCase {
 		super();
 	}
 
-	async createFromGoogleProvider({
+	async signInWithGoogleProvider({
 		code,
 		originUrl,
-	}: CreateWith3rdPartyProviderInput): Promise<AuthOutput> {
+	}: SignWith3rdPartyProviderInput): Promise<AuthOutput> {
 		const { scopes, ...providerTokens } = await this.googleAdapter
 			.exchangeCode({ code, originUrl })
 			.catch((err) => {
@@ -103,68 +102,112 @@ export class AuthService extends AuthUseCase {
 			provider: SignInProviderEnum.GOOGLE,
 		});
 
-		let account: Account;
-		let isFirstAccess = false;
-
-		if (relatedAccounts.length > 0) {
-			const sameProviderId = relatedAccounts.find((a) =>
-				a.signInProviders.find((p) => p.providerId === providerData.id),
-			);
-			const sameEmail = relatedAccounts.find(
-				(a) => a.email === providerData.email,
-			);
-
-			// Has an account with the same email, and it
-			// isn't linked with another provider account
-			if (
-				sameEmail &&
-				!sameProviderId &&
-				!sameEmail.signInProviders.find(
-					(p) => p.provider === SignInProviderEnum.GOOGLE,
-				)
-			) {
-				account = sameEmail;
-			}
-
-			// Account with same provider id (it can have a different email,
-			// in case that the user updated it in provider or on our platform)
-			// More descriptive IF:
-			// if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
-			if (sameProviderId) {
-				account = sameProviderId;
-			}
-
-			if (!account) {
-				throw new ConflictException(
-					'Error finding account, please contact support',
-				);
-			}
-
-			await this.authRepository.updateProvider({
-				accountId: account.id,
-				provider: SignInProviderEnum.GOOGLE,
-				providerId: providerData.id,
-				accessToken: providerTokens.accessToken,
-				refreshToken: providerTokens.refreshToken,
-				expiresAt: providerTokens.expiresAt,
-			});
-		} else {
-			account = await this.authRepository.create({
-				email: providerData.email,
-				google: {
-					id: providerData.id,
-					accessToken: providerTokens.accessToken,
-					refreshToken: providerTokens.refreshToken,
-					expiresAt: providerTokens.expiresAt,
-				},
-			});
-
-			isFirstAccess = true;
+		if (relatedAccounts.length <= 0) {
+			throw new NotFoundException('User not found');
 		}
+
+		let account: Account;
+
+		const sameProviderId = relatedAccounts.find((a) =>
+			a.signInProviders.find((p) => p.providerId === providerData.id),
+		);
+		const sameEmail = relatedAccounts.find(
+			(a) => a.email === providerData.email,
+		);
+
+		// Has an account with the same email, and it
+		// isn't linked with another provider account
+		if (
+			sameEmail &&
+			!sameProviderId &&
+			!sameEmail.signInProviders.find(
+				(p) => p.provider === SignInProviderEnum.GOOGLE,
+			)
+		) {
+			account = sameEmail;
+		}
+
+		// Account with same provider id (it can have a different email,
+		// in case that the user updated it in provider or on our platform)
+		// More descriptive IF:
+		// if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
+		if (sameProviderId) {
+			account = sameProviderId;
+		}
+
+		if (!account) {
+			throw new ConflictException(
+				'Error finding account, please contact support',
+			);
+		}
+
+		await this.authRepository.updateProvider({
+			accountId: account.id,
+			provider: SignInProviderEnum.GOOGLE,
+			providerId: providerData.id,
+			accessToken: providerTokens.accessToken,
+			refreshToken: providerTokens.refreshToken,
+			expiresAt: providerTokens.expiresAt,
+		});
 
 		return this.genAuthOutput({
 			accountId: account.id,
-			isFirstAccess,
+			refresh: true,
+		});
+	}
+
+	async signUpWithGoogleProvider({
+		code,
+		originUrl,
+	}: SignWith3rdPartyProviderInput): Promise<AuthOutput> {
+		const { scopes, ...providerTokens } = await this.googleAdapter
+			.exchangeCode({ code, originUrl })
+			.catch((err) => {
+				Logger.error(err);
+
+				throw new BadRequestException('Invalid code');
+			});
+
+		const missingScopes = this.googleAdapter.requiredScopes.filter(
+			(s) => !scopes.includes(s),
+		);
+
+		if (missingScopes.length > 0) {
+			throw new BadRequestException(
+				`Missing required scopes: ${missingScopes.join(' ')}`,
+			);
+		}
+
+		const providerData = await this.googleAdapter.getAuthenticatedUserData(
+			providerTokens.accessToken,
+		);
+
+		if (!providerData.isEmailVerified) {
+			throw new ForbiddenException('Unverified provider email');
+		}
+
+		const relatedAccounts = await this.authRepository.getManyByProvider({
+			providerId: providerData.id,
+			email: providerData.email,
+			provider: SignInProviderEnum.GOOGLE,
+		});
+
+		if (relatedAccounts.length > 0) {
+			throw new ConflictException('User already exists');
+		}
+
+		const account = await this.authRepository.create({
+			email: providerData.email,
+			google: {
+				id: providerData.id,
+				accessToken: providerTokens.accessToken,
+				refreshToken: providerTokens.refreshToken,
+				expiresAt: providerTokens.expiresAt,
+			},
+		});
+
+		return this.genAuthOutput({
+			accountId: account.id,
 			refresh: true,
 		});
 	}
@@ -246,7 +289,6 @@ export class AuthService extends AuthUseCase {
 
 		return this.genAuthOutput({
 			accountId: magicLinkCode.accountId,
-			isFirstAccess: magicLinkCode.isFirstAccess,
 			refresh: true,
 		});
 	}
@@ -264,7 +306,6 @@ export class AuthService extends AuthUseCase {
 
 		return this.genAuthOutput({
 			accountId: refreshTokenData.accountId,
-			isFirstAccess: false,
 			refresh: false,
 		});
 	}
@@ -280,7 +321,6 @@ export class AuthService extends AuthUseCase {
 	 */
 	public async genAuthOutput({
 		accountId,
-		isFirstAccess,
 		refresh,
 	}: GenTokensInput): Promise<AuthOutput> {
 		const promises = [];
@@ -295,15 +335,11 @@ export class AuthService extends AuthUseCase {
 			promises.push({ refreshToken: undefined });
 		}
 
-		if (!isFirstAccess) {
-			promises.push(
-				this.termsAndPoliciesService.hasAcceptedLatest({
-					accountId: accountId,
-				}),
-			);
-		} else {
-			promises.push(false);
-		}
+		promises.push(
+			this.termsAndPoliciesService.hasAcceptedLatest({
+				accountId: accountId,
+			}),
+		);
 
 		const [{ refreshToken }, hasAcceptedLatestTerms] = (await Promise.all(
 			promises,
@@ -318,7 +354,6 @@ export class AuthService extends AuthUseCase {
 			accessToken,
 			expiresAt,
 			refreshToken,
-			isFirstAccess,
 		};
 	}
 }

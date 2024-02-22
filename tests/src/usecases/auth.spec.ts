@@ -57,52 +57,8 @@ describe('Usecases > Auth', () => {
 		});
 	});
 
-	describe('> createFromGoogleProvider', () => {
-		it('should sign in user', async () => {
-			googleAdapter.mock.exchangeCode.mockResolvedValue(
-				googleAdapter.outputs.exchangeCode.success,
-			);
-			googleAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
-				googleAdapter.outputs.getAuthenticatedUserData.success,
-			);
-			authRepository.mock.getManyByProvider.mockResolvedValue(
-				authRepository.outputs.getManyByProvider.empty,
-			);
-			authRepository.mock.create.mockResolvedValue(
-				authRepository.outputs.create.successGoogle,
-			);
-			refreshTokenRepository.mock.create.mockResolvedValue(
-				refreshTokenRepository.outputs.create.success,
-			);
-			tokenAdapter.mock.genAccess.mockReturnValue(
-				tokenAdapter.outputs.genAccess.success,
-			);
-
-			let result;
-			try {
-				result = await service.createFromGoogleProvider({
-					code: 'code',
-				});
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toStrictEqual({
-				accessToken: tokenAdapter.outputs.genAccess.success.accessToken,
-				expiresAt: tokenAdapter.outputs.genAccess.success.expiresAt,
-				refreshToken:
-					refreshTokenRepository.outputs.create.success.refreshToken,
-				isFirstAccess: true,
-			});
-			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
-			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
-			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
-			expect(authRepository.mock.create).toHaveBeenCalled();
-			expect(refreshTokenRepository.mock.create).toHaveBeenCalled();
-			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
-		});
-
-		it('should sign up user (same providerId)', async () => {
+	describe('> signInWithGoogleProvider', () => {
+		it('should sign in user (same providerId)', async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.success,
 			);
@@ -123,7 +79,7 @@ describe('Usecases > Auth', () => {
 
 			let result;
 			try {
-				result = await service.createFromGoogleProvider({
+				result = await service.signInWithGoogleProvider({
 					code: 'code',
 				});
 			} catch (err) {
@@ -135,7 +91,6 @@ describe('Usecases > Auth', () => {
 				expiresAt: tokenAdapter.outputs.genAccess.success.expiresAt,
 				refreshToken:
 					refreshTokenRepository.outputs.create.success.refreshToken,
-				isFirstAccess: false,
 			});
 			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
 			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
@@ -146,7 +101,7 @@ describe('Usecases > Auth', () => {
 			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
 		});
 
-		it('should sign up user (same email)', async () => {
+		it('should sign in user (same email)', async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.success,
 			);
@@ -167,7 +122,7 @@ describe('Usecases > Auth', () => {
 
 			let result;
 			try {
-				result = await service.createFromGoogleProvider({
+				result = await service.signInWithGoogleProvider({
 					code: 'code',
 				});
 			} catch (err) {
@@ -179,7 +134,6 @@ describe('Usecases > Auth', () => {
 				expiresAt: tokenAdapter.outputs.genAccess.success.expiresAt,
 				refreshToken:
 					refreshTokenRepository.outputs.create.success.refreshToken,
-				isFirstAccess: false,
 			});
 			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
 			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
@@ -190,6 +144,38 @@ describe('Usecases > Auth', () => {
 			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
 		});
 
+		it("should fail if user doesn't exists", async () => {
+			googleAdapter.mock.exchangeCode.mockResolvedValue(
+				googleAdapter.outputs.exchangeCode.success,
+			);
+			googleAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
+				googleAdapter.outputs.getAuthenticatedUserData.success,
+			);
+			authRepository.mock.getManyByProvider.mockResolvedValue(
+				authRepository.outputs.getManyByProvider.empty,
+			);
+
+			let result;
+			try {
+				result = await service.signInWithGoogleProvider({
+					code: 'code',
+				});
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toBeInstanceOf(Error);
+			expect(result.status).toBe(404);
+			expect(result.message).toBe('User not found');
+			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
+			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
+			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
+			expect(authRepository.mock.updateProvider).not.toHaveBeenCalled();
+			expect(refreshTokenRepository.mock.create).not.toHaveBeenCalled();
+			expect(termsService.mock.hasAcceptedLatest).not.toHaveBeenCalled();
+			expect(tokenAdapter.mock.genAccess).not.toHaveBeenCalled();
+		});
+
 		it('should fail if missing scopes', async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.noScopes,
@@ -197,7 +183,7 @@ describe('Usecases > Auth', () => {
 
 			let result;
 			try {
-				result = await service.createFromGoogleProvider({
+				result = await service.signInWithGoogleProvider({
 					code: 'code',
 				});
 			} catch (err) {
@@ -227,7 +213,7 @@ describe('Usecases > Auth', () => {
 
 			let result;
 			try {
-				result = await service.createFromGoogleProvider({
+				result = await service.signInWithGoogleProvider({
 					code: 'code',
 				});
 			} catch (err) {
@@ -255,7 +241,7 @@ describe('Usecases > Auth', () => {
 
 			let result;
 			try {
-				result = await service.createFromGoogleProvider({
+				result = await service.signInWithGoogleProvider({
 					code: 'code',
 				});
 			} catch (err) {
@@ -271,6 +257,183 @@ describe('Usecases > Auth', () => {
 			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
 			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
 			expect(authRepository.mock.updateProvider).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('> signUpWithGoogleProvider', () => {
+		it('should sign up user', async () => {
+			googleAdapter.mock.exchangeCode.mockResolvedValue(
+				googleAdapter.outputs.exchangeCode.success,
+			);
+			googleAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
+				googleAdapter.outputs.getAuthenticatedUserData.success,
+			);
+			authRepository.mock.getManyByProvider.mockResolvedValue(
+				authRepository.outputs.getManyByProvider.empty,
+			);
+			authRepository.mock.create.mockResolvedValue(
+				authRepository.outputs.create.successGoogle,
+			);
+			refreshTokenRepository.mock.create.mockResolvedValue(
+				refreshTokenRepository.outputs.create.success,
+			);
+			tokenAdapter.mock.genAccess.mockReturnValue(
+				tokenAdapter.outputs.genAccess.success,
+			);
+
+			let result;
+			try {
+				result = await service.signUpWithGoogleProvider({
+					code: 'code',
+				});
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toStrictEqual({
+				accessToken: tokenAdapter.outputs.genAccess.success.accessToken,
+				expiresAt: tokenAdapter.outputs.genAccess.success.expiresAt,
+				refreshToken:
+					refreshTokenRepository.outputs.create.success.refreshToken,
+			});
+			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
+			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
+			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
+			expect(authRepository.mock.create).toHaveBeenCalled();
+			expect(refreshTokenRepository.mock.create).toHaveBeenCalled();
+			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
+		});
+
+		it('should fail if user already exists (same providerId)', async () => {
+			googleAdapter.mock.exchangeCode.mockResolvedValue(
+				googleAdapter.outputs.exchangeCode.success,
+			);
+			googleAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
+				googleAdapter.outputs.getAuthenticatedUserData.success,
+			);
+			authRepository.mock.getManyByProvider.mockResolvedValue(
+				authRepository.outputs.getManyByProvider.google,
+			);
+			authRepository.mock.updateProvider.mockResolvedValue(undefined);
+			refreshTokenRepository.mock.create.mockResolvedValue(
+				refreshTokenRepository.outputs.create.success,
+			);
+			termsService.mock.hasAcceptedLatest.mockResolvedValue(true);
+			tokenAdapter.mock.genAccess.mockReturnValue(
+				tokenAdapter.outputs.genAccess.success,
+			);
+
+			let result;
+			try {
+				result = await service.signUpWithGoogleProvider({
+					code: 'code',
+				});
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toBeInstanceOf(Error);
+			expect(result.status).toBe(409);
+			expect(result.message).toBe('User already exists');
+			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
+			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
+			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
+			expect(authRepository.mock.updateProvider).not.toHaveBeenCalled();
+			expect(refreshTokenRepository.mock.create).not.toHaveBeenCalled();
+			expect(termsService.mock.hasAcceptedLatest).not.toHaveBeenCalled();
+			expect(tokenAdapter.mock.genAccess).not.toHaveBeenCalled();
+		});
+
+		it('should fail if user already exists (same email)', async () => {
+			googleAdapter.mock.exchangeCode.mockResolvedValue(
+				googleAdapter.outputs.exchangeCode.success,
+			);
+			googleAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
+				googleAdapter.outputs.getAuthenticatedUserData.success,
+			);
+			authRepository.mock.getManyByProvider.mockResolvedValue(
+				authRepository.outputs.getManyByProvider.email,
+			);
+			authRepository.mock.updateProvider.mockResolvedValue(undefined);
+			refreshTokenRepository.mock.create.mockResolvedValue(
+				refreshTokenRepository.outputs.create.success,
+			);
+			termsService.mock.hasAcceptedLatest.mockResolvedValue(true);
+			tokenAdapter.mock.genAccess.mockReturnValue(
+				tokenAdapter.outputs.genAccess.success,
+			);
+
+			let result;
+			try {
+				result = await service.signUpWithGoogleProvider({
+					code: 'code',
+				});
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toBeInstanceOf(Error);
+			expect(result.status).toBe(409);
+			expect(result.message).toBe('User already exists');
+			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
+			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
+			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
+			expect(authRepository.mock.updateProvider).not.toHaveBeenCalled();
+			expect(refreshTokenRepository.mock.create).not.toHaveBeenCalled();
+			expect(termsService.mock.hasAcceptedLatest).not.toHaveBeenCalled();
+			expect(tokenAdapter.mock.genAccess).not.toHaveBeenCalled();
+		});
+
+		it('should fail if missing scopes', async () => {
+			googleAdapter.mock.exchangeCode.mockResolvedValue(
+				googleAdapter.outputs.exchangeCode.noScopes,
+			);
+
+			let result;
+			try {
+				result = await service.signUpWithGoogleProvider({
+					code: 'code',
+				});
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toBeInstanceOf(Error);
+			expect(result.status).toBe(400);
+			expect(result.message).toBe(
+				`Missing required scopes: ${googleAdapter.mock.requiredScopes.join(
+					' ',
+				)}`,
+			);
+			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
+			expect(
+				googleAdapter.mock.getAuthenticatedUserData,
+			).not.toHaveBeenCalled();
+		});
+
+		it('should fail if unverified provider email', async () => {
+			googleAdapter.mock.exchangeCode.mockResolvedValue(
+				googleAdapter.outputs.exchangeCode.success,
+			);
+			googleAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
+				googleAdapter.outputs.getAuthenticatedUserData.unverified,
+			);
+
+			let result;
+			try {
+				result = await service.signUpWithGoogleProvider({
+					code: 'code',
+				});
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toBeInstanceOf(Error);
+			expect(result.status).toBe(403);
+			expect(result.message).toBe('Unverified provider email');
+			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
+			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
+			expect(authRepository.mock.getManyByProvider).not.toHaveBeenCalled();
 		});
 	});
 
@@ -309,7 +472,6 @@ describe('Usecases > Auth', () => {
 				expiresAt: tokenAdapter.outputs.genAccess.success.expiresAt,
 				refreshToken:
 					refreshTokenRepository.outputs.create.success.refreshToken,
-				isFirstAccess: false,
 			});
 			expect(magicLinkCodeRepository.mock.get).toHaveBeenCalled();
 			expect(refreshTokenRepository.mock.create).toHaveBeenCalled();
@@ -363,7 +525,6 @@ describe('Usecases > Auth', () => {
 			expect(result).toStrictEqual({
 				accessToken: 'accessToken',
 				expiresAt,
-				isFirstAccess: false,
 				refreshToken: undefined,
 			});
 		});
@@ -405,7 +566,6 @@ describe('Usecases > Auth', () => {
 			try {
 				result = await service.genAuthOutput({
 					accountId: 'accountId',
-					isFirstAccess: true,
 					refresh: true,
 				});
 			} catch (err) {
@@ -417,7 +577,6 @@ describe('Usecases > Auth', () => {
 				expiresAt,
 				refreshToken:
 					refreshTokenRepository.outputs.create.success.refreshToken,
-				isFirstAccess: true,
 			});
 		});
 
@@ -434,7 +593,6 @@ describe('Usecases > Auth', () => {
 			try {
 				result = await service.genAuthOutput({
 					accountId: 'accountId',
-					isFirstAccess: true,
 					refresh: false,
 				});
 			} catch (err) {
@@ -444,7 +602,6 @@ describe('Usecases > Auth', () => {
 			expect(result).toMatchObject({
 				accessToken: 'accessToken',
 				expiresAt,
-				isFirstAccess: true,
 			});
 			expect(result.refreshToken).toBeUndefined();
 			expect(refreshTokenRepository.mock.create).not.toHaveBeenCalled();
@@ -463,7 +620,6 @@ describe('Usecases > Auth', () => {
 			try {
 				result = await service.genAuthOutput({
 					accountId: 'accountId',
-					isFirstAccess: false,
 					refresh: false,
 				});
 			} catch (err) {
@@ -491,7 +647,6 @@ describe('Usecases > Auth', () => {
 			try {
 				result = await service.genAuthOutput({
 					accountId: 'accountId',
-					isFirstAccess: false,
 					refresh: false,
 				});
 			} catch (err) {

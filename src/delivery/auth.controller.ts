@@ -5,12 +5,10 @@ import {
 	HttpStatus,
 	Inject,
 	Post,
-	Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import {
 	CreateFromEmailProviderDto,
-	CreateFromGoogleProviderDto,
+	SignWith3rdPartyProviderDto,
 	CreateFromPhoneProviderDto,
 	ExchangeCodeDto,
 	RefreshTokenDto,
@@ -26,24 +24,24 @@ export class AuthController {
 		private readonly authService: AuthUseCase,
 	) {}
 
-	@Post('/google')
+	@HttpCode(HttpStatus.OK)
+	@Post('/google/sign-in')
 	@Public()
-	async createFromGoogleProvider(
+	async signInWithGoogleProvider(
 		@Body()
-		body: CreateFromGoogleProviderDto,
-		@Res({ passthrough: true })
-		res: Response,
+		body: SignWith3rdPartyProviderDto,
 	) {
-		const { isFirstAccess, ...data } =
-			await this.authService.createFromGoogleProvider(body);
+		return this.authService.signInWithGoogleProvider(body);
+	}
 
-		if (isFirstAccess) {
-			res.status(HttpStatus.CREATED);
-		} else {
-			res.status(HttpStatus.OK);
-		}
-
-		return data;
+	@HttpCode(HttpStatus.CREATED)
+	@Post('/google/sign-up')
+	@Public()
+	async signUpWithGoogleProvider(
+		@Body()
+		body: SignWith3rdPartyProviderDto,
+	) {
+		return this.authService.signUpWithGoogleProvider(body);
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -66,24 +64,14 @@ export class AuthController {
 		return this.authService.createFromPhoneProvider(body);
 	}
 
+	@HttpCode(HttpStatus.OK)
 	@Post('/code')
 	@Public()
 	async exchangeCode(
 		@Body()
 		body: ExchangeCodeDto,
-		@Res({ passthrough: true })
-		res: Response,
 	) {
-		const { isFirstAccess, ...data } =
-			await this.authService.exchangeCode(body);
-
-		if (isFirstAccess) {
-			res.status(HttpStatus.CREATED);
-		} else {
-			res.status(HttpStatus.OK);
-		}
-
-		return data;
+		return this.authService.exchangeCode(body);
 	}
 
 	@Post('/refresh')
