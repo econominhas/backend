@@ -63,8 +63,10 @@ servers:
     description: Production
 
 paths:
-  /auth/google:
-    $ref: paths/auth/google.yaml
+  /auth/google/sign-in:
+    $ref: paths/auth/google/sign-in.yaml
+  /auth/google/sign-up:
+    $ref: paths/auth/google/sign-up.yaml
   /auth/email:
     $ref: paths/auth/email.yaml
   /auth/phone:
