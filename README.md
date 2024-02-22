@@ -205,3 +205,17 @@ This phase is were we convert the documentation to code and make everything work
 		</tr>
 	</tbody>
 </table>
+
+### SetUp
+
+1. Run <code>yarn start:dev</code>
+2. Run econominhas-api migrations
+   - Step 2.1: Run docker ps for get id container <code>econominhas-api</code>.
+   - Step 2.2: Run docker exec -it <code>\<ID container\></code>.
+   - Step 2.3: Run <code>yarn db:migrate</code> to create the migrations.
+3. Run collections postman.
+   - Setp 3.1: inside the econominhas-api container run <code>yarn openapi:postman</code>
+   - Step 3.2: import collection from <code>openapi/postman.json</code>
+4. Available http://localhost:3000/
+
+<br/>
