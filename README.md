@@ -208,14 +208,12 @@ This phase is were we convert the documentation to code and make everything work
 
 ### Running the API for the first time
 
-1. Create <code>.env</code> copy and paste <code>.env.example</code>
+1. Copy and paste <code>.env.example</code> and rename the copy to <code>.env</code>
 2. Run <code>yarn start:dev</code>
 3. Run econominhas-api migrations
-   - Step 2.1: Run <code>yarn start:db</code>
-   - Step 2.3: Run <code>yarn db:migrate</code> to create the migrations.
-4. Generate postman collections
-   - Setp 3.1: Run <code>yarn openapi:postman</code>
-   - Step 3.2: import collection from <code>openapi/postman.json</code>
-5. Available http://localhost:3000/v1
+   - Step 2.1: List id container Run<code>docker ps</code>
+   - Step 2.2: Run <code>docker exec -it \<container id\> sh</code>
+   - Step 2.3: Run <code>yarn db:migrate</code>
+4. Available at http://localhost:3000/v1
 
 <br/>
