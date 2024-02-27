@@ -479,12 +479,20 @@ enum IconEnum {
   @@map("icon_enum")
 }
 
+enum CostTypeEnum {
+  fixed
+  variable
+
+  @@map("cost_type_enum")
+}
+
 /// Contains the default categories suggested to the user on the account creation
 model DefaultCategory {
-  name        String   @id @db.VarChar(30)
-  description String   @db.VarChar(300)
+  name        String       @id @db.VarChar(30)
+  description String       @db.VarChar(300)
   icon        IconEnum
-  color       String   @db.Char(7)
+  color       String       @db.Char(7)
+  costType    CostTypeEnum @map("cost_type") ///This field is used only for populating the frontend and collecting data
 
   @@map("default_categories")
 }
