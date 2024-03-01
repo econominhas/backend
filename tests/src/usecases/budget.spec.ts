@@ -495,7 +495,7 @@ describe('Usecases > Budget', () => {
 	});
 
 	describe('> createNextBudgetDates', () => {
-		it('', async () => {
+		it('should generates future budget dates for a specific budget', async () => {
 			const input = {
 				startFrom: {
 					id: '1',
