@@ -7,7 +7,6 @@ import { makeCategoryRepositoryMock } from '../../mocks/repositories/postgres/ca
 import { makeTransactionRepositoryMock } from '../../mocks/repositories/postgres/transaction';
 import { makeAccountServiceMock } from '../../mocks/usecases/account';
 import { makeDayjsAdapterMock } from '../../mocks/adapters/dayjs';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
 
 describe('Usecases > Budget', () => {
 	let service: BudgetService;
@@ -506,7 +505,6 @@ describe('Usecases > Budget', () => {
 				},
 				amount: 20,
 			};
-			let result;
 			const dates = Array.from({ length: input.amount }, (_, index) => {
 				const currentDate = new Date(input.startFrom.date);
 				currentDate.setMonth(currentDate.getMonth() + index);
@@ -514,12 +512,11 @@ describe('Usecases > Budget', () => {
 			});
 			dayjsAdapter.mock.getNextMonths.mockReturnValue(dates);
 			for (let index = 0; index < input.amount; index++) {
-				console.log(new Date(dates[index]).getMonth() + 1);
 				dayjsAdapter.mock.get
 					.mockReturnValueOnce(new Date(dates[index]).getMonth() + 1)
 					.mockReturnValueOnce(new Date(dates[index]).getFullYear());
 			}
-
+			let result;
 			try {
 				result = await service.createNextBudgetDates(input);
 			} catch (err) {
