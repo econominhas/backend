@@ -87,16 +87,18 @@ export class BudgetService extends BudgetUseCase {
 	}: CreateBasicInput): Promise<Budget> {
 		const itemsFormatted = items
 			.map(({ categoryId, amount }) =>
-				Array(12).map((_, idx) => ({
-					month: idx + 1,
-					year,
-					items: [
-						{
-							categoryId,
-							amount,
-						},
-					],
-				})),
+				Array(12)
+					.fill(null)
+					.map((_, idx) => ({
+						month: idx + 1,
+						year,
+						items: [
+							{
+								categoryId,
+								amount,
+							},
+						],
+					})),
 			)
 			.flat();
 
@@ -143,7 +145,7 @@ export class BudgetService extends BudgetUseCase {
 			budgetByCategory: categories
 				// Only return categories that are active and
 				// inactive categories that have some kind of expense
-				.filter((c) => !c.active && expensesByCategoryId[c.id] === 0)
+				.filter((c) => c.active || expensesByCategoryId[c.id] > 0)
 				.map(({ accountId: _, ...c }) => ({
 					...c,
 					totalExpenses: expensesByCategoryId[c.id],
