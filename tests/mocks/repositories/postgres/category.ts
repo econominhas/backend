@@ -12,17 +12,67 @@ export const makeCategoryRepositoryMock = () => {
 	};
 
 	const outputs = {
-		getByUser: [
-			{
-				id: '1',
-				accountId: 'accountId',
-				name: 'name',
-				description: 'description',
-				icon: IconEnum.bank,
-				color: 'red',
-				active: true,
-			},
-		],
+		getByUser: {
+			activeCategory: [
+				{
+					id: 1,
+					accountId: 'accountId1',
+					name: 'Category A',
+					description: 'description',
+					icon: IconEnum.bank,
+					color: 'red',
+					active: true,
+				},
+				{
+					id: 2,
+					accountId: 'accountId2',
+					name: 'Category B',
+					description: 'description',
+					icon: IconEnum.bank,
+					color: 'red',
+					active: true,
+				},
+				{
+					id: 3,
+					accountId: 'accountId3',
+					name: 'Category C',
+					description: 'description',
+					icon: IconEnum.bank,
+					color: 'red',
+					active: true,
+				},
+			],
+
+			inactiveCategory: [
+				{
+					id: 1,
+					accountId: 'accountId1',
+					name: 'Category A',
+					description: 'description',
+					icon: IconEnum.bank,
+					color: 'red',
+					active: false,
+				},
+				{
+					id: 2,
+					accountId: 'accountId2',
+					name: 'Category B',
+					description: 'description',
+					icon: IconEnum.bank,
+					color: 'red',
+					active: false,
+				},
+				{
+					id: 3,
+					accountId: 'accountId3',
+					name: 'Category C',
+					description: 'description',
+					icon: IconEnum.bank,
+					color: 'red',
+					active: false,
+				},
+			],
+		},
 	};
 
 	const module = {

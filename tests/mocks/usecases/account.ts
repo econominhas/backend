@@ -11,6 +11,11 @@ export const makeAccountServiceMock = () => {
 		updateOnboarding: jest.fn(),
 	};
 
+	const outputs = {
+		setBudget: {
+			sucess: undefined,
+		},
+	};
 	const module = {
 		provide: AccountService,
 		useValue: mock,
@@ -18,6 +23,7 @@ export const makeAccountServiceMock = () => {
 
 	return {
 		mock,
+		outputs,
 		module,
 	};
 };

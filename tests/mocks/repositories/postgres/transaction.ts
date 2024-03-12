@@ -12,12 +12,18 @@ export const makeTransactionRepositoryMock = () => {
 	};
 
 	const outputs = {
-		getMonthlyAmountByCategory: [
-			{
-				categoryId: 'categoryId',
-				amount: 100,
-			},
-		],
+		getMonthlyAmountByCategory: {
+			expensePositive: [
+				{ categoryId: 1, amount: 50 },
+				{ categoryId: 2, amount: 0 },
+				{ categoryId: 3, amount: 100 },
+			],
+			expenseNegative: [
+				{ categoryId: 1, amount: 100 },
+				{ categoryId: 2, amount: -50 },
+				{ categoryId: 3, amount: 200 },
+			],
+		},
 	};
 
 	const module = {
