@@ -38,20 +38,22 @@ describe('Usecases > Budget', () => {
 
 	beforeEach(() => {
 		budgetRepository.mock.createWithItems.mockResolvedValue(
-			budgetRepository.outputs.createWithItems,
+			budgetRepository.outputs.createWithItems.sucess,
 		);
-		accountService.mock.setBudget.mockResolvedValue(null);
+		accountService.mock.setBudget.mockResolvedValue(
+			accountService.outputs.setBudget.sucess,
+		);
 		budgetRepository.mock.upsertManyBudgetDates.mockResolvedValue(
-			budgetRepository.outputs.upsertManyBudgetDates,
+			budgetRepository.outputs.upsertManyBudgetDates.sucess,
 		);
 		categoryRepository.mock.getByUser.mockResolvedValue(
-			categoryRepository.outputs.getByUser,
+			categoryRepository.outputs.getByUser.activeCategory,
 		);
 		budgetRepository.mock.getMonthlyByCategory.mockResolvedValue(
-			budgetRepository.outputs.getMonthlyByCategory,
+			budgetRepository.outputs.getMonthlyByCategory.positiveBudget,
 		);
 		transactionRepository.mock.getMonthlyAmountByCategory.mockResolvedValue(
-			transactionRepository.outputs.getMonthlyAmountByCategory,
+			transactionRepository.outputs.getMonthlyAmountByCategory.expensePositive,
 		);
 		dayjsAdapter.mock.startOf.mockReturnValue(2);
 	});
@@ -77,9 +79,6 @@ describe('Usecases > Budget', () => {
 					{ month: 2, items: [] },
 				],
 			};
-
-			const spyOn1 = jest.spyOn(accountService.mock, 'setBudget');
-			const spyOn2 = jest.spyOn(budgetRepository.mock, 'createWithItems');
 			let result;
 			try {
 				result = await service.create(input);
@@ -92,12 +91,12 @@ describe('Usecases > Budget', () => {
 				id: '1',
 				name: 'Test Budget',
 			});
-			expect(spyOn1).toHaveBeenCalled();
-			expect(spyOn1).toHaveBeenCalledWith({
+			expect(accountService.mock.setBudget).toHaveBeenCalled();
+			expect(accountService.mock.setBudget).toHaveBeenCalledWith({
 				accountId: 'accountId',
 				budgetId: '1',
 			});
-			expect(spyOn2).toHaveBeenCalledWith({
+			expect(budgetRepository.mock.createWithItems).toHaveBeenCalledWith({
 				accountId: 'accountId',
 				name: 'name',
 				description: 'description',
@@ -128,14 +127,10 @@ describe('Usecases > Budget', () => {
 				],
 			};
 
-			// Simular falha ao criar o orçamento
-			const psyOnCreateWithItems = jest
-				.spyOn(budgetRepository.mock, 'createWithItems')
-				.mockRejectedValue(new Error('Failed to create budget'));
+			budgetRepository.mock.createWithItems.mockRejectedValue(
+				new Error('Failed to create budget'),
+			);
 
-			// Simular chamada ao método setBudget do serviço de conta
-			const spyOn = jest.spyOn(accountService.mock, 'setBudget');
-			// Chamar o método create e capturar a exceção
 			let result;
 			try {
 				result = await service.create(input);
@@ -143,25 +138,20 @@ describe('Usecases > Budget', () => {
 				result = err;
 			}
 
-			// Verificar se uma exceção foi lançada
 			expect(result).toBeInstanceOf(Error);
-			expect(spyOn).not.toHaveBeenCalled();
-			expect(psyOnCreateWithItems).toHaveBeenCalledTimes(1);
+			expect(accountService.mock.setBudget).not.toHaveBeenCalled();
+			expect(budgetRepository.mock.createWithItems).toHaveBeenCalledTimes(1);
 		});
 
-		it('deve criar um orçamento com o limite máximo de meses', async () => {
-			// Defina o limite máximo de meses
-			const MAX_MONTHS = 12;
-
-			// Crie uma entrada com o limite máximo de meses
+		it('should create a budget with the maximum number of months', async () => {
 			const input = {
 				accountId: 'accountId',
 				name: 'Test Budget',
 				description: 'Test Budget Description',
 				year: 2024,
-				months: Array.from({ length: MAX_MONTHS }, (_, index) => ({
+				months: Array.from({ length: 12 }, (_, index) => ({
 					month: index + 1,
-					items: [], // Supondo que não há itens para este teste
+					items: [],
 				})),
 			};
 
@@ -171,8 +161,6 @@ describe('Usecases > Budget', () => {
 			} catch (err) {
 				result = err;
 			}
-
-			// Verifique se o orçamento foi criado corretamente
 			expect(result).toBeDefined();
 			expect(budgetRepository.mock.createWithItems).toHaveBeenCalledWith({
 				accountId: 'accountId',
@@ -194,16 +182,6 @@ describe('Usecases > Budget', () => {
 				accountId: '1',
 				dates: [new Date(2024, 2, 1)],
 			};
-
-			const newBudgetDates = [
-				{
-					id: '1',
-					budgetId: '1',
-					month: 1,
-					year: 2024,
-					date: new Date(2024, 1, 24, 3, 0, 0),
-				},
-			];
 			dayjsAdapter.mock.get.mockReturnValueOnce(2).mockReturnValueOnce(2024);
 			let result;
 			try {
@@ -211,7 +189,15 @@ describe('Usecases > Budget', () => {
 			} catch (err) {
 				result = err;
 			}
-			expect(result).toStrictEqual(newBudgetDates);
+			expect(result).toStrictEqual([
+				{
+					id: '1',
+					budgetId: '1',
+					month: 1,
+					year: 2024,
+					date: new Date(2024, 1, 24, 3, 0, 0),
+				},
+			]);
 			expect(budgetRepository.mock.upsertManyBudgetDates).toHaveBeenCalledWith([
 				{
 					budgetId: '1',
@@ -242,22 +228,6 @@ describe('Usecases > Budget', () => {
 			} catch (err) {
 				result = err;
 			}
-			const itemsFormatted = input.items
-				.map(({ categoryId, amount }) =>
-					Array(12)
-						.fill(null)
-						.map((_, idx) => ({
-							month: idx + 1,
-							year: input.year,
-							items: [
-								{
-									categoryId,
-									amount,
-								},
-							],
-						})),
-				)
-				.flat();
 			expect(result).toStrictEqual({
 				id: '1',
 				accountId: 'accountId',
@@ -267,13 +237,28 @@ describe('Usecases > Budget', () => {
 			expect(accountService.mock.setBudget).toHaveBeenCalled();
 			expect(accountService.mock.setBudget).toHaveBeenCalledWith({
 				accountId: input.accountId,
-				budgetId: budgetRepository.outputs.createWithItems.id,
+				budgetId: budgetRepository.outputs.createWithItems.sucess.id,
 			});
 			expect(budgetRepository.mock.createWithItems).toHaveBeenCalledWith({
 				accountId: 'accountId',
 				name: 'string',
 				description: 'Test Budget Description',
-				months: itemsFormatted,
+				months: input.items
+					.map(({ categoryId, amount }) =>
+						Array(12)
+							.fill(null)
+							.map((_, idx) => ({
+								month: idx + 1,
+								year: input.year,
+								items: [
+									{
+										categoryId,
+										amount,
+									},
+								],
+							})),
+					)
+					.flat(),
 			});
 		});
 	});
@@ -287,29 +272,6 @@ describe('Usecases > Budget', () => {
 				year: 2024,
 			};
 
-			const mockCategories = [
-				{ id: 1, name: 'Categoria A', active: true },
-				{ id: 2, name: 'Categoria B', active: true },
-				{ id: 3, name: 'Categoria C', active: true },
-			];
-
-			const mockBudgets = [
-				{ categoryId: 1, amount: 100 },
-				{ categoryId: 2, amount: 200 },
-				{ categoryId: 3, amount: 150 },
-			];
-
-			const mockExpenses = [
-				{ categoryId: 1, amount: 50 },
-				{ categoryId: 2, amount: 0 }, // Despesa zero
-				{ categoryId: 3, amount: 100 },
-			];
-
-			categoryRepository.mock.getByUser.mockResolvedValue(mockCategories);
-			budgetRepository.mock.getMonthlyByCategory.mockResolvedValue(mockBudgets);
-			transactionRepository.mock.getMonthlyAmountByCategory.mockResolvedValue(
-				mockExpenses,
-			);
 			let result;
 			try {
 				result = await service.overview(input);
@@ -336,27 +298,36 @@ describe('Usecases > Budget', () => {
 			expect(result.budgetByCategory).toEqual([
 				{
 					id: 1,
-					name: 'Categoria A',
+					name: 'Category A',
 					active: true,
 					totalExpenses: 50,
 					totalBudget: 100,
 					remainingBudget: 50,
+					color: 'red',
+					description: 'description',
+					icon: 'bank',
 				},
 				{
 					id: 2,
-					name: 'Categoria B',
+					name: 'Category B',
 					active: true,
 					totalExpenses: 0,
 					totalBudget: 200,
 					remainingBudget: 200,
+					color: 'red',
+					description: 'description',
+					icon: 'bank',
 				},
 				{
 					id: 3,
-					name: 'Categoria C',
+					name: 'Category C',
 					active: true,
 					totalExpenses: 100,
 					totalBudget: 150,
 					remainingBudget: 50,
+					color: 'red',
+					description: 'description',
+					icon: 'bank',
 				},
 			]);
 		});
@@ -369,28 +340,8 @@ describe('Usecases > Budget', () => {
 				year: 2024,
 			};
 
-			const mockCategories = [
-				{ id: 1, name: 'Categoria A', active: false },
-				{ id: 2, name: 'Categoria B', active: false },
-				{ id: 3, name: 'Categoria C', active: false },
-			];
-
-			const mockBudgets = [
-				{ categoryId: 1, amount: 100 },
-				{ categoryId: 2, amount: 200 },
-				{ categoryId: 3, amount: 150 },
-			];
-
-			const mockExpenses = [
-				{ categoryId: 1, amount: 50 },
-				{ categoryId: 2, amount: 0 }, // Despesa zero
-				{ categoryId: 3, amount: 100 },
-			];
-
-			categoryRepository.mock.getByUser.mockResolvedValue(mockCategories);
-			budgetRepository.mock.getMonthlyByCategory.mockResolvedValue(mockBudgets);
-			transactionRepository.mock.getMonthlyAmountByCategory.mockResolvedValue(
-				mockExpenses,
+			categoryRepository.mock.getByUser.mockResolvedValue(
+				categoryRepository.outputs.getByUser.inactiveCategory,
 			);
 
 			let result;
@@ -411,7 +362,6 @@ describe('Usecases > Budget', () => {
 			expect(
 				transactionRepository.mock.getMonthlyAmountByCategory,
 			).toHaveBeenCalledWith(input);
-
 			expect(result.totalBudget).toEqual(450);
 			expect(result.totalExpenses).toEqual(150);
 			expect(result.remainingBudget).toEqual(300);
@@ -419,19 +369,25 @@ describe('Usecases > Budget', () => {
 			expect(result.budgetByCategory).toEqual([
 				{
 					id: 1,
-					name: 'Categoria A',
+					name: 'Category A',
 					active: false,
 					totalExpenses: 50,
 					totalBudget: 100,
 					remainingBudget: 50,
+					color: 'red',
+					description: 'description',
+					icon: 'bank',
 				},
 				{
 					id: 3,
-					name: 'Categoria C',
+					name: 'Category C',
 					active: false,
 					totalExpenses: 100,
 					totalBudget: 150,
 					remainingBudget: 50,
+					color: 'red',
+					description: 'description',
+					icon: 'bank',
 				},
 			]);
 		});
@@ -443,28 +399,12 @@ describe('Usecases > Budget', () => {
 				year: 2024,
 			};
 
-			const mockCategories = [
-				{ id: 1, name: 'Categoria A', active: true },
-				{ id: 2, name: 'Categoria B', active: true },
-				{ id: 3, name: 'Categoria C', active: true },
-			];
-
-			const mockBudgets = [
-				{ categoryId: 1, amount: -50 }, // Orçamento negativo
-				{ categoryId: 2, amount: 20 },
-				{ categoryId: 3, amount: 150 },
-			];
-
-			const mockExpenses = [
-				{ categoryId: 1, amount: 100 }, // Despesa positiva
-				{ categoryId: 2, amount: -50 }, // Despesa negativa
-				{ categoryId: 3, amount: 200 }, // Despesa positiva
-			];
-
-			categoryRepository.mock.getByUser.mockResolvedValue(mockCategories);
-			budgetRepository.mock.getMonthlyByCategory.mockResolvedValue(mockBudgets);
+			budgetRepository.mock.getMonthlyByCategory.mockResolvedValue(
+				budgetRepository.outputs.getMonthlyByCategory.negativeBudget,
+			);
 			transactionRepository.mock.getMonthlyAmountByCategory.mockResolvedValue(
-				mockExpenses,
+				transactionRepository.outputs.getMonthlyAmountByCategory
+					.expenseNegative,
 			);
 
 			let result;
@@ -523,11 +463,11 @@ describe('Usecases > Budget', () => {
 				result = err;
 			}
 
-			const lastArgument =
+			expect(
 				budgetRepository.mock.upsertManyBudgetDates.mock.calls[0][0].slice(
 					-1,
-				)[0];
-			expect(lastArgument).toEqual({
+				)[0],
+			).toEqual({
 				budgetId: '1',
 				date: dates[input.amount - 1],
 				month: 11,
