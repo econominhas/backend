@@ -291,10 +291,11 @@ describe('Usecases > Budget', () => {
 				transactionRepository.mock.getMonthlyAmountByCategory,
 			).toHaveBeenCalledWith(input);
 
-			expect(result.totalBudget).toEqual(450);
-			expect(result.totalExpenses).toEqual(150);
-			expect(result.remainingBudget).toEqual(300);
-			expect(result.budgetByCategory).toHaveLength(3);
+			expect(result).toMatchObject({
+				totalBudget: 450,
+				totalExpenses: 150,
+				remainingBudget: 300,
+			});
 			expect(result.budgetByCategory).toEqual([
 				{
 					id: 1,
@@ -362,10 +363,13 @@ describe('Usecases > Budget', () => {
 			expect(
 				transactionRepository.mock.getMonthlyAmountByCategory,
 			).toHaveBeenCalledWith(input);
-			expect(result.totalBudget).toEqual(450);
-			expect(result.totalExpenses).toEqual(150);
-			expect(result.remainingBudget).toEqual(300);
+
 			expect(result.budgetByCategory).toHaveLength(2);
+			expect(result).toMatchObject({
+				totalBudget: 450,
+				totalExpenses: 150,
+				remainingBudget: 300,
+			});
 			expect(result.budgetByCategory).toEqual([
 				{
 					id: 1,
@@ -426,9 +430,11 @@ describe('Usecases > Budget', () => {
 				transactionRepository.mock.getMonthlyAmountByCategory,
 			).toHaveBeenCalledWith(input);
 
-			expect(result.totalBudget).toEqual(120);
-			expect(result.totalExpenses).toEqual(250);
-			expect(result.remainingBudget).toEqual(-130);
+			expect(result).toMatchObject({
+				totalBudget: 120,
+				totalExpenses: 250,
+				remainingBudget: -130,
+			});
 			expect(result.budgetByCategory).toHaveLength(3);
 		});
 	});
@@ -443,13 +449,24 @@ describe('Usecases > Budget', () => {
 					year: 2024,
 					date: new Date(2024, 3, 2),
 				},
-				amount: 20,
+				amount: 14,
 			};
-			const dates = Array.from({ length: input.amount }, (_, index) => {
-				const currentDate = new Date(input.startFrom.date);
-				currentDate.setMonth(currentDate.getMonth() + index);
-				return currentDate.toISOString();
-			});
+			const dates = [
+				'2024-04-02T03:00:00.000Z',
+				'2024-05-02T03:00:00.000Z',
+				'2024-06-02T03:00:00.000Z',
+				'2024-07-02T03:00:00.000Z',
+				'2024-08-02T03:00:00.000Z',
+				'2024-09-02T03:00:00.000Z',
+				'2024-10-02T03:00:00.000Z',
+				'2024-11-02T03:00:00.000Z',
+				'2024-12-02T03:00:00.000Z',
+				'2025-01-02T03:00:00.000Z',
+				'2025-02-02T03:00:00.000Z',
+				'2025-03-02T03:00:00.000Z',
+				'2025-04-02T03:00:00.000Z',
+				'2025-05-02T03:00:00.000Z',
+			];
 			dayjsAdapter.mock.getNextMonths.mockReturnValue(dates);
 			for (let index = 0; index < input.amount; index++) {
 				dayjsAdapter.mock.get
@@ -470,12 +487,12 @@ describe('Usecases > Budget', () => {
 			).toEqual({
 				budgetId: '1',
 				date: dates[input.amount - 1],
-				month: 11,
+				month: 5,
 				year: 2025,
 			});
 			expect(
 				budgetRepository.mock.upsertManyBudgetDates.mock.calls[0][0].length,
-			).toEqual(20);
+			).toEqual(14);
 		});
 	});
 });
