@@ -436,6 +436,41 @@ describe('Usecases > Budget', () => {
 				remainingBudget: -130,
 			});
 			expect(result.budgetByCategory).toHaveLength(3);
+			expect(result.budgetByCategory).toStrictEqual([
+				{
+					active: true,
+					color: 'red',
+					description: 'description',
+					icon: 'bank',
+					id: 1,
+					name: 'Category A',
+					remainingBudget: -150,
+					totalBudget: -50,
+					totalExpenses: 100,
+				},
+				{
+					active: true,
+					color: 'red',
+					description: 'description',
+					icon: 'bank',
+					id: 2,
+					name: 'Category B',
+					remainingBudget: 70,
+					totalBudget: 20,
+					totalExpenses: -50,
+				},
+				{
+					active: true,
+					color: 'red',
+					description: 'description',
+					icon: 'bank',
+					id: 3,
+					name: 'Category C',
+					remainingBudget: -50,
+					totalBudget: 150,
+					totalExpenses: 200,
+				},
+			]);
 		});
 	});
 
