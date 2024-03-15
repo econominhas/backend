@@ -205,3 +205,15 @@ This phase is were we convert the documentation to code and make everything work
 		</tr>
 	</tbody>
 </table>
+
+### Running the API for the first time
+
+1. Copy and paste <code>.env.example</code> and rename the copy to <code>.env</code>
+2. Run <code>yarn start:dev</code>
+3. Run econominhas-api migrations
+   - Step 2.1: List id container Run<code>docker ps</code>
+   - Step 2.2: Run <code>docker exec -it \<container id\> sh</code>
+   - Step 2.3: Run <code>yarn db:migrate</code>
+4. Available at http://localhost:3000/v1
+
+<br/>
