@@ -33,7 +33,6 @@ export class WalletService extends WalletUseCase {
 		return {
 			bankAccountBalance: bankBalance,
 			vaBalance: cardsBalance[CardVariantEnum.VA],
-			vrBalance: cardsBalance[CardVariantEnum.VR],
 			vtBalance: cardsBalance[CardVariantEnum.VT],
 		};
 	}

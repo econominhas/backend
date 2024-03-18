@@ -23,7 +23,6 @@ export interface BalanceOverviewInput {
 export interface BalanceOverviewOutput {
 	bankAccountBalance: number;
 	vaBalance?: number;
-	vrBalance?: number;
 	vtBalance?: number;
 }
 
