@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
-import { JWTAdapterService } from './token.service';
+import { PasetoAdapterService } from './token.service';
 import { UIDAdapterModule } from '../uid/uid.module';
 import { ConfigModule } from '@nestjs/config';
-import * as Jwt from 'jsonwebtoken';
+import { V4 } from 'paseto';
 
 @Module({
 	imports: [UIDAdapterModule, ConfigModule],
 	providers: [
-		JWTAdapterService,
+		PasetoAdapterService,
 		{
-			provide: 'jsonwebtoken',
-			useValue: Jwt,
+			provide: 'paseto',
+			useValue: V4,
 		},
 	],
-	exports: [JWTAdapterService],
+	exports: [PasetoAdapterService],
 })
-export class JWTAdapterModule {}
+export class PasetoAdapterModule {}
