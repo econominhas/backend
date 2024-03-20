@@ -6,3 +6,8 @@ enum:
   - MASTERCARD
   - ELO
   - SODEXO
+  - AMEX
+  - ALELO
+  - PLUXEE
+  - TICKET
+  - VR

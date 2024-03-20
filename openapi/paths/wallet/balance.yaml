@@ -22,8 +22,6 @@ get:
                 $ref: ../../components/fields/amount.yaml
               vaBalance:
                 $ref: ../../components/fields/amount.yaml
-              vrBalance:
-                $ref: ../../components/fields/amount.yaml
               vtBalance:
                 $ref: ../../components/fields/amount.yaml
     '401':

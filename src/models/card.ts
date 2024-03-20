@@ -47,7 +47,6 @@ export interface GetBalanceByUserInput {
 
 export interface GetBalanceByUserOutput {
 	[CardVariantEnum.VA]: number;
-	[CardVariantEnum.VR]: number;
 	[CardVariantEnum.VT]: number;
 }
 

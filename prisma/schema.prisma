@@ -334,7 +334,7 @@ enum CardNetworkEnum {
   ELO
   SODEXO
   AMEX
-  // VA, VR
+  // VA
   ALELO
   PLUXEE
   TICKET
@@ -352,7 +352,6 @@ enum CardVariantEnum {
   ULTRA_PREMIUM // Mastercard=Black Visa=Infinite Elo=Nanquim
   // Benefit
   VA
-  VR
   VT
 
   @@map("card_variant_enum")

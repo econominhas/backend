@@ -101,7 +101,7 @@ export class CardRepositoryService extends CardRepository {
 			WHERE
 				c.account_id = ${accountId}
 			AND
-				cp.variant IN ${[CardVariantEnum.VA, CardVariantEnum.VR, CardVariantEnum.VT]}
+				cp.variant IN ${[CardVariantEnum.VA, CardVariantEnum.VT]}
 			GROUP BY
 				cp.variant
 			ORDER BY
@@ -213,7 +213,7 @@ export class CardRepositoryService extends CardRepository {
 				accountId,
 				cardProvider: {
 					variant: {
-						in: [CardVariantEnum.VA, CardVariantEnum.VR, CardVariantEnum.VT],
+						in: [CardVariantEnum.VA, CardVariantEnum.VT],
 					},
 				},
 			},
@@ -368,7 +368,7 @@ export class CardRepositoryService extends CardRepository {
 				id: cardId,
 				cardProvider: {
 					variant: {
-						in: [CardVariantEnum.VA, CardVariantEnum.VR, CardVariantEnum.VT],
+						in: [CardVariantEnum.VA, CardVariantEnum.VT],
 					},
 				},
 			},
