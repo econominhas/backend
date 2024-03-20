@@ -32,11 +32,11 @@ import { TokenAdapter } from 'adapters/token';
 import { EmailAdapter } from 'adapters/email';
 import { SmsAdapter } from 'adapters/sms';
 import { GoogleAdapterService } from 'adapters/implementations/google/google.service';
-import { JWTAdapterService } from 'adapters/implementations/jwt/token.service';
 import { SESAdapterService } from 'adapters/implementations/ses/ses.service';
 import { SNSSMSAdapterService } from 'adapters/implementations/sns-sms/sns.service';
 import { TopicAdapter } from 'adapters/topic';
 import { SNSAdapterService } from 'adapters/implementations/sns/sns.service';
+import { PasetoAdapterService } from 'adapters/implementations/paseto/token.service';
 
 interface GenTokensInput {
 	accountId: string;
@@ -53,13 +53,11 @@ export class AuthService extends AuthUseCase {
 		private readonly magicLinkCodeRepository: MagicLinkCodeRepository,
 		@Inject(RefreshTokenRepositoryService)
 		private readonly refreshTokenRepository: RefreshTokenRepository,
-
 		@Inject(TermsAndPoliciesService)
 		private readonly termsAndPoliciesService: TermsAndPoliciesUseCase,
-
 		@Inject(GoogleAdapterService)
 		private readonly googleAdapter: GoogleAdapter,
-		@Inject(JWTAdapterService)
+		@Inject(PasetoAdapterService)
 		private readonly tokenAdapter: TokenAdapter,
 		@Inject(SESAdapterService)
 		private readonly emailAdapter: EmailAdapter,
@@ -343,7 +341,7 @@ export class AuthService extends AuthUseCase {
 			promises,
 		)) as [{ refreshToken: string }, boolean];
 
-		const { accessToken, expiresAt } = this.tokenAdapter.genAccess({
+		const { accessToken, expiresAt } = await this.tokenAdapter.genAccess({
 			accountId: accountId,
 			hasAcceptedLatestTerms,
 		});

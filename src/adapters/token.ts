@@ -24,9 +24,11 @@ export interface GenRefreshOutput {
 }
 
 export abstract class TokenAdapter {
-	abstract genAccess(i: GenAccessInput): GenAccessOutput;
+	abstract genAccess(i: GenAccessInput): Promise<GenAccessOutput>;
 
-	abstract validateAccess(i: ValidateAccessInput): TokenPayload | undefined;
+	abstract validateAccess(
+		i: ValidateAccessInput,
+	): Promise<TokenPayload | undefined>;
 
 	abstract genRefresh(): GenRefreshOutput;
 }

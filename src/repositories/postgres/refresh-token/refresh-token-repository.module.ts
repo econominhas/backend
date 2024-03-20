@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PostgresModule } from '..';
 import { RefreshTokenRepositoryService } from './refresh-token-repository.service';
-import { JWTAdapterModule } from 'adapters/implementations/jwt/token.module';
+import { PasetoAdapterModule } from 'adapters/implementations/paseto/token.module';
 
 @Module({
-	imports: [PostgresModule.forFeature(['refreshToken']), JWTAdapterModule],
+	imports: [PostgresModule.forFeature(['refreshToken']), PasetoAdapterModule],
 	providers: [RefreshTokenRepositoryService],
 	exports: [RefreshTokenRepositoryService],
 })
