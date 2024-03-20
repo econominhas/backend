@@ -40,7 +40,7 @@ export class AuthGuard implements CanActivate {
 				context.getHandler(),
 			);
 
-			if (!ignoreTermsCheck && !payload.terms) {
+			if (!ignoreTermsCheck && !(await payload).terms) {
 				return false;
 			}
 		} catch {

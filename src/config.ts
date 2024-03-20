@@ -35,10 +35,10 @@ class EnvVars {
 	GOOGLE_CLIENT_SECRET: string;
 
 	@IsString()
-	JWT_SECRET: string;
+	DATABASE_URL: string;
 
 	@IsString()
-	DATABASE_URL: string;
+	PASETO_SECRET: string;
 }
 
 export type AppConfig = ConfigService<EnvVars>;
