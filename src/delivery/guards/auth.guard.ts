@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
 		}
 
 		try {
-			const payload = this.tokenAdapter.validateAccess(token);
+			const payload = await this.tokenAdapter.validateAccess(token);
 
 			if (!payload) {
 				return false;
@@ -40,7 +40,7 @@ export class AuthGuard implements CanActivate {
 				context.getHandler(),
 			);
 
-			if (!ignoreTermsCheck && !(await payload).terms) {
+			if (!ignoreTermsCheck && !payload.terms) {
 				return false;
 			}
 		} catch {
