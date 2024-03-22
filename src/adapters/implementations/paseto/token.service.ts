@@ -12,6 +12,7 @@ import { SecretAdapter } from 'adapters/secret';
 import { UIDAdapterService } from '../uid/uid.service';
 import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
+import type { KeyObject } from 'crypto';
 
 @Injectable()
 export class PasetoAdapterService extends TokenAdapter {
@@ -26,6 +27,13 @@ export class PasetoAdapterService extends TokenAdapter {
 		protected readonly config: AppConfig,
 	) {
 		super();
+	}
+
+	private getSecret(): KeyObject {
+		const secretString = this.config.get('PASETO_SECRET');
+		const secretBuffer = Buffer.from(secretString, 'base64');
+		const secretKeyObject = this.paseto.bytesToKeyObject(secretBuffer);
+		return secretKeyObject;
 	}
 
 	async genAccess({
@@ -44,12 +52,9 @@ export class PasetoAdapterService extends TokenAdapter {
 
 		const expiresAt = '';
 
-		const secretString = await this.config.get('PASETO_SECRET');
+		const secret = this.getSecret();
 
-		const secretBuffer = Buffer.from(secretString, 'base64');
-		const secretKeyObject = this.paseto.bytesToKeyObject(secretBuffer);
-
-		const accessToken = await this.paseto.sign(payloadRecord, secretKeyObject);
+		const accessToken = await this.paseto.sign(payloadRecord, secret);
 
 		return {
 			accessToken,
@@ -61,9 +66,7 @@ export class PasetoAdapterService extends TokenAdapter {
 		accessToken,
 	}: ValidateAccessInput): Promise<TokenPayload> {
 		try {
-			const secretString = this.config.get('PASETO_SECRET');
-			const secretBuffer = Buffer.from(secretString, 'base64');
-			const secret = this.paseto.bytesToKeyObject(secretBuffer);
+			const secret = this.getSecret();
 
 			const payload = (await this.paseto.verify(
 				accessToken,
