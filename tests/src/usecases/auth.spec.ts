@@ -10,6 +10,7 @@ import { makeTokenAdapterMock } from '../../mocks/adapters/token';
 import { makeEmailAdapterMock } from '../../mocks/adapters/email';
 import { makeSmsAdapterMock } from '../../mocks/adapters/sms';
 import { makeAuthRepositoryMock } from '../../mocks/repositories/postgres/auth';
+import { makeTopicAdapterMock } from '../../mocks/adapters/topic';
 
 describe('Usecases > Auth', () => {
 	let service: AuthService;
@@ -25,6 +26,7 @@ describe('Usecases > Auth', () => {
 	const tokenAdapter = makeTokenAdapterMock();
 	const emailAdapter = makeEmailAdapterMock();
 	const smsAdapter = makeSmsAdapterMock();
+	const topicAdapter = makeTopicAdapterMock();
 
 	beforeAll(async () => {
 		try {
@@ -38,6 +40,7 @@ describe('Usecases > Auth', () => {
 					tokenAdapter.module,
 					emailAdapter.module,
 					smsAdapter.module,
+					topicAdapter.module,
 				],
 			});
 
