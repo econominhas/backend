@@ -34,6 +34,8 @@ import { SmsAdapter } from 'adapters/sms';
 import { GoogleAdapterService } from 'adapters/implementations/google/google.service';
 import { JWTAdapterService } from 'adapters/implementations/jwt/token.service';
 import { SESAdapterService } from 'adapters/implementations/ses/ses.service';
+import { SNSSMSAdapterService } from 'adapters/implementations/sns-sms/sns.service';
+import { TopicAdapter } from 'adapters/topic';
 import { SNSAdapterService } from 'adapters/implementations/sns/sns.service';
 
 interface GenTokensInput {
@@ -61,8 +63,10 @@ export class AuthService extends AuthUseCase {
 		private readonly tokenAdapter: TokenAdapter,
 		@Inject(SESAdapterService)
 		private readonly emailAdapter: EmailAdapter,
-		@Inject(SNSAdapterService)
+		@Inject(SNSSMSAdapterService)
 		private readonly smsAdapter: SmsAdapter,
+		@Inject(SNSAdapterService)
+		private readonly topicAdapter: TopicAdapter,
 	) {
 		super();
 	}
@@ -159,6 +163,13 @@ export class AuthService extends AuthUseCase {
 				},
 			});
 
+			await this.topicAdapter.send({
+				topicName: 'USER_CREATED',
+				body: {
+					accountId: account.id,
+				},
+			});
+
 			isFirstAccess = true;
 		}
 
@@ -180,6 +191,13 @@ export class AuthService extends AuthUseCase {
 		if (!account) {
 			account = await this.authRepository.create({
 				email: i.email,
+			});
+
+			await this.topicAdapter.send({
+				topicName: 'USER_CREATED',
+				body: {
+					accountId: account.id,
+				},
 			});
 
 			isFirstAccess = true;
@@ -213,6 +231,13 @@ export class AuthService extends AuthUseCase {
 				phone: i.phone,
 			});
 
+			await this.topicAdapter.send({
+				topicName: 'USER_CREATED',
+				body: {
+					accountId: account.id,
+				},
+			});
+
 			isFirstAccess = true;
 		}
 
@@ -242,6 +267,15 @@ export class AuthService extends AuthUseCase {
 
 		if (!magicLinkCode) {
 			throw new NotFoundException('Invalid code');
+		}
+
+		if (magicLinkCode.isFirstAccess) {
+			await this.topicAdapter.send({
+				topicName: 'USER_CREATED',
+				body: {
+					accountId: magicLinkCode.accountId,
+				},
+			});
 		}
 
 		return this.genAuthOutput({

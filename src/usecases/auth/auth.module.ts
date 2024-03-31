@@ -8,6 +8,7 @@ import { AuthRepositoryModule } from 'repositories/postgres/auth/auth-repository
 import { GoogleAdapterModule } from 'adapters/implementations/google/google.module';
 import { JWTAdapterModule } from 'adapters/implementations/jwt/token.module';
 import { SESAdapterModule } from 'adapters/implementations/ses/ses.module';
+import { SNSSMSAdapterModule } from 'adapters/implementations/sns-sms/sns.module';
 import { SNSAdapterModule } from 'adapters/implementations/sns/sns.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { SNSAdapterModule } from 'adapters/implementations/sns/sns.module';
 		GoogleAdapterModule,
 		JWTAdapterModule,
 		SESAdapterModule,
+		SNSSMSAdapterModule,
 		SNSAdapterModule,
 
 		TermsAndPoliciesModule,
