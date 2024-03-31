@@ -28,7 +28,7 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 - [dbdocs](https://dbdocs.io/) to host the database docs
 - [openapi](https://www.openapis.org/) to document the API routes
   - We don't document the API using the code to don't bind us to any library or framework, this way we can be more tool agnostic and use the default way to document APIs: OpenAPI
-- [redocly](https://redocly.com/) to host the API docs
+- [redocly](https://www.npmjs.com/package/@redocly/cli) to compile the openapi docs in one file and validate if the syntax is correct
 
 ## Hosted Docs
 
