@@ -32,7 +32,7 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 
 ## Hosted Docs
 
-- [API](https://wise-bulldog-88.redoc.ly/)
+- [API](https://econominhas.readme.io/reference/)
 - [Database](https://dbdocs.io/henriqueleite42/Econominhas?view=relationships)
 
 ## Useful commands
