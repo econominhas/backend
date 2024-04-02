@@ -45,16 +45,11 @@ export class PasetoAdapterService extends TokenAdapter {
 			terms: hasAcceptedLatestTerms,
 		};
 
-		const payloadRecord: Record<string, unknown> = {
-			sub: payload.sub,
-			terms: payload.terms,
-		};
-
 		const expiresAt = '';
 
 		const secret = this.getSecret();
 
-		const accessToken = await this.paseto.sign(payloadRecord, secret);
+		const accessToken = await this.paseto.sign(payload as any, secret);
 
 		return {
 			accessToken,
