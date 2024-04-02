@@ -4,45 +4,49 @@ import {
 	Injectable,
 	InternalServerErrorException,
 	NotFoundException,
-} from '@nestjs/common';
-import { InjectRaw, InjectRepository, RawPostgres, Repository } from '..';
-import type { PaginatedRepository } from 'types/paginated-items';
-import type {
-	CreateInput,
-	GetBalanceByUserInput,
-	GetBalanceByUserOutput,
-	GetBillsToBePaidInput,
-	GetBillsToBePaidOutput,
-	GetByIdInput,
-	GetByIdOutput,
-	GetPostpaidInput,
-	GetPostpaidOutput,
-	GetPrepaidInput,
-	GetPrepaidOutput,
-	GetProviderInput,
-	UpdateBalanceInput,
-	UpsertManyBillsInput,
-} from 'models/card';
-import { CardRepository } from 'models/card';
-import type {
-	Card,
-	CardBill,
-	CardNetworkEnum,
-	CardProvider,
-} from '@prisma/client';
-import { CardTypeEnum, CardVariantEnum, PayAtEnum } from '@prisma/client';
-import { IdAdapter } from 'adapters/id';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
+} from "@nestjs/common";
+import {
+	type Card,
+	type CardBill,
+	type CardNetworkEnum,
+	type CardProvider,
+	CardTypeEnum,
+	CardVariantEnum,
+	PayAtEnum,
+} from "@prisma/client";
+
+import {
+	CardRepository,
+	type CreateInput,
+	type GetBalanceByUserInput,
+	type GetBalanceByUserOutput,
+	type GetBillsToBePaidInput,
+	type GetBillsToBePaidOutput,
+	type GetByIdInput,
+	type GetByIdOutput,
+	type GetPostpaidInput,
+	type GetPostpaidOutput,
+	type GetPrepaidInput,
+	type GetPrepaidOutput,
+	type GetProviderInput,
+	type UpdateBalanceInput,
+	type UpsertManyBillsInput,
+} from "models/card";
+import { IdAdapter } from "adapters/id";
+import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+import { type PaginatedRepository } from "types/paginated-items";
+
+import { InjectRaw, InjectRepository, RawPostgres, Repository } from "..";
 
 @Injectable()
 export class CardRepositoryService extends CardRepository {
 	constructor(
-		@InjectRepository('cardProvider')
-		private readonly cardProviderRepository: Repository<'cardProvider'>,
-		@InjectRepository('card')
-		private readonly cardRepository: Repository<'card'>,
-		@InjectRepository('cardBill')
-		private readonly cardBillRepository: Repository<'cardBill'>,
+		@InjectRepository("cardProvider")
+		private readonly cardProviderRepository: Repository<"cardProvider">,
+		@InjectRepository("card")
+		private readonly cardRepository: Repository<"card">,
+		@InjectRepository("cardBill")
+		private readonly cardBillRepository: Repository<"cardBill">,
 		@InjectRaw()
 		private readonly rawPostgres: RawPostgres,
 
@@ -184,7 +188,7 @@ export class CardRepositoryService extends CardRepository {
 			OFFSET ${offset};
 		`;
 
-		return r.map((data) => ({
+		return r.map(data => ({
 			id: data.id,
 			name: data.name,
 			lastFourDigits: data.last_four_digits,
@@ -207,7 +211,7 @@ export class CardRepositoryService extends CardRepository {
 		accountId,
 		limit,
 		offset,
-	}: GetPrepaidInput): Promise<GetPrepaidOutput[]> {
+	}: GetPrepaidInput): Promise<Array<GetPrepaidOutput>> {
 		const r = await this.cardRepository.findMany({
 			where: {
 				accountId,
@@ -301,7 +305,7 @@ export class CardRepositoryService extends CardRepository {
 			OFFSET ${offset};
 		`;
 
-		return r.map((data) => ({
+		return r.map(data => ({
 			id: data.id,
 			name: data.name,
 			lastFourDigits: data.last_four_digits,
@@ -319,7 +323,7 @@ export class CardRepositoryService extends CardRepository {
 		}));
 	}
 
-	async create({
+	create({
 		accountId,
 		cardProviderId,
 		name,
@@ -329,7 +333,7 @@ export class CardRepositoryService extends CardRepository {
 		balance,
 	}: CreateInput): Promise<Card> {
 		try {
-			const cardAccount = await this.cardRepository.create({
+			return this.cardRepository.create({
 				data: {
 					id: this.idAdapter.genId(),
 					accountId,
@@ -341,16 +345,14 @@ export class CardRepositoryService extends CardRepository {
 					balance,
 				},
 			});
-
-			return cardAccount;
 		} catch (err) {
 			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2003
-			if (err.code === 'P2003') {
+			if (err.code === "P2003") {
 				throw new NotFoundException("Card provider doesn't exists");
 			}
 			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2004
-			if (err.code === 'P2004') {
-				throw new ConflictException('Card already exists');
+			if (err.code === "P2004") {
+				throw new ConflictException("Card already exists");
 			}
 
 			throw new InternalServerErrorException(
@@ -380,7 +382,9 @@ export class CardRepositoryService extends CardRepository {
 		});
 	}
 
-	async upsertManyBills(i: UpsertManyBillsInput[]): Promise<CardBill[]> {
+	async upsertManyBills(
+		i: Array<UpsertManyBillsInput>,
+	): Promise<Array<CardBill>> {
 		const cardId = i[0]?.cardId;
 
 		if (!cardId) {
@@ -392,26 +396,24 @@ export class CardRepositoryService extends CardRepository {
 				where: {
 					cardId,
 					month: {
-						in: i.map((cb) => cb.month),
+						in: i.map(cb => cb.month),
 					},
 				},
 				select: {
 					month: true,
 				},
 			})
-			.then((r) => r.map((cb) => cb.month.toISOString()));
+			.then(r => r.map(cb => cb.month.toISOString()));
 
 		const cardBills = i.filter(
-			(cb) => !alreadyExistentMonths.includes(cb.month.toISOString()),
+			cb => !alreadyExistentMonths.includes(cb.month.toISOString()),
 		);
 
 		await this.cardBillRepository.createMany({
-			data: cardBills.map((cardBill) => {
-				return {
-					...cardBill,
-					id: this.idAdapter.genId(),
-				};
-			}),
+			data: cardBills.map(cardBill => ({
+				...cardBill,
+				id: this.idAdapter.genId(),
+			})),
 			skipDuplicates: true,
 		});
 
@@ -419,11 +421,11 @@ export class CardRepositoryService extends CardRepository {
 			where: {
 				cardId,
 				month: {
-					in: i.map((cb) => cb.month),
+					in: i.map(cb => cb.month),
 				},
 			},
 			orderBy: {
-				month: 'asc',
+				month: "asc",
 			},
 		});
 	}

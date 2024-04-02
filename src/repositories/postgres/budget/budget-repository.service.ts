@@ -1,26 +1,28 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { InjectRepository, Repository } from '..';
-import type {
-	CreateWithItemsInput,
-	GetBudgetDateByIdInput,
-	GetMonthlyByCategoryInput,
-	GetMonthlyByCategoryOutput,
-	UpsertManyBudgetDatesInput,
-} from 'models/budget';
-import { BudgetRepository } from 'models/budget';
-import type { Budget, BudgetDate } from '@prisma/client';
-import { IdAdapter } from 'adapters/id';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
+import { Inject, Injectable } from "@nestjs/common";
+import { type Budget, type BudgetDate } from "@prisma/client";
+
+import {
+	BudgetRepository,
+	type CreateWithItemsInput,
+	type GetBudgetDateByIdInput,
+	type GetMonthlyByCategoryInput,
+	type GetMonthlyByCategoryOutput,
+	type UpsertManyBudgetDatesInput,
+} from "models/budget";
+import { IdAdapter } from "adapters/id";
+import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+import { DateAdapter } from "adapters/date";
+import { DayjsAdapterService } from "adapters/implementations/dayjs/dayjs.service";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class BudgetRepositoryService extends BudgetRepository {
 	constructor(
-		@InjectRepository('budget')
-		private readonly budgetRepository: Repository<'budget'>,
-		@InjectRepository('budgetDate')
-		private readonly budgetDateRepository: Repository<'budgetDate'>,
+		@InjectRepository("budget")
+		private readonly budgetRepository: Repository<"budget">,
+		@InjectRepository("budgetDate")
+		private readonly budgetDateRepository: Repository<"budgetDate">,
 
 		@Inject(DayjsAdapterService)
 		private readonly dateAdapter: DateAdapter,
@@ -99,9 +101,11 @@ export class BudgetRepositoryService extends BudgetRepository {
 			},
 		});
 
-		if (!budget) return;
+		if (!budget) {
+			return;
+		}
 
-		return budget.budgetDates.map((bd) => bd.budgetItems).flat();
+		return budget.budgetDates.map(bd => bd.budgetItems).flat();
 	}
 
 	getBudgetDateById({
@@ -119,8 +123,8 @@ export class BudgetRepositoryService extends BudgetRepository {
 	}
 
 	async upsertManyBudgetDates(
-		i: UpsertManyBudgetDatesInput[],
-	): Promise<BudgetDate[]> {
+		i: Array<UpsertManyBudgetDatesInput>,
+	): Promise<Array<BudgetDate>> {
 		const budgetId = i[0]?.budgetId;
 
 		if (!budgetId) {
@@ -132,26 +136,24 @@ export class BudgetRepositoryService extends BudgetRepository {
 				where: {
 					budgetId,
 					date: {
-						in: i.map((bd) => bd.date),
+						in: i.map(bd => bd.date),
 					},
 				},
 				select: {
 					date: true,
 				},
 			})
-			.then((r) => r.map((bd) => bd.date.toISOString()));
+			.then(r => r.map(bd => bd.date.toISOString()));
 
 		const budgetDates = i.filter(
-			(bd) => !alreadyExistentDates.includes(bd.date.toISOString()),
+			bd => !alreadyExistentDates.includes(bd.date.toISOString()),
 		);
 
 		await this.budgetDateRepository.createMany({
-			data: budgetDates.map((budgetDate) => {
-				return {
-					...budgetDate,
-					id: this.idAdapter.genId(),
-				};
-			}),
+			data: budgetDates.map(budgetDate => ({
+				...budgetDate,
+				id: this.idAdapter.genId(),
+			})),
 			skipDuplicates: true,
 		});
 
@@ -159,11 +161,11 @@ export class BudgetRepositoryService extends BudgetRepository {
 			where: {
 				budgetId,
 				date: {
-					in: i.map((cb) => cb.date),
+					in: i.map(cb => cb.date),
 				},
 			},
 			orderBy: {
-				date: 'asc',
+				date: "asc",
 			},
 		});
 	}

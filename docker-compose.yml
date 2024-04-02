@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   localstack:
@@ -6,19 +6,19 @@ services:
     image: localstack/localstack:1.0.4
     container_name: econominhas-localstack
     ports:
-      - '4566:4566'
+      - "4566:4566"
     environment:
       - SERVICES=s3:4566
       - HOSTNAME=localstack
       - HOSTNAME_EXTERNAL=localstack
       - DEFAULT_REGION=us-east-1
     volumes:
-      - './localstack/buckets.sh:/docker-entrypoint-initaws.d/buckets.sh'
+      - "./localstack/buckets.sh:/docker-entrypoint-initaws.d/buckets.sh"
     networks:
       - econominhas-api_network
 
   postgres:
-    image: 'postgres:latest'
+    image: "postgres:latest"
     container_name: econominhas-postgres
     ports:
       - 5432:5432
@@ -27,17 +27,17 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: database
     volumes:
-      - 'postgres:/var/lib/postgresql/data/'
+      - "postgres:/var/lib/postgresql/data/"
     networks:
       - econominhas-api_network
 
   api:
     build:
-      context: '.'
+      context: "."
       dockerfile: Dockerfile.dev
     image: econominhas-api
     container_name: econominhas-api
-    command: yarn start:docker
+    command: pnpm run start:docker
     depends_on:
       - postgres
       - localstack

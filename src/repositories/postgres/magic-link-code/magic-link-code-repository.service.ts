@@ -1,16 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { UpsertInput, GetInput, GetOutput } from 'models/magic-link-code';
-import { MagicLinkCodeRepository } from 'models/magic-link-code';
-import { InjectRepository, Repository } from '..';
-import type { MagicLinkCode } from '@prisma/client';
-import { SecretAdapter } from 'adapters/secret';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
+import { Inject, Injectable } from "@nestjs/common";
+import { type MagicLinkCode } from "@prisma/client";
+
+import {
+	MagicLinkCodeRepository,
+	type UpsertInput,
+	type GetInput,
+	type GetOutput,
+} from "models/magic-link-code";
+import { SecretAdapter } from "adapters/secret";
+import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class MagicLinkCodeRepositoryService extends MagicLinkCodeRepository {
 	constructor(
-		@InjectRepository('magicLinkCode')
-		private readonly magicLinkCodeRepository: Repository<'magicLinkCode'>,
+		@InjectRepository("magicLinkCode")
+		private readonly magicLinkCodeRepository: Repository<"magicLinkCode">,
 
 		@Inject(UIDAdapterService)
 		private readonly secretAdapter: SecretAdapter,

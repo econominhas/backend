@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common';
-import { SNSAdapterService } from './sns.service';
-import { ConfigModule } from '@nestjs/config';
-import { UIDAdapterModule } from '../uid/uid.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+
+import { UIDAdapterModule } from "../uid/uid.module";
+
+import { SNSAdapterService } from "./sns.service";
 
 @Module({
 	imports: [ConfigModule, UIDAdapterModule],

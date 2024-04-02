@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
-import { PostgresModule } from '..';
-import { TermsAndPoliciesRepositoryService } from './terms-and-policies-repository.service';
+import { Module } from "@nestjs/common";
+
+import { PostgresModule } from "..";
+
+import { TermsAndPoliciesRepositoryService } from "./terms-and-policies-repository.service";
 
 @Module({
 	imports: [
-		PostgresModule.forFeature(['termsAndPolicies', 'termsAndPoliciesAccepted']),
+		PostgresModule.forFeature(["termsAndPolicies", "termsAndPoliciesAccepted"]),
 	],
 	providers: [TermsAndPoliciesRepositoryService],
 	exports: [TermsAndPoliciesRepositoryService],

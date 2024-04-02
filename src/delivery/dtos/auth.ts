@@ -1,13 +1,14 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
-import { IsID, IsSecretCode } from '../validators/internal';
-import { IsPhone, IsURL } from '../validators/miscellaneous';
+import { IsEmail, IsOptional, IsString } from "class-validator";
+
+import { IsID, IsSecretCode } from "../validators/internal";
+import { IsPhone, IsURL } from "../validators/miscellaneous";
 
 export class CreateFromGoogleProviderDto {
 	@IsString()
 	code: string;
 
 	@IsOptional()
-	@IsURL({ acceptLocalhost: process.env['NODE_ENV'] !== 'production' })
+	@IsURL({ acceptLocalhost: process.env.NODE_ENV !== "production" })
 	originUrl?: string;
 }
 

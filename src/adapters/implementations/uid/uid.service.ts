@@ -1,11 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { IdAdapter } from '../../id';
-import type { SecretAdapter } from '../../secret';
+import { Inject, Injectable } from "@nestjs/common";
+
+import { type IdAdapter } from "../../id";
+import { type SecretAdapter } from "../../secret";
 
 @Injectable()
 export class UIDAdapterService implements IdAdapter, SecretAdapter {
 	constructor(
-		@Inject('uid/secure')
+		@Inject("uid/secure")
 		protected uid: (length?: number) => string,
 	) {}
 

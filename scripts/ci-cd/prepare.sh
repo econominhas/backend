@@ -8,7 +8,7 @@ export NVM_DIR="$HOME/.nvm"
 cd /home/ubuntu/econominhas
 
 # Install dependencies
-yarn install --production=true --frozen-lockfile --ignore-scripts
+pnpm i --prod --frozen-lockfile --ignore-scripts
 
 # Generate prisma client
 npx prisma generate --generator client

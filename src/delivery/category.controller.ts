@@ -1,27 +1,29 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
-import { CategoryService } from 'usecases/category/category.service';
-import { PaginatedDto, UserDataDto } from './dtos';
-import { UserData } from './decorators/user-data';
-import { CreateManyDto, GetByUserDto } from './dtos/category';
-import { CategoryUseCase } from 'models/category';
+import { Body, Controller, Get, Inject, Post, Query } from "@nestjs/common";
 
-@Controller('categories')
+import { CategoryService } from "usecases/category/category.service";
+import { CategoryUseCase } from "models/category";
+
+import { PaginatedDto, UserDataDto } from "./dtos";
+import { UserData } from "./decorators/user-data";
+import { CreateManyDto, GetByUserDto } from "./dtos/category";
+
+@Controller("categories")
 export class CategoryController {
 	constructor(
 		@Inject(CategoryService)
 		private readonly categoryService: CategoryUseCase,
 	) {}
 
-	@Get('/default')
-	async getDefault(
+	@Get("/default")
+	getDefault(
 		@Query()
 		pagination: PaginatedDto,
 	) {
 		return this.categoryService.getDefault(pagination);
 	}
 
-	@Get('/')
-	async getByUser(
+	@Get("/")
+	getByUser(
 		@UserData()
 		userData: UserDataDto,
 		@Query()
@@ -33,7 +35,7 @@ export class CategoryController {
 		});
 	}
 
-	@Post('/many')
+	@Post("/many")
 	createMany(
 		@UserData()
 		userData: UserDataDto,

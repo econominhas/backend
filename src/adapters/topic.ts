@@ -1,5 +1,5 @@
 export interface UserCreatedInput {
-	topicName: 'USER_CREATED';
+	topicName: "USER_CREATED";
 	body: {
 		accountId: string;
 	};

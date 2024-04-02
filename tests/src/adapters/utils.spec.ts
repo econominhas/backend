@@ -1,35 +1,31 @@
-import type { INestApplication } from '@nestjs/common';
-import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
-import { UtilsAdapterModule } from 'adapters/implementations/utils/utils.module';
-import { createTestModule, createTestService } from '../../utils';
+import { type INestApplication } from "@nestjs/common";
 
-describe('Adapters > Utils', () => {
+import { UtilsAdapterService } from "../../../src/adapters/implementations/utils/utils.service";
+import { UtilsAdapterModule } from "../../../src/adapters/implementations/utils/utils.module";
+import { createTestModule, createTestService } from "../../utils";
+
+describe("Adapters > Utils", () => {
 	let service: UtilsAdapterService;
 	let module: INestApplication;
 
 	beforeAll(async () => {
-		try {
-			service =
-				await createTestService<UtilsAdapterService>(UtilsAdapterService);
+		service = await createTestService<UtilsAdapterService>(UtilsAdapterService);
 
-			module = await createTestModule(UtilsAdapterModule);
-		} catch (err) {
-			console.error(err);
-		}
+		module = await createTestModule(UtilsAdapterModule);
 	});
 
-	describe('definitions', () => {
-		it('should initialize Service', () => {
+	describe("definitions", () => {
+		it("should initialize Service", () => {
 			expect(service).toBeDefined();
 		});
 
-		it('should initialize Module', async () => {
+		it("should initialize Module", () => {
 			expect(module).toBeDefined();
 		});
 	});
 
-	describe('> pagination', () => {
-		it('should get pagination data (empty params)', async () => {
+	describe("> pagination", () => {
+		it("should get pagination data (empty params)", () => {
 			let result;
 			try {
 				result = service.pagination({});
@@ -48,7 +44,7 @@ describe('Adapters > Utils', () => {
 			});
 		});
 
-		it('should get pagination data (with page)', async () => {
+		it("should get pagination data (with page)", () => {
 			let result;
 			try {
 				result = service.pagination({
@@ -70,7 +66,7 @@ describe('Adapters > Utils', () => {
 			});
 		});
 
-		it('should get pagination data (with limit)', async () => {
+		it("should get pagination data (with limit)", () => {
 			let result;
 			try {
 				result = service.pagination({
@@ -91,7 +87,7 @@ describe('Adapters > Utils', () => {
 			});
 		});
 
-		it('should get pagination data (with page and limit)', async () => {
+		it("should get pagination data (with page and limit)", () => {
 			let result;
 			try {
 				result = service.pagination({
@@ -114,8 +110,8 @@ describe('Adapters > Utils', () => {
 		});
 	});
 
-	describe('> formatMoney', () => {
-		it('should get money formatted (R$0,01)', async () => {
+	describe("> formatMoney", () => {
+		it("should get money formatted (R$0,01)", () => {
 			let result;
 			try {
 				result = service.formatMoney(1);
@@ -123,10 +119,10 @@ describe('Adapters > Utils', () => {
 				result = err;
 			}
 
-			expect(result).toBe('R$ 0,01');
+			expect(result).toBe("R$ 0,01");
 		});
 
-		it('should get money formatted (R$0,10)', async () => {
+		it("should get money formatted (R$0,10)", () => {
 			let result;
 			try {
 				result = service.formatMoney(10);
@@ -134,10 +130,10 @@ describe('Adapters > Utils', () => {
 				result = err;
 			}
 
-			expect(result).toBe('R$ 0,10');
+			expect(result).toBe("R$ 0,10");
 		});
 
-		it('should get money formatted (R$1,00)', async () => {
+		it("should get money formatted (R$1,00)", () => {
 			let result;
 			try {
 				result = service.formatMoney(100);
@@ -145,10 +141,10 @@ describe('Adapters > Utils', () => {
 				result = err;
 			}
 
-			expect(result).toBe('R$ 1,00');
+			expect(result).toBe("R$ 1,00");
 		});
 
-		it('should get money formatted (R$10,00)', async () => {
+		it("should get money formatted (R$10,00)", () => {
 			let result;
 			try {
 				result = service.formatMoney(1000);
@@ -156,10 +152,10 @@ describe('Adapters > Utils', () => {
 				result = err;
 			}
 
-			expect(result).toBe('R$ 10,00');
+			expect(result).toBe("R$ 10,00");
 		});
 
-		it('should get money formatted (R$99,09)', async () => {
+		it("should get money formatted (R$99,09)", () => {
 			let result;
 			try {
 				result = service.formatMoney(9909);
@@ -167,7 +163,7 @@ describe('Adapters > Utils', () => {
 				result = err;
 			}
 
-			expect(result).toBe('R$ 99,09');
+			expect(result).toBe("R$ 99,09");
 		});
 	});
 });

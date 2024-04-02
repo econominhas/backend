@@ -16,6 +16,18 @@
 		"editor.detectIndentation": true,
 		"editor.insertSpaces": true
 	},
+	"[javascript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
 
 	// ======================= Extentions ===========================
 
@@ -63,6 +75,11 @@
 		"[ ]",
 		"[x]"
 	],
+
+	// Make ESLint fix all the things that he can on save (like prettier formatting)
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "always"
+	},
 
 	// Code Spell Checker
 	"cSpell.words": [

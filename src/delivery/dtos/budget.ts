@@ -3,10 +3,11 @@ import {
 	ArrayMinSize,
 	IsArray,
 	ValidateNested,
-} from 'class-validator';
-import { IsAmount, IsDescription, IsID, IsName } from '../validators/internal';
-import { Type } from 'class-transformer';
-import { IsMonth, IsYear } from '../validators/date';
+} from "class-validator";
+import { Type } from "class-transformer";
+
+import { IsAmount, IsDescription, IsID, IsName } from "../validators/internal";
+import { IsMonth, IsYear } from "../validators/date";
 
 class CreateItem {
 	@IsID()

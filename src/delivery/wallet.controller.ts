@@ -1,17 +1,19 @@
-import { Controller, Get, Inject } from '@nestjs/common';
-import { UserDataDto } from './dtos';
-import { UserData } from './decorators/user-data';
-import { WalletService } from 'usecases/wallet/wallet.service';
-import { WalletUseCase } from 'models/wallet';
+import { Controller, Get, Inject } from "@nestjs/common";
 
-@Controller('wallet')
+import { WalletService } from "usecases/wallet/wallet.service";
+import { WalletUseCase } from "models/wallet";
+
+import { UserDataDto } from "./dtos";
+import { UserData } from "./decorators/user-data";
+
+@Controller("wallet")
 export class WalletController {
 	constructor(
 		@Inject(WalletService)
 		private readonly walletService: WalletUseCase,
 	) {}
 
-	@Get('/balance')
+	@Get("/balance")
 	balanceOverview(
 		@UserData()
 		userData: UserDataDto,

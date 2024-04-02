@@ -1,6 +1,6 @@
-import { SNSAdapterService } from 'adapters/implementations/sns/sns.service';
-import type { Mock } from '../types';
-import type { TopicAdapter } from 'adapters/topic';
+import { SNSAdapterService } from "../../../src/adapters/implementations/sns/sns.service";
+import { type Mock } from "../types";
+import { type TopicAdapter } from "../../../src/adapters/topic";
 
 export const makeTopicAdapterMock = () => {
 	const mock: Mock<TopicAdapter> = {

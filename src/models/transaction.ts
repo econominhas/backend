@@ -6,12 +6,13 @@
  *
  */
 
-import type { IconEnum, TransactionTypeEnum } from '@prisma/client';
-import type {
-	Paginated,
-	PaginatedItems,
-	PaginatedRepository,
-} from 'types/paginated-items';
+import { type IconEnum, type TransactionTypeEnum } from "@prisma/client";
+
+import {
+	type Paginated,
+	type PaginatedItems,
+	type PaginatedRepository,
+} from "types/paginated-items";
 
 export interface GetMonthlyAmountByCategoryInput {
 	accountId: string;

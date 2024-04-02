@@ -1,6 +1,8 @@
-import { IsOptional } from 'class-validator';
-import { IsName } from '../validators/internal';
-import { IsTrue } from 'delivery/validators/miscellaneous';
+import { IsOptional } from "class-validator";
+
+import { IsTrue } from "delivery/validators/miscellaneous";
+
+import { IsName } from "../validators/internal";
 
 export class NameDto {
 	@IsName()

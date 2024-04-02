@@ -1,4 +1,4 @@
-import type { Budget, BudgetDate, Category } from '@prisma/client';
+import { type Budget, type BudgetDate, type Category } from "@prisma/client";
 
 /**
  *
@@ -107,7 +107,7 @@ export interface OverviewOutput {
 	totalBudget: number;
 	remainingBudget: number;
 	budgetByCategory: Array<
-		Omit<Category, 'accountId'> & {
+		Omit<Category, "accountId"> & {
 			totalExpenses: number;
 			totalBudget: number;
 			remainingBudget: number;

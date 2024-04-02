@@ -1,15 +1,16 @@
-import type { INestApplication } from '@nestjs/common';
-import { GoogleAdapterModule } from 'adapters/implementations/google/google.module';
-import { GoogleAdapterService } from 'adapters/implementations/google/google.service';
-import { makeAxiosMock } from '../../mocks/libs/axios';
-import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module';
-import { createTestModule, createTestService, removeMillis } from '../../utils';
-import { makeConfigMock } from '../../mocks/config';
+import { type INestApplication } from "@nestjs/common";
 
-const googleTokenUrl = 'https://oauth2.googleapis.com/token';
-const googleUserDataUrl = 'https://openidconnect.googleapis.com/v1/userinfo';
+import { GoogleAdapterModule } from "../../../src/adapters/implementations/google/google.module";
+import { GoogleAdapterService } from "../../../src/adapters/implementations/google/google.service";
+import { DayJsAdapterModule } from "../../../src/adapters/implementations/dayjs/dayjs.module";
+import { makeAxiosMock } from "../../mocks/libs/axios";
+import { createTestModule, createTestService, removeMillis } from "../../utils";
+import { makeConfigMock } from "../../mocks/config";
 
-describe('Adapters > Google', () => {
+const googleTokenUrl = "https://oauth2.googleapis.com/token";
+const googleUserDataUrl = "https://openidconnect.googleapis.com/v1/userinfo";
+
+describe("Adapters > Google", () => {
 	let service: GoogleAdapterService;
 	let module: INestApplication;
 
@@ -17,50 +18,46 @@ describe('Adapters > Google', () => {
 	const axiosMock = makeAxiosMock();
 
 	beforeAll(async () => {
-		try {
-			service = await createTestService<GoogleAdapterService>(
-				GoogleAdapterService,
-				{
-					imports: [DayJsAdapterModule],
-					providers: [
-						{
-							provide: 'axios',
-							useValue: axiosMock,
-						},
-						configMock.module,
-					],
-				},
-			);
+		service = await createTestService<GoogleAdapterService>(
+			GoogleAdapterService,
+			{
+				imports: [DayJsAdapterModule],
+				providers: [
+					{
+						provide: "axios",
+						useValue: axiosMock,
+					},
+					configMock.module,
+				],
+			},
+		);
 
-			module = await createTestModule(GoogleAdapterModule);
-		} catch (err) {
-			console.error(err);
-		}
+		module = await createTestModule(GoogleAdapterModule);
 	});
 
-	describe('definitions', () => {
-		it('should initialize Service', () => {
+	describe("definitions", () => {
+		it("should initialize Service", () => {
 			expect(service).toBeDefined();
 		});
 
-		it('should initialize Module', async () => {
+		it("should initialize Module", () => {
 			expect(module).toBeDefined();
 		});
 	});
 
-	describe('> exchangeCode', () => {
-		it('should return auth data', async () => {
+	describe("> exchangeCode", () => {
+		it("should return auth data", async () => {
 			const body = {
-				code: 'foo',
-				client_id: configMock.mock.get('GOOGLE_CLIENT_ID'),
-				client_secret: configMock.mock.get('GOOGLE_CLIENT_SECRET'),
-				grant_type: 'authorization_code',
+				code: "foo",
+				client_id: configMock.mock.get("GOOGLE_CLIENT_ID")!,
+				client_secret: configMock.mock.get("GOOGLE_CLIENT_SECRET")!,
+				grant_type: "authorization_code",
 			};
 
 			const axiosResponse = {
-				access_token: 'foo',
-				refresh_token: 'bar',
-				scope: 'foo bar fooBar',
+				access_token: "foo",
+				refresh_token: "bar",
+				scope: "foo bar fooBar",
 				expires_in: 120,
 			};
 
@@ -81,7 +78,7 @@ describe('Adapters > Google', () => {
 			expect(result).toMatchObject({
 				accessToken: axiosResponse.access_token,
 				refreshToken: axiosResponse.refresh_token,
-				scopes: axiosResponse.scope.split(' '),
+				scopes: axiosResponse.scope.split(" "),
 			});
 			expect(removeMillis(result.expiresAt)).toBe(
 				removeMillis(new Date(date.getTime() + 60 * 1000)),
@@ -92,26 +89,26 @@ describe('Adapters > Google', () => {
 				new URLSearchParams(body),
 				{
 					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
-						Accept: 'application/json',
+						"Content-Type": "application/x-www-form-urlencoded",
+						"Accept": "application/json",
 					},
 				},
 			);
 		});
 
-		it('should return auth data (with originUrl)', async () => {
+		it("should return auth data (with originUrl)", async () => {
 			const body = {
-				code: 'foo',
-				client_id: configMock.mock.get('GOOGLE_CLIENT_ID'),
-				client_secret: configMock.mock.get('GOOGLE_CLIENT_SECRET'),
-				redirect_uri: 'originUrl',
-				grant_type: 'authorization_code',
+				code: "foo",
+				client_id: configMock.mock.get("GOOGLE_CLIENT_ID")!,
+				client_secret: configMock.mock.get("GOOGLE_CLIENT_SECRET")!,
+				redirect_uri: "originUrl",
+				grant_type: "authorization_code",
 			};
 
 			const axiosResponse = {
-				access_token: 'foo',
-				refresh_token: 'bar',
-				scope: 'foo bar fooBar',
+				access_token: "foo",
+				refresh_token: "bar",
+				scope: "foo bar fooBar",
 				expires_in: 120,
 			};
 
@@ -133,7 +130,7 @@ describe('Adapters > Google', () => {
 			expect(result).toMatchObject({
 				accessToken: axiosResponse.access_token,
 				refreshToken: axiosResponse.refresh_token,
-				scopes: axiosResponse.scope.split(' '),
+				scopes: axiosResponse.scope.split(" "),
 			});
 			expect(removeMillis(result.expiresAt)).toBe(
 				removeMillis(new Date(date.getTime() + 60 * 1000)),
@@ -144,18 +141,18 @@ describe('Adapters > Google', () => {
 				new URLSearchParams(body),
 				{
 					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
-						Accept: 'application/json',
+						"Content-Type": "application/x-www-form-urlencoded",
+						"Accept": "application/json",
 					},
 				},
 			);
 		});
 
-		it('should fail if google rejects request', async () => {
+		it("should fail if google rejects request", async () => {
 			axiosMock.post.mockRejectedValue({
 				response: {
 					data: {
-						error: 'error',
+						error: "error",
 					},
 				},
 			});
@@ -163,8 +160,8 @@ describe('Adapters > Google', () => {
 			let result;
 			try {
 				result = await service.exchangeCode({
-					code: 'code',
-					originUrl: 'originUrl',
+					code: "code",
+					originUrl: "originUrl",
 				});
 			} catch (err) {
 				result = err;
@@ -174,31 +171,31 @@ describe('Adapters > Google', () => {
 			expect(result.message).toBe('{"error":"error"}');
 		});
 
-		it('should fail if google rejects request (undefined response)', async () => {
+		it("should fail if google rejects request (undefined response)", async () => {
 			axiosMock.post.mockRejectedValue({});
 
 			let result;
 			try {
 				result = await service.exchangeCode({
-					code: 'code',
-					originUrl: 'originUrl',
+					code: "code",
+					originUrl: "originUrl",
 				});
 			} catch (err) {
 				result = err;
 			}
 
 			expect(result).toBeInstanceOf(Error);
-			expect(result.message).toBe('{}');
+			expect(result.message).toBe("{}");
 		});
 	});
 
-	describe('> getAuthenticatedUserData', () => {
-		it('should return user data', async () => {
+	describe("> getAuthenticatedUserData", () => {
+		it("should return user data", async () => {
 			const axiosResponse = {
-				sub: 'sub',
-				given_name: 'given_name',
-				email: 'email',
-				email_verified: 'email_verified',
+				sub: "sub",
+				given_name: "given_name",
+				email: "email",
+				email_verified: "email_verified",
 			};
 
 			axiosMock.get.mockResolvedValue({
@@ -207,7 +204,7 @@ describe('Adapters > Google', () => {
 
 			let result;
 			try {
-				result = await service.getAuthenticatedUserData('accessToken');
+				result = await service.getAuthenticatedUserData("accessToken");
 			} catch (err) {
 				result = err;
 			}
@@ -221,23 +218,23 @@ describe('Adapters > Google', () => {
 			expect(axiosMock.get).toHaveBeenCalled();
 			expect(axiosMock.get).toHaveBeenCalledWith(googleUserDataUrl, {
 				headers: {
-					Authorization: `Bearer accessToken`,
+					Authorization: "Bearer accessToken",
 				},
 			});
 		});
 
-		it('should fail if google rejects request', async () => {
+		it("should fail if google rejects request", async () => {
 			axiosMock.get.mockRejectedValue({
 				response: {
 					data: {
-						error: 'error',
+						error: "error",
 					},
 				},
 			});
 
 			let result;
 			try {
-				result = await service.getAuthenticatedUserData('accessToken');
+				result = await service.getAuthenticatedUserData("accessToken");
 			} catch (err) {
 				result = err;
 			}
@@ -246,18 +243,18 @@ describe('Adapters > Google', () => {
 			expect(result.message).toBe('{"error":"error"}');
 		});
 
-		it('should fail if google rejects request (undefined response)', async () => {
+		it("should fail if google rejects request (undefined response)", async () => {
 			axiosMock.get.mockRejectedValue({});
 
 			let result;
 			try {
-				result = await service.getAuthenticatedUserData('accessToken');
+				result = await service.getAuthenticatedUserData("accessToken");
 			} catch (err) {
 				result = err;
 			}
 
 			expect(result).toBeInstanceOf(Error);
-			expect(result.message).toBe('{}');
+			expect(result.message).toBe("{}");
 		});
 	});
 });

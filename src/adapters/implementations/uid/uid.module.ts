@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
-import { UIDAdapterService } from './uid.service';
-import { uid } from 'uid/secure';
+import { Module } from "@nestjs/common";
+import { uid } from "uid/secure";
+
+import { UIDAdapterService } from "./uid.service";
 
 @Module({
 	providers: [
 		UIDAdapterService,
 		{
-			provide: 'uid/secure',
+			provide: "uid/secure",
 			useValue: uid,
 		},
 	],

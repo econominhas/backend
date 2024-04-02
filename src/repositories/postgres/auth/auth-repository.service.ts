@@ -2,33 +2,34 @@ import {
 	Inject,
 	Injectable,
 	InternalServerErrorException,
-} from '@nestjs/common';
-import type {
-	CreateInput,
-	GetManyByProviderInput,
-	GetByEmailInput,
-	GetByProviderInput,
-	GetByPhoneInput,
-	CreateWithGoogle,
-	CreateWithPhone,
-	CreateWithEmail,
-	UpdateProviderInput,
-	GetManyByProviderOutput,
-} from 'models/auth';
-import { InjectRepository, Repository } from '..';
-import type { Account, Prisma } from '@prisma/client';
-import { SignInProviderEnum } from '@prisma/client';
-import { AuthRepository } from 'models/auth';
-import { IdAdapter } from 'adapters/id';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
+} from "@nestjs/common";
+import { SignInProviderEnum, type Account, type Prisma } from "@prisma/client";
+
+import {
+	AuthRepository,
+	type CreateInput,
+	type GetManyByProviderInput,
+	type GetByEmailInput,
+	type GetByProviderInput,
+	type GetByPhoneInput,
+	type CreateWithGoogle,
+	type CreateWithPhone,
+	type CreateWithEmail,
+	type UpdateProviderInput,
+	type GetManyByProviderOutput,
+} from "models/auth";
+import { IdAdapter } from "adapters/id";
+import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class AuthRepositoryService extends AuthRepository {
 	constructor(
-		@InjectRepository('account')
-		private readonly accountRepository: Repository<'account'>,
-		@InjectRepository('signInProvider')
-		private readonly signInProviderRepository: Repository<'signInProvider'>,
+		@InjectRepository("account")
+		private readonly accountRepository: Repository<"account">,
+		@InjectRepository("signInProvider")
+		private readonly signInProviderRepository: Repository<"signInProvider">,
 
 		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
@@ -36,10 +37,10 @@ export class AuthRepositoryService extends AuthRepository {
 		super();
 	}
 
-	async create(i: CreateInput): Promise<Account> {
+	create(i: CreateInput): Promise<Account> {
 		const accountId = this.idAdapter.genId();
 
-		const baseAccount: Prisma.AccountCreateArgs['data'] = {
+		const baseAccount: Prisma.AccountCreateArgs["data"] = {
 			id: accountId,
 			config: {
 				create: {
@@ -92,10 +93,10 @@ export class AuthRepositoryService extends AuthRepository {
 			});
 		}
 
-		throw new InternalServerErrorException('Invalid user creation method');
+		throw new InternalServerErrorException("Invalid user creation method");
 	}
 
-	async getByEmail({ email }: GetByEmailInput): Promise<undefined | Account> {
+	getByEmail({ email }: GetByEmailInput): Promise<Account | undefined> {
 		return this.accountRepository.findUnique({
 			where: {
 				email,
@@ -103,7 +104,7 @@ export class AuthRepositoryService extends AuthRepository {
 		});
 	}
 
-	async getByPhone({ phone }: GetByPhoneInput): Promise<undefined | Account> {
+	getByPhone({ phone }: GetByPhoneInput): Promise<Account | undefined> {
 		return this.accountRepository.findUnique({
 			where: {
 				phone,
@@ -111,10 +112,10 @@ export class AuthRepositoryService extends AuthRepository {
 		});
 	}
 
-	async getByProvider({
+	getByProvider({
 		provider,
 		providerId,
-	}: GetByProviderInput): Promise<undefined | Account> {
+	}: GetByProviderInput): Promise<Account | undefined> {
 		return this.accountRepository.findFirst({
 			where: {
 				signInProviders: {
@@ -127,7 +128,7 @@ export class AuthRepositoryService extends AuthRepository {
 		});
 	}
 
-	async getManyByProvider({
+	getManyByProvider({
 		provider,
 		providerId,
 		email,
@@ -149,7 +150,7 @@ export class AuthRepositoryService extends AuthRepository {
 					email
 						? {
 								email,
-						  }
+							}
 						: undefined,
 				].filter(Boolean),
 			},

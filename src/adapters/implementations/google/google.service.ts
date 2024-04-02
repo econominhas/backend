@@ -1,15 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type {
-	ExchangeCodeInput,
-	ExchangeCodeOutput,
-	GetAuthenticatedUserDataOutput,
-} from '../../google';
-import { GoogleAdapter } from '../../google';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from '../dayjs/dayjs.service';
-import { AppConfig } from 'config';
-import { ConfigService } from '@nestjs/config';
-import { Axios } from 'axios';
+import { Inject, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Axios } from "axios";
+
+import { DateAdapter } from "adapters/date";
+import { AppConfig } from "config";
+
+import {
+	GoogleAdapter,
+	type ExchangeCodeInput,
+	type ExchangeCodeOutput,
+	type GetAuthenticatedUserDataOutput,
+} from "../../google";
+import { DayjsAdapterService } from "../dayjs/dayjs.service";
 
 interface ExchangeCodeAPIOutput {
 	access_token: string;
@@ -29,7 +31,7 @@ interface GetUserDataAPIOutput {
 @Injectable()
 export class GoogleAdapterService extends GoogleAdapter {
 	constructor(
-		@Inject('axios')
+		@Inject("axios")
 		protected readonly axios: Axios,
 
 		@Inject(DayjsAdapterService)
@@ -47,32 +49,32 @@ export class GoogleAdapterService extends GoogleAdapter {
 	}: ExchangeCodeInput): Promise<ExchangeCodeOutput> {
 		// ALERT: The order of the properties is important, don't change it!
 		const body = new URLSearchParams();
-		body.append('code', code);
-		body.append('client_id', this.config.get('GOOGLE_CLIENT_ID'));
-		body.append('client_secret', this.config.get('GOOGLE_CLIENT_SECRET'));
+		body.append("code", code);
+		body.append("client_id", this.config.get("GOOGLE_CLIENT_ID"));
+		body.append("client_secret", this.config.get("GOOGLE_CLIENT_SECRET"));
 		if (originUrl) {
-			body.append('redirect_uri', originUrl);
+			body.append("redirect_uri", originUrl);
 		}
-		body.append('grant_type', 'authorization_code');
+		body.append("grant_type", "authorization_code");
 		// ALERT: The order of the properties is important, don't change it!
 
 		const result = await this.axios
-			.post('https://oauth2.googleapis.com/token', body, {
+			.post("https://oauth2.googleapis.com/token", body, {
 				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-					Accept: 'application/json',
+					"Content-Type": "application/x-www-form-urlencoded",
+					"Accept": "application/json",
 				},
 			})
-			.then((r) => r.data as ExchangeCodeAPIOutput)
-			.catch((err) => {
+			.then(r => r.data as ExchangeCodeAPIOutput)
+			.catch(err => {
 				throw new Error(JSON.stringify(err?.response?.data || {}));
 			});
 
 		return {
 			accessToken: result.access_token,
 			refreshToken: result.refresh_token,
-			scopes: result.scope.split(' '),
-			expiresAt: this.dateAdapter.nowPlus(result.expires_in - 60, 'second'),
+			scopes: result.scope.split(" "),
+			expiresAt: this.dateAdapter.nowPlus(result.expires_in - 60, "second"),
 		};
 	}
 
@@ -80,13 +82,13 @@ export class GoogleAdapterService extends GoogleAdapter {
 		accessToken: string,
 	): Promise<GetAuthenticatedUserDataOutput> {
 		const result = await this.axios
-			.get('https://openidconnect.googleapis.com/v1/userinfo', {
+			.get("https://openidconnect.googleapis.com/v1/userinfo", {
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
 				},
 			})
-			.then((r) => r.data as GetUserDataAPIOutput)
-			.catch((err) => {
+			.then(r => r.data as GetUserDataAPIOutput)
+			.catch(err => {
 				throw new Error(JSON.stringify(err?.response?.data || {}));
 			});
 

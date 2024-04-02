@@ -6,5 +6,5 @@
  * to communicate with the backend
  */
 export enum RtTemplateEnum {
-	'SALARY_DEFAULT' = 'SALARY_DEFAULT',
+	"SALARY_DEFAULT" = "SALARY_DEFAULT",
 }

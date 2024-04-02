@@ -1,6 +1,6 @@
-import type { Mock } from '../types';
-import type { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
+import { DayjsAdapterService } from "../../../src/adapters/implementations/dayjs/dayjs.service";
+import { type Mock } from "../types";
+import { type DateAdapter } from "../../../src/adapters/date";
 
 export const makeDayjsAdapterMock = () => {
 	const mock: Mock<DateAdapter> = {

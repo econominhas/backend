@@ -1,20 +1,24 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { InjectRepository, Repository } from '..';
+import { Inject, Injectable } from "@nestjs/common";
 import {
 	RecurrenceFrequencyEnum,
 	type RecurrentTransaction,
-} from '@prisma/client';
-import type { CreateInput } from 'models/recurrent-transaction';
-import { RecurrentTransactionRepository } from 'models/recurrent-transaction';
-import { IdAdapter } from 'adapters/id';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
-import type { PaginatedRepository } from 'types/paginated-items';
+} from "@prisma/client";
+
+import {
+	RecurrentTransactionRepository,
+	type CreateInput,
+} from "models/recurrent-transaction";
+import { IdAdapter } from "adapters/id";
+import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+import { type PaginatedRepository } from "types/paginated-items";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class RecurrentTransactionRepositoryService extends RecurrentTransactionRepository {
 	constructor(
-		@InjectRepository('recurrentTransaction')
-		private readonly recurrentTransactionRepository: Repository<'recurrentTransaction'>,
+		@InjectRepository("recurrentTransaction")
+		private readonly recurrentTransactionRepository: Repository<"recurrentTransaction">,
 
 		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
@@ -86,7 +90,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 	findMonthly({
 		limit,
 		offset,
-	}: PaginatedRepository): Promise<RecurrentTransaction[]> {
+	}: PaginatedRepository): Promise<Array<RecurrentTransaction>> {
 		return this.recurrentTransactionRepository.findMany({
 			where: {
 				frequency: RecurrenceFrequencyEnum.MONTHLY,
@@ -99,7 +103,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 	findYearly({
 		limit,
 		offset,
-	}: PaginatedRepository): Promise<RecurrentTransaction[]> {
+	}: PaginatedRepository): Promise<Array<RecurrentTransaction>> {
 		return this.recurrentTransactionRepository.findMany({
 			where: {
 				frequency: RecurrenceFrequencyEnum.YEARLY,

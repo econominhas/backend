@@ -1,5 +1,5 @@
-import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
-import type { TokenAdapter } from 'adapters/token';
+import { PasetoAdapterService } from '../../../src/adapters/implementations/paseto/paseto.service';
+import type { TokenAdapter } from '../../../src/adapters/token';
 import type { Mock } from '../types';
 
 export const makeTokenAdapterMock = () => {

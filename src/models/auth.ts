@@ -1,8 +1,8 @@
-import type {
-	Account,
-	SignInProvider,
-	SignInProviderEnum,
-} from '@prisma/client';
+import {
+	type Account,
+	type SignInProvider,
+	type SignInProviderEnum,
+} from "@prisma/client";
 
 /**
  *
@@ -28,7 +28,7 @@ export interface CreateWithGoogle {
 	};
 }
 
-export type CreateInput = CreateWithEmail | CreateWithPhone | CreateWithGoogle;
+export type CreateInput = CreateWithEmail | CreateWithGoogle | CreateWithPhone;
 
 export interface GetByEmailInput {
 	email: string;

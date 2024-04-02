@@ -1,5 +1,6 @@
-import type { EmploymentContractTypeEnum } from '@prisma/client';
-import type { RtTemplateEnum } from 'types/enums/rt-template';
+import { type EmploymentContractTypeEnum } from "@prisma/client";
+
+import { type RtTemplateEnum } from "types/enums/rt-template";
 
 export interface CreateInput {
 	accountId: string;

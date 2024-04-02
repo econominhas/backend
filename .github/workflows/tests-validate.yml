@@ -5,8 +5,8 @@ on:
     branches:
       - master
     paths:
-      - 'src/*'
-      - 'tests/*'
+      - "src/*"
+      - "tests/*"
 
 jobs:
   tests-validate:
@@ -17,13 +17,15 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version-file: .nvmrc
+
+      - uses: pnpm/action-setup@v3
 
       - name: Install dependencies
-        run: yarn install --ignore-scripts
+        run: pnpm install --ignore-scripts
 
       - name: Gen prisma types
-        run: yarn db:prisma
+        run: pnpm run db:prisma
 
       - name: Run tests
-        run: yarn test:cov
+        run: pnpm run test:cov

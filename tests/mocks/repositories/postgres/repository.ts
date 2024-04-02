@@ -1,11 +1,11 @@
 export interface PostgresMock {
-	find: jest.Mock<any, any>;
-	findOne: jest.Mock<any, any>;
-	findAndCount: jest.Mock<any, any>;
-	save: jest.Mock<any, any>;
-	insert: jest.Mock<any, any>;
-	update: jest.Mock<any, any>;
-	delete: jest.Mock<any, any>;
+	find: jest.Mock;
+	findOne: jest.Mock;
+	findAndCount: jest.Mock;
+	save: jest.Mock;
+	insert: jest.Mock;
+	update: jest.Mock;
+	delete: jest.Mock;
 }
 
 export const makePostgresMock = () => ({

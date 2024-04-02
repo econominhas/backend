@@ -1,31 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import type {
-	GetByIdInput,
-	GetByIdWithProvidersInput,
-	GetByIdWithProvidersOutput,
-	GetOnboardingRecordInput,
-	UpdateConfigInput,
-	UpdateOnboardingRecordInput,
-} from 'models/account';
-import { AccountRepository } from 'models/account';
-import { InjectRepository, Repository } from '..';
-import type { Account, Onboarding } from '@prisma/client';
-import { cleanObj } from '@techmmunity/utils';
+import { Injectable } from "@nestjs/common";
+import { type Account, type Onboarding } from "@prisma/client";
+import { cleanObj } from "@techmmunity/utils";
+
+import {
+	AccountRepository,
+	type GetByIdInput,
+	type GetByIdWithProvidersInput,
+	type GetByIdWithProvidersOutput,
+	type GetOnboardingRecordInput,
+	type UpdateConfigInput,
+	type UpdateOnboardingRecordInput,
+} from "models/account";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class AccountRepositoryService extends AccountRepository {
 	constructor(
-		@InjectRepository('account')
-		private readonly accountRepository: Repository<'account'>,
-		@InjectRepository('config')
-		private readonly configRepository: Repository<'config'>,
-		@InjectRepository('onboarding')
-		private readonly onboardingRepository: Repository<'onboarding'>,
+		@InjectRepository("account")
+		private readonly accountRepository: Repository<"account">,
+		@InjectRepository("config")
+		private readonly configRepository: Repository<"config">,
+		@InjectRepository("onboarding")
+		private readonly onboardingRepository: Repository<"onboarding">,
 	) {
 		super();
 	}
 
-	async getById({ id }: GetByIdInput): Promise<undefined | Account> {
+	getById({ id }: GetByIdInput): Promise<Account | undefined> {
 		return this.accountRepository.findUnique({
 			where: {
 				id,
@@ -33,10 +35,10 @@ export class AccountRepositoryService extends AccountRepository {
 		});
 	}
 
-	async getByIdWithProviders({
+	getByIdWithProviders({
 		id,
 	}: GetByIdWithProvidersInput): Promise<
-		undefined | GetByIdWithProvidersOutput
+		GetByIdWithProvidersOutput | undefined
 	> {
 		return this.accountRepository.findUnique({
 			include: {
@@ -64,9 +66,9 @@ export class AccountRepositoryService extends AccountRepository {
 		});
 	}
 
-	async getOnboarding({
+	getOnboarding({
 		accountId,
-	}: GetOnboardingRecordInput): Promise<void | Onboarding> {
+	}: GetOnboardingRecordInput): Promise<Onboarding | void> {
 		return this.onboardingRepository.findUnique({
 			where: {
 				id: accountId,
@@ -78,7 +80,7 @@ export class AccountRepositoryService extends AccountRepository {
 		accountId,
 		...data
 	}: UpdateOnboardingRecordInput): Promise<void> {
-		this.onboardingRepository.update({
+		await this.onboardingRepository.update({
 			where: {
 				id: accountId,
 			},

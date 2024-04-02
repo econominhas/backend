@@ -1,8 +1,11 @@
-import type { ExecutionContext } from '@nestjs/common';
-import { createParamDecorator } from '@nestjs/common';
-import type { Request } from 'express';
-import { decode } from 'paseto';
-import type { TokenPayload, UserData as UserDataType } from 'adapters/token';
+import { createParamDecorator, type ExecutionContext } from "@nestjs/common";
+import { type Request } from "express";
+import { decode } from "paseto";
+
+import {
+	type TokenPayload,
+	type UserData as UserDataType,
+} from "adapters/token";
 
 export const validate = (
 	_data: undefined,
@@ -11,7 +14,7 @@ export const validate = (
 	try {
 		const request = ctx.switchToHttp().getRequest<Request>();
 
-		const [, token] = request.headers.authorization?.split(' ') ?? [];
+		const [, token] = request.headers.authorization?.split(" ") ?? [];
 
 		const payload = decode<TokenPayload>(token)?.payload;
 

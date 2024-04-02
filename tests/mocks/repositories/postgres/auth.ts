@@ -1,7 +1,8 @@
-import { SignInProviderEnum } from '@prisma/client';
-import type { Mock } from '../../types';
-import type { AuthRepository } from 'models/auth';
-import { AuthRepositoryService } from 'repositories/postgres/auth/auth-repository.service';
+import { SignInProviderEnum } from "@prisma/client";
+
+import { AuthRepositoryService } from "../../../../src/repositories/postgres/auth/auth-repository.service";
+import { type AuthRepository } from "../../../../src/models/auth";
+import { type Mock } from "../../types";
 
 export const makeAuthRepositoryMock = () => {
 	const mock: Mock<AuthRepository> = {
@@ -23,24 +24,24 @@ export const makeAuthRepositoryMock = () => {
 			empty: [],
 			email: [
 				{
-					id: 'accountId',
-					email: 'foo@bar.com',
+					id: "accountId",
+					email: "foo@bar.com",
 					createdAt: new Date(),
 					signInProviders: [],
 				},
 			],
 			google: [
 				{
-					id: 'accountId',
-					email: 'foo@bar.com',
+					id: "accountId",
+					email: "foo@bar.com",
 					createdAt: new Date(),
 					signInProviders: [
 						{
-							accountId: 'accountId',
+							accountId: "accountId",
 							provider: SignInProviderEnum.GOOGLE,
-							providerId: 'providerId',
-							accessToken: 'accessToken',
-							refreshToken: 'refreshToken',
+							providerId: "providerId",
+							accessToken: "accessToken",
+							refreshToken: "refreshToken",
 							expiresAt: new Date(),
 						},
 					],
@@ -48,16 +49,16 @@ export const makeAuthRepositoryMock = () => {
 			],
 			sameEmailDifferentGoogle: [
 				{
-					id: 'accountId',
-					email: 'foo@bar.com',
+					id: "accountId",
+					email: "foo@bar.com",
 					createdAt: new Date(),
 					signInProviders: [
 						{
-							accountId: 'accountId',
+							accountId: "accountId",
 							provider: SignInProviderEnum.GOOGLE,
-							providerId: 'differentProviderId',
-							accessToken: 'accessToken',
-							refreshToken: 'refreshToken',
+							providerId: "differentProviderId",
+							accessToken: "accessToken",
+							refreshToken: "refreshToken",
 							expiresAt: new Date(),
 						},
 					],
@@ -66,8 +67,8 @@ export const makeAuthRepositoryMock = () => {
 		},
 		create: {
 			successGoogle: {
-				id: 'accountId',
-				email: 'foo@bar.com',
+				id: "accountId",
+				email: "foo@bar.com",
 				createdAt: new Date(),
 			},
 		},

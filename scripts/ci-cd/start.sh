@@ -8,4 +8,4 @@ export NVM_DIR="$HOME/.nvm"
 cd /home/ubuntu/econominhas
 
 # Start new build
-pm2 start "yarn start:prod" --name "ECONOMINHAS"
+pm2 start "pnpm run start:prod" --name "ECONOMINHAS"

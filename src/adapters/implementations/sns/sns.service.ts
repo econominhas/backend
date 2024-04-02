@@ -1,15 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
-import { AppConfig } from 'config';
-import { ConfigService } from '@nestjs/config';
-import type { SendInput, SendSecureInput } from 'adapters/topic';
-import { TopicAdapter } from 'adapters/topic';
-import { UIDAdapterService } from '../uid/uid.service';
-import { IdAdapter } from 'adapters/id';
+import { Inject, Injectable } from "@nestjs/common";
+import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
+import { ConfigService } from "@nestjs/config";
+
+import { AppConfig } from "config";
+import {
+	type SendInput,
+	type SendSecureInput,
+	TopicAdapter,
+} from "adapters/topic";
+import { IdAdapter } from "adapters/id";
+
+import { UIDAdapterService } from "../uid/uid.service";
 
 @Injectable()
 export class SNSAdapterService extends TopicAdapter {
-	private client: SNSClient;
+	private readonly client: SNSClient;
 
 	constructor(
 		@Inject(ConfigService)
@@ -21,11 +26,11 @@ export class SNSAdapterService extends TopicAdapter {
 		super();
 
 		this.client = new SNSClient({
-			endpoint: this.config.get('AWS_ENDPOINT'),
-			region: this.config.get('AWS_REGION'),
+			endpoint: this.config.get("AWS_ENDPOINT"),
+			region: this.config.get("AWS_REGION"),
 			credentials: {
-				secretAccessKey: this.config.get('AWS_SECRET_ACCESS_KEY'),
-				accessKeyId: this.config.get('AWS_ACCESS_KEY_ID'),
+				secretAccessKey: this.config.get("AWS_SECRET_ACCESS_KEY"),
+				accessKeyId: this.config.get("AWS_ACCESS_KEY_ID"),
 			},
 		});
 	}

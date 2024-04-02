@@ -3,32 +3,34 @@ import {
 	InternalServerErrorException,
 	Inject,
 	Injectable,
-} from '@nestjs/common';
-import { IdAdapter } from 'adapters/id';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
-import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
-import { UtilsAdapter } from 'adapters/utils';
-import { BankRepository, BankUseCase } from 'models/bank';
-import { BudgetRepository, BudgetUseCase } from 'models/budget';
-import { CardRepository, CardUseCase } from 'models/card';
-import { CategoryRepository } from 'models/category';
-import type {
-	CreditInput,
-	GetByBudgetOutput,
-	GetListInput,
-	InOutInput,
-	TransferInput,
-} from 'models/transaction';
-import { TransactionRepository, TransactionUseCase } from 'models/transaction';
-import { BankRepositoryService } from 'repositories/postgres/bank/bank-repository.service';
-import { BudgetRepositoryService } from 'repositories/postgres/budget/budget-repository.service';
-import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
-import { CategoryRepositoryService } from 'repositories/postgres/category/category-repository.service';
-import { TransactionRepositoryService } from 'repositories/postgres/transaction/transaction-repository.service';
-import type { PaginatedItems } from 'types/paginated-items';
-import { BankService } from 'usecases/bank/bank.service';
-import { BudgetService } from 'usecases/budget/budget.service';
-import { CardService } from 'usecases/card/card.service';
+} from "@nestjs/common";
+
+import { IdAdapter } from "adapters/id";
+import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+import { UtilsAdapterService } from "adapters/implementations/utils/utils.service";
+import { UtilsAdapter } from "adapters/utils";
+import { BankRepository, BankUseCase } from "models/bank";
+import { BudgetRepository, BudgetUseCase } from "models/budget";
+import { CardRepository, CardUseCase } from "models/card";
+import { CategoryRepository } from "models/category";
+import {
+	TransactionRepository,
+	TransactionUseCase,
+	type CreditInput,
+	type GetByBudgetOutput,
+	type GetListInput,
+	type InOutInput,
+	type TransferInput,
+} from "models/transaction";
+import { BankRepositoryService } from "repositories/postgres/bank/bank-repository.service";
+import { BudgetRepositoryService } from "repositories/postgres/budget/budget-repository.service";
+import { CardRepositoryService } from "repositories/postgres/card/card-repository.service";
+import { CategoryRepositoryService } from "repositories/postgres/category/category-repository.service";
+import { TransactionRepositoryService } from "repositories/postgres/transaction/transaction-repository.service";
+import { BankService } from "usecases/bank/bank.service";
+import { BudgetService } from "usecases/budget/budget.service";
+import { CardService } from "usecases/card/card.service";
+import { type PaginatedItems } from "types/paginated-items";
 
 @Injectable()
 export class TransactionService extends TransactionUseCase {
@@ -109,21 +111,19 @@ export class TransactionService extends TransactionUseCase {
 			}),
 		]);
 
-		const bankAccountFrom = bankAccounts.find(
-			(b) => b.id === bankAccountFromId,
-		);
-		const bankAccountTo = bankAccounts.find((b) => b.id === bankAccountToId);
+		const bankAccountFrom = bankAccounts.find(b => b.id === bankAccountFromId);
+		const bankAccountTo = bankAccounts.find(b => b.id === bankAccountToId);
 
 		if (!bankAccountFrom) {
-			throw new BadRequestException('Invalid bankAccountFrom');
+			throw new BadRequestException("Invalid bankAccountFrom");
 		}
 
 		if (!bankAccountTo) {
-			throw new BadRequestException('Invalid bankAccountTo');
+			throw new BadRequestException("Invalid bankAccountTo");
 		}
 
 		if (!budgetDate) {
-			throw new BadRequestException('Invalid budgetDate');
+			throw new BadRequestException("Invalid budgetDate");
 		}
 
 		/**
@@ -185,15 +185,15 @@ export class TransactionService extends TransactionUseCase {
 		]);
 
 		if (!bankAccount) {
-			throw new BadRequestException('Invalid bankAccount');
+			throw new BadRequestException("Invalid bankAccount");
 		}
 
 		if (!category) {
-			throw new BadRequestException('Invalid category');
+			throw new BadRequestException("Invalid category");
 		}
 
 		if (!budgetDate) {
-			throw new BadRequestException('Invalid budgetDate');
+			throw new BadRequestException("Invalid budgetDate");
 		}
 
 		/**
@@ -256,21 +256,23 @@ export class TransactionService extends TransactionUseCase {
 		]);
 
 		if (!card) {
-			throw new BadRequestException('Invalid card');
+			throw new BadRequestException("Invalid card");
 		}
 
 		if (!category) {
-			throw new BadRequestException('Invalid category');
+			throw new BadRequestException("Invalid category");
 		}
 
 		if (!budgetDate) {
-			throw new BadRequestException('Invalid budgetDate');
+			throw new BadRequestException("Invalid budgetDate");
 		}
 
-		// Create credit card bills and budgetDates if they
-		// don't exist
-		// OBS: this should be done elsewhere, but since we
-		// are poor and a very small team, we do it here
+		/*
+		 * Create credit card bills and budgetDates if they
+		 * don't exist
+		 * OBS: this should be done elsewhere, but since we
+		 * are poor and a very small team, we do it here
+		 */
 		const [cardBills, budgetDates] = await Promise.all([
 			this.cardService.createNextCardBills({
 				cardId,
@@ -284,11 +286,11 @@ export class TransactionService extends TransactionUseCase {
 		]);
 
 		if (cardBills.length !== installments) {
-			throw new InternalServerErrorException('Fail to create card bills');
+			throw new InternalServerErrorException("Fail to create card bills");
 		}
 
 		if (budgetDates.length !== installments) {
-			throw new InternalServerErrorException('Fail to create budgets');
+			throw new InternalServerErrorException("Fail to create budgets");
 		}
 
 		// Create multiple transactions with their installment

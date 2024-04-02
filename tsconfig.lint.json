@@ -3,5 +3,6 @@
 	"compilerOptions": {
 		"outDir": "./dist-lint"
 	},
-	"exclude": ["node_modules", "test", "dist", "dist-lint", "**/*spec.ts"]
+	"include": ["src", "tests", ".eslintrc.js"],
+	"exclude": ["node_modules", "dist", "dist-lint"]
 }

@@ -1,13 +1,14 @@
-import type {
-	BankAccount,
-	BankProvider,
-	TransactionTypeEnum,
-} from '@prisma/client';
-import type {
-	Paginated,
-	PaginatedItems,
-	PaginatedRepository,
-} from 'types/paginated-items';
+import {
+	type BankAccount,
+	type BankProvider,
+	type TransactionTypeEnum,
+} from "@prisma/client";
+
+import {
+	type Paginated,
+	type PaginatedItems,
+	type PaginatedRepository,
+} from "types/paginated-items";
 
 /**
  *

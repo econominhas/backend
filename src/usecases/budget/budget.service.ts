@@ -1,23 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type {
-	CreateBasicInput,
-	CreateInput,
-	CreateNextBudgetDatesInput,
-	GetOrCreateManyInput,
-	OverviewInput,
-	OverviewOutput,
-} from 'models/budget';
-import { BudgetRepository, BudgetUseCase } from 'models/budget';
-import { BudgetRepositoryService } from 'repositories/postgres/budget/budget-repository.service';
-import { AccountService } from '../account/account.service';
-import type { Budget, BudgetDate } from '@prisma/client';
-import { AccountUseCase } from 'models/account';
-import { TransactionRepository } from 'models/transaction';
-import { TransactionRepositoryService } from 'repositories/postgres/transaction/transaction-repository.service';
-import { CategoryRepository } from 'models/category';
-import { CategoryRepositoryService } from 'repositories/postgres/category/category-repository.service';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
+import { Inject, Injectable } from "@nestjs/common";
+import { type Budget, type BudgetDate } from "@prisma/client";
+
+import {
+	BudgetRepository,
+	BudgetUseCase,
+	type CreateBasicInput,
+	type CreateInput,
+	type CreateNextBudgetDatesInput,
+	type GetOrCreateManyInput,
+	type OverviewInput,
+	type OverviewOutput,
+} from "models/budget";
+import { BudgetRepositoryService } from "repositories/postgres/budget/budget-repository.service";
+import { AccountUseCase } from "models/account";
+import { TransactionRepository } from "models/transaction";
+import { TransactionRepositoryService } from "repositories/postgres/transaction/transaction-repository.service";
+import { CategoryRepository } from "models/category";
+import { CategoryRepositoryService } from "repositories/postgres/category/category-repository.service";
+import { DateAdapter } from "adapters/date";
+import { DayjsAdapterService } from "adapters/implementations/dayjs/dayjs.service";
+
+import { AccountService } from "../account/account.service";
 
 @Injectable()
 export class BudgetService extends BudgetUseCase {
@@ -64,16 +67,16 @@ export class BudgetService extends BudgetUseCase {
 		return budget;
 	}
 
-	async getOrCreateMany({
+	getOrCreateMany({
 		budgetId,
 		dates,
-	}: GetOrCreateManyInput): Promise<BudgetDate[]> {
+	}: GetOrCreateManyInput): Promise<Array<BudgetDate>> {
 		return this.budgetRepository.upsertManyBudgetDates(
-			dates.map((date) => ({
+			dates.map(date => ({
 				budgetId,
-				month: this.dateAdapter.get(date, 'month'),
-				year: this.dateAdapter.get(date, 'year'),
-				date: this.dateAdapter.startOf(date, 'month'),
+				month: this.dateAdapter.get(date, "month"),
+				year: this.dateAdapter.get(date, "year"),
+				date: this.dateAdapter.startOf(date, "month"),
 			})),
 		);
 	}
@@ -143,9 +146,11 @@ export class BudgetService extends BudgetUseCase {
 			totalExpenses,
 			remainingBudget: totalBudget - totalExpenses,
 			budgetByCategory: categories
-				// Only return categories that are active and
-				// inactive categories that have some kind of expense
-				.filter((c) => c.active || expensesByCategoryId[c.id] > 0)
+				/*
+				 * Only return categories that are active and
+				 * inactive categories that have some kind of expense
+				 */
+				.filter(c => c.active || expensesByCategoryId[c.id] > 0)
 				.map(({ accountId: _, ...c }) => ({
 					...c,
 					totalExpenses: expensesByCategoryId[c.id],
@@ -156,17 +161,17 @@ export class BudgetService extends BudgetUseCase {
 		};
 	}
 
-	async createNextBudgetDates({
+	createNextBudgetDates({
 		startFrom,
 		amount,
-	}: CreateNextBudgetDatesInput): Promise<BudgetDate[]> {
+	}: CreateNextBudgetDatesInput): Promise<Array<BudgetDate>> {
 		const dates = this.dateAdapter.getNextMonths(startFrom.date, amount);
 
 		return this.budgetRepository.upsertManyBudgetDates(
-			dates.map((date) => ({
+			dates.map(date => ({
 				budgetId: startFrom.budgetId,
-				month: this.dateAdapter.get(date, 'month'),
-				year: this.dateAdapter.get(date, 'year'),
+				month: this.dateAdapter.get(date, "month"),
+				year: this.dateAdapter.get(date, "year"),
 				date,
 			})),
 		);

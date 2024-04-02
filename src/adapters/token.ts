@@ -29,9 +29,10 @@ export abstract class TokenAdapter {
 
 	abstract genAccess(i: GenAccessInput): Promise<GenAccessOutput>;
 
-	abstract validateAccess(
-		i: ValidateAccessInput,
-	): Promise<TokenPayload | undefined>;
+	/**
+	 * Throw error if fail to validate
+	 */
+	abstract validateAccess(i: ValidateAccessInput): Promise<TokenPayload>;
 
 	abstract genRefresh(): GenRefreshOutput;
 }

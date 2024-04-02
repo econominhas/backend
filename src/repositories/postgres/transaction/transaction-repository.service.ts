@@ -1,24 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { InjectRepository, Repository } from '..';
-import type {
-	CreateCreditInput,
-	CreateInOutInput,
-	CreateTransferInput,
-	GetByBudgetInput,
-	GetByBudgetOutput,
-	GetMonthlyAmountByCategoryInput,
-	GetMonthlyAmountByCategoryOutput,
-} from 'models/transaction';
-import { TransactionRepository } from 'models/transaction';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
-import { IdAdapter } from 'adapters/id';
-import { TransactionTypeEnum } from '@prisma/client';
+import { Inject, Injectable } from "@nestjs/common";
+import { TransactionTypeEnum } from "@prisma/client";
+
+import {
+	TransactionRepository,
+	type CreateCreditInput,
+	type CreateInOutInput,
+	type CreateTransferInput,
+	type GetByBudgetInput,
+	type GetByBudgetOutput,
+	type GetMonthlyAmountByCategoryInput,
+	type GetMonthlyAmountByCategoryOutput,
+} from "models/transaction";
+import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+import { IdAdapter } from "adapters/id";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class TransactionRepositoryService extends TransactionRepository {
 	constructor(
-		@InjectRepository('transaction')
-		private readonly transactionRepository: Repository<'transaction'>,
+		@InjectRepository("transaction")
+		private readonly transactionRepository: Repository<"transaction">,
 
 		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
@@ -66,7 +68,7 @@ export class TransactionRepositoryService extends TransactionRepository {
 		> = {};
 
 		for (const transaction of transactions) {
-			const { categoryId } = transaction.budgetDate.budgetItems[0];
+			const [{ categoryId }] = transaction.budgetDate.budgetItems;
 			const { amount } = transaction;
 
 			if (expensesPerCategory[categoryId]) {
@@ -89,7 +91,7 @@ export class TransactionRepositoryService extends TransactionRepository {
 		year,
 		limit,
 		offset,
-	}: GetByBudgetInput): Promise<GetByBudgetOutput[]> {
+	}: GetByBudgetInput): Promise<Array<GetByBudgetOutput>> {
 		return this.transactionRepository.findMany({
 			select: {
 				id: true,
@@ -118,7 +120,7 @@ export class TransactionRepositoryService extends TransactionRepository {
 				},
 			},
 			orderBy: {
-				createdAt: 'desc',
+				createdAt: "desc",
 			},
 			skip: offset,
 			take: limit,
@@ -219,8 +221,8 @@ export class TransactionRepositoryService extends TransactionRepository {
 	}
 
 	async createCredit({ common, unique }: CreateCreditInput): Promise<void> {
-		this.transactionRepository.createMany({
-			data: unique.map((u) => ({
+		await this.transactionRepository.createMany({
+			data: unique.map(u => ({
 				...common,
 				...u,
 				installment: {

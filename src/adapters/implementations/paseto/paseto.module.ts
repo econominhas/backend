@@ -1,16 +1,18 @@
-import { Module } from '@nestjs/common';
-import { PasetoAdapterService } from './paseto.service';
-import { UIDAdapterModule } from '../uid/uid.module';
-import { ConfigModule } from '@nestjs/config';
-import { V4 } from 'paseto';
-import { DayJsAdapterModule } from '../dayjs/dayjs.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { V4 } from "paseto";
+
+import { UIDAdapterModule } from "../uid/uid.module";
+import { DayJsAdapterModule } from "../dayjs/dayjs.module";
+
+import { PasetoAdapterService } from "./paseto.service";
 
 @Module({
 	imports: [UIDAdapterModule, DayJsAdapterModule, ConfigModule],
 	providers: [
 		PasetoAdapterService,
 		{
-			provide: 'paseto',
+			provide: "paseto",
 			useValue: V4,
 		},
 	],

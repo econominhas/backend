@@ -1,7 +1,8 @@
-import { CategoryRepository } from 'models/category';
-import type { Mock } from '../../types';
-import { CategoryRepositoryService } from 'repositories/postgres/category/category-repository.service';
-import { IconEnum } from '@prisma/client';
+import { IconEnum } from "@prisma/client";
+
+import { CategoryRepositoryService } from "../../../../src/repositories/postgres/category/category-repository.service";
+import { type Mock } from "../../types";
+import { type CategoryRepository } from "../../../../src/models/category";
 
 export const makeCategoryRepositoryMock = () => {
 	const mock: Mock<CategoryRepository> = {
@@ -16,29 +17,29 @@ export const makeCategoryRepositoryMock = () => {
 			activeCategory: [
 				{
 					id: 1,
-					accountId: 'accountId1',
-					name: 'Category A',
-					description: 'description',
+					accountId: "accountId1",
+					name: "Category A",
+					description: "description",
 					icon: IconEnum.bank,
-					color: 'red',
+					color: "red",
 					active: true,
 				},
 				{
 					id: 2,
-					accountId: 'accountId2',
-					name: 'Category B',
-					description: 'description',
+					accountId: "accountId2",
+					name: "Category B",
+					description: "description",
 					icon: IconEnum.bank,
-					color: 'red',
+					color: "red",
 					active: true,
 				},
 				{
 					id: 3,
-					accountId: 'accountId3',
-					name: 'Category C',
-					description: 'description',
+					accountId: "accountId3",
+					name: "Category C",
+					description: "description",
 					icon: IconEnum.bank,
-					color: 'red',
+					color: "red",
 					active: true,
 				},
 			],
@@ -46,29 +47,29 @@ export const makeCategoryRepositoryMock = () => {
 			inactiveCategory: [
 				{
 					id: 1,
-					accountId: 'accountId1',
-					name: 'Category A',
-					description: 'description',
+					accountId: "accountId1",
+					name: "Category A",
+					description: "description",
 					icon: IconEnum.bank,
-					color: 'red',
+					color: "red",
 					active: false,
 				},
 				{
 					id: 2,
-					accountId: 'accountId2',
-					name: 'Category B',
-					description: 'description',
+					accountId: "accountId2",
+					name: "Category B",
+					description: "description",
 					icon: IconEnum.bank,
-					color: 'red',
+					color: "red",
 					active: false,
 				},
 				{
 					id: 3,
-					accountId: 'accountId3',
-					name: 'Category C',
-					description: 'description',
+					accountId: "accountId3",
+					name: "Category C",
+					description: "description",
 					icon: IconEnum.bank,
-					color: 'red',
+					color: "red",
 					active: false,
 				},
 			],

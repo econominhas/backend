@@ -1,15 +1,16 @@
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-import { Inject, Injectable } from '@nestjs/common';
-import type { SendInput } from '../../email';
-import { EMAIL_TEMPLATES, EmailAdapter } from '../../email';
-import { AppConfig } from 'config';
-import { ConfigService } from '@nestjs/config';
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { Inject, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+
+import { AppConfig } from "config";
+
+import { EMAIL_TEMPLATES, EmailAdapter, type SendInput } from "../../email";
 
 @Injectable()
 export class SESAdapterService extends EmailAdapter {
-	private defaultPlaceholders: Record<string, string>;
+	private readonly defaultPlaceholders: Record<string, string>;
 
-	private client: SESClient;
+	private readonly client: SESClient;
 
 	constructor(
 		@Inject(ConfigService)
@@ -18,11 +19,11 @@ export class SESAdapterService extends EmailAdapter {
 		super();
 
 		this.client = new SESClient({
-			endpoint: this.config.get('AWS_ENDPOINT'),
-			region: this.config.get('AWS_REGION'),
+			endpoint: this.config.get("AWS_ENDPOINT"),
+			region: this.config.get("AWS_REGION"),
 			credentials: {
-				secretAccessKey: this.config.get('AWS_SECRET_ACCESS_KEY'),
-				accessKeyId: this.config.get('AWS_ACCESS_KEY_ID'),
+				secretAccessKey: this.config.get("AWS_SECRET_ACCESS_KEY"),
+				accessKeyId: this.config.get("AWS_ACCESS_KEY_ID"),
 			},
 		});
 
@@ -52,12 +53,12 @@ export class SESAdapterService extends EmailAdapter {
 				Message: {
 					Subject: {
 						Data: this.applyPlaceholders(title, placeholders),
-						Charset: 'UTF-8',
+						Charset: "UTF-8",
 					},
 					Body: {
 						Html: {
 							Data: this.applyPlaceholders(body, placeholders),
-							Charset: 'UTF-8',
+							Charset: "UTF-8",
 						},
 					},
 				},
@@ -77,7 +78,7 @@ export class SESAdapterService extends EmailAdapter {
 			const value = placeholders[key];
 
 			formattedText = formattedText.replace(
-				new RegExp(`{{${key}}}`, 'g'),
+				new RegExp(`{{${key}}}`, "g"),
 				value,
 			);
 		}

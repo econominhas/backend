@@ -1,12 +1,13 @@
+import { IsDate, IsIn, IsPositive } from "class-validator";
+import { TransactionTypeEnum } from "@prisma/client";
+
 import {
 	IsAmount,
 	IsDescription,
 	IsID,
 	IsTransactionName,
-} from '../validators/internal';
-import { IsMonth, IsYear } from '../validators/date';
-import { IsDate, IsIn, IsPositive } from 'class-validator';
-import { TransactionTypeEnum } from '@prisma/client';
+} from "../validators/internal";
+import { IsMonth, IsYear } from "../validators/date";
 
 export class GetListDto {
 	@IsID()

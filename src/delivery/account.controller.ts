@@ -6,22 +6,24 @@ import {
 	HttpStatus,
 	Inject,
 	Patch,
-} from '@nestjs/common';
-import { AccountService } from 'usecases/account/account.service';
-import { IgnoreTermsCheck } from './guards/auth.guard';
-import { UserData } from './decorators/user-data';
-import { NameDto, UpdateOnboardingDto } from './dtos/account';
-import { UserDataDto } from './dtos';
-import { AccountUseCase } from 'models/account';
+} from "@nestjs/common";
 
-@Controller('accounts')
+import { AccountService } from "usecases/account/account.service";
+import { AccountUseCase } from "models/account";
+
+import { IgnoreTermsCheck } from "./guards/auth.guard";
+import { UserData } from "./decorators/user-data";
+import { NameDto, UpdateOnboardingDto } from "./dtos/account";
+import { UserDataDto } from "./dtos";
+
+@Controller("accounts")
 export class AccountController {
 	constructor(
 		@Inject(AccountService)
 		private readonly accountService: AccountUseCase,
 	) {}
 
-	@Get('/iam')
+	@Get("/iam")
 	@IgnoreTermsCheck()
 	iam(
 		@UserData()
@@ -33,7 +35,7 @@ export class AccountController {
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Patch('/name')
+	@Patch("/name")
 	name(
 		@UserData()
 		userData: UserDataDto,
@@ -46,7 +48,7 @@ export class AccountController {
 		});
 	}
 
-	@Get('/onboarding')
+	@Get("/onboarding")
 	getOnboarding(
 		@UserData()
 		userData: UserDataDto,
@@ -57,7 +59,7 @@ export class AccountController {
 	}
 
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Patch('/onboarding')
+	@Patch("/onboarding")
 	updateOnboarding(
 		@UserData()
 		userData: UserDataDto,

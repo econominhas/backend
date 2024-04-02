@@ -1,11 +1,12 @@
-import { Reflector } from '@nestjs/core';
+import { Reflector } from "@nestjs/core";
+
 import {
 	AuthGuard,
 	IgnoreTermsCheck,
 	Public,
-} from 'delivery/guards/auth.guard';
+} from "../../../../src/delivery/guards/auth.guard";
 
-describe('Delivery > Guards', () => {
+describe("Delivery > Guards", () => {
 	const reflectorMock = {
 		get: jest.fn(),
 	};
@@ -30,8 +31,8 @@ describe('Delivery > Guards', () => {
 		reflectorMock.get.mockReset();
 	});
 
-	describe('> Auth', () => {
-		it('should return true if public', async () => {
+	describe("> Auth", () => {
+		it("should return true if public", async () => {
 			reflectorMock.get.mockReturnValue(true);
 
 			const contextMock = makeContextMock();
@@ -46,7 +47,7 @@ describe('Delivery > Guards', () => {
 			expect(result).toBeTruthy();
 		});
 
-		it('should return false without auth header', async () => {
+		it("should return false without auth header", async () => {
 			reflectorMock.get.mockReturnValue(false);
 
 			const contextMock = makeContextMock();
@@ -64,13 +65,13 @@ describe('Delivery > Guards', () => {
 			expect(result).toBeFalsy();
 		});
 
-		it('should return false if token is not Bearer', async () => {
+		it("should return false if token is not Bearer", async () => {
 			reflectorMock.get.mockReturnValue(false);
 
 			const contextMock = makeContextMock();
 			contextMock.requestMock.mockReturnValue({
 				headers: {
-					authorization: 'foo bar',
+					authorization: "foo bar",
 				},
 			});
 
@@ -90,7 +91,7 @@ describe('Delivery > Guards', () => {
 			const contextMock = makeContextMock();
 			contextMock.requestMock.mockReturnValue({
 				headers: {
-					authorization: 'Bearer',
+					authorization: "Bearer",
 				},
 			});
 
@@ -104,13 +105,13 @@ describe('Delivery > Guards', () => {
 			expect(result).toBeFalsy();
 		});
 
-		it('should return false if invalid token', async () => {
+		it("should return false if invalid token", async () => {
 			reflectorMock.get.mockReturnValue(false);
 
 			const contextMock = makeContextMock();
 			contextMock.requestMock.mockReturnValue({
 				headers: {
-					authorization: 'Bearer foo',
+					authorization: "Bearer foo",
 				},
 			});
 
@@ -126,18 +127,18 @@ describe('Delivery > Guards', () => {
 			expect(result).toBeFalsy();
 		});
 
-		it('should return false if terms flag and terms not accepted', async () => {
+		it("should return false if terms flag and terms not accepted", async () => {
 			reflectorMock.get.mockReturnValueOnce(false);
 
 			const contextMock = makeContextMock();
 			contextMock.requestMock.mockReturnValue({
 				headers: {
-					authorization: 'Bearer foo',
+					authorization: "Bearer foo",
 				},
 			});
 
 			tokenMock.validateAccess.mockReturnValue({
-				sub: 'accountId',
+				sub: "accountId",
 				terms: false,
 			});
 
@@ -153,13 +154,13 @@ describe('Delivery > Guards', () => {
 			expect(result).toBeFalsy();
 		});
 
-		it('should return false if fail to validate', async () => {
+		it("should return false if fail to validate", async () => {
 			reflectorMock.get.mockReturnValueOnce(false);
 
 			const contextMock = makeContextMock();
 			contextMock.requestMock.mockReturnValue({
 				headers: {
-					authorization: 'Bearer foo',
+					authorization: "Bearer foo",
 				},
 			});
 
@@ -179,18 +180,18 @@ describe('Delivery > Guards', () => {
 			expect(result).toBeFalsy();
 		});
 
-		it('should return true if terms flag and terms accepted', async () => {
+		it("should return true if terms flag and terms accepted", async () => {
 			reflectorMock.get.mockReturnValueOnce(false);
 
 			const contextMock = makeContextMock();
 			contextMock.requestMock.mockReturnValue({
 				headers: {
-					authorization: 'Bearer foo',
+					authorization: "Bearer foo",
 				},
 			});
 
 			tokenMock.validateAccess.mockReturnValue({
-				sub: 'accountId',
+				sub: "accountId",
 				terms: true,
 			});
 
@@ -207,18 +208,20 @@ describe('Delivery > Guards', () => {
 		});
 	});
 
-	describe('> Public', () => {
+	describe("> Public", () => {
 		const reflector = new Reflector();
 
-		it('should set metadata', () => {
+		it("should set metadata", () => {
 			let result;
 			try {
 				class Foo {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					//@ts-ignore
 					@Public()
 					bar() {}
 				}
 
-				result = reflector.get('isPublic', new Foo().bar);
+				result = reflector.get("isPublic", new Foo().bar);
 			} catch (err) {
 				result = err;
 			}
@@ -228,18 +231,20 @@ describe('Delivery > Guards', () => {
 		});
 	});
 
-	describe('> IgnoreTermsCheck', () => {
+	describe("> IgnoreTermsCheck", () => {
 		const reflector = new Reflector();
 
-		it('should set metadata', () => {
+		it("should set metadata", () => {
 			let result;
 			try {
 				class Foo {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					//@ts-ignore
 					@IgnoreTermsCheck()
 					bar() {}
 				}
 
-				result = reflector.get('ignoreTermsCheck', new Foo().bar);
+				result = reflector.get("ignoreTermsCheck", new Foo().bar);
 			} catch (err) {
 				result = err;
 			}

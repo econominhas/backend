@@ -1,25 +1,28 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type {
-	GenAccessInput,
-	GenAccessOutput,
-	GenRefreshOutput,
-	TokenPayload,
-	ValidateAccessInput,
-} from '../../token';
-import { TokenAdapter } from '../../token';
-import type { V4 } from 'paseto';
-import { SecretAdapter } from 'adapters/secret';
-import { UIDAdapterService } from '../uid/uid.service';
-import { AppConfig } from 'config';
-import { ConfigService } from '@nestjs/config';
-import type { KeyObject } from 'crypto';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from '../dayjs/dayjs.service';
+import { type KeyObject } from "crypto";
+
+import { Inject, Injectable } from "@nestjs/common";
+import { type V4 } from "paseto";
+import { ConfigService } from "@nestjs/config";
+
+import { SecretAdapter } from "adapters/secret";
+import { AppConfig } from "config";
+import { DateAdapter } from "adapters/date";
+
+import { UIDAdapterService } from "../uid/uid.service";
+import {
+	TokenAdapter,
+	type GenAccessInput,
+	type GenAccessOutput,
+	type GenRefreshOutput,
+	type TokenPayload,
+	type ValidateAccessInput,
+} from "../../token";
+import { DayjsAdapterService } from "../dayjs/dayjs.service";
 
 @Injectable()
 export class PasetoAdapterService extends TokenAdapter {
 	constructor(
-		@Inject('paseto')
+		@Inject("paseto")
 		protected readonly paseto: typeof V4,
 
 		@Inject(UIDAdapterService)
@@ -34,10 +37,9 @@ export class PasetoAdapterService extends TokenAdapter {
 	}
 
 	private getSecret(): KeyObject {
-		const secretString = this.config.get('PASETO_PRIVATE_KEY');
-		const secretBuffer = Buffer.from(secretString, 'base64');
-		const secretKeyObject = this.paseto.bytesToKeyObject(secretBuffer);
-		return secretKeyObject;
+		const secretString = this.config.get("PASETO_PRIVATE_KEY");
+		const secretBuffer = Buffer.from(secretString, "base64");
+		return this.paseto.bytesToKeyObject(secretBuffer);
 	}
 
 	async genAccess({
@@ -47,7 +49,7 @@ export class PasetoAdapterService extends TokenAdapter {
 		const payload: TokenPayload = {
 			sub: accountId,
 			terms: hasAcceptedLatestTerms,
-			exp: this.dateAdapter.nowPlus(this.expiration, 'minute').toISOString(),
+			exp: this.dateAdapter.nowPlus(this.expiration, "minute").toISOString(),
 		};
 
 		const secret = this.getSecret();
@@ -60,21 +62,10 @@ export class PasetoAdapterService extends TokenAdapter {
 		};
 	}
 
-	async validateAccess({
-		accessToken,
-	}: ValidateAccessInput): Promise<TokenPayload> {
-		try {
-			const secret = this.getSecret();
+	validateAccess({ accessToken }: ValidateAccessInput): Promise<TokenPayload> {
+		const secret = this.getSecret();
 
-			const payload = (await this.paseto.verify(
-				accessToken,
-				secret,
-			)) as TokenPayload;
-
-			return payload;
-		} catch {
-			return;
-		}
+		return this.paseto.verify<TokenPayload>(accessToken, secret);
 	}
 
 	genRefresh(): GenRefreshOutput {
