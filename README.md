@@ -51,8 +51,8 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 
 ## How to create a migration
 
-- Run `yarn start:db`
-- In another tab, run `yarn db:gen-migration <migration name>`
+- Run `pnpm run start:db`
+- In another tab, run `pnpm run db:gen-migration <migration name>`
 
 ## Teams
 
@@ -209,11 +209,11 @@ This phase is were we convert the documentation to code and make everything work
 ### Running the API for the first time
 
 1. Copy and paste <code>.env.example</code> and rename the copy to <code>.env</code>
-2. Run <code>yarn start:dev</code>
+2. Run <code>pnpm run start:dev</code>
 3. Run econominhas-api migrations
    - Step 2.1: List id container Run<code>docker ps</code>
    - Step 2.2: Run <code>docker exec -it \<container id\> sh</code>
-   - Step 2.3: Run <code>yarn db:migrate</code>
+   - Step 2.3: Run <code>pnpm run db:migrate</code>
 4. Available at http://localhost:3000/v1
 
 <br/>

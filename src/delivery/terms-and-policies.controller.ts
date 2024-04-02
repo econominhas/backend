@@ -6,15 +6,17 @@ import {
 	HttpStatus,
 	Inject,
 	Post,
-} from '@nestjs/common';
-import { IgnoreTermsCheck, Public } from './guards/auth.guard';
-import { UserData } from './decorators/user-data';
-import { TermsAndPoliciesService } from 'usecases/terms-and-policies/terms-and-policies.service';
-import { AcceptDto } from './dtos/terms-and-policies';
-import { UserDataDto } from './dtos';
-import { TermsAndPoliciesUseCase } from 'models/terms-and-policies';
+} from "@nestjs/common";
 
-@Controller('terms')
+import { TermsAndPoliciesService } from "usecases/terms-and-policies/terms-and-policies.service";
+import { TermsAndPoliciesUseCase } from "models/terms-and-policies";
+
+import { IgnoreTermsCheck, Public } from "./guards/auth.guard";
+import { UserData } from "./decorators/user-data";
+import { AcceptDto } from "./dtos/terms-and-policies";
+import { UserDataDto } from "./dtos";
+
+@Controller("terms")
 export class TermsAndPoliciesController {
 	constructor(
 		@Inject(TermsAndPoliciesService)
@@ -22,9 +24,9 @@ export class TermsAndPoliciesController {
 	) {}
 
 	@HttpCode(HttpStatus.CREATED)
-	@Post('/accept')
+	@Post("/accept")
 	@IgnoreTermsCheck()
-	async accept(
+	accept(
 		@UserData()
 		userData: UserDataDto,
 		@Body()
@@ -36,7 +38,7 @@ export class TermsAndPoliciesController {
 		});
 	}
 
-	@Get('/latest')
+	@Get("/latest")
 	@Public()
 	latest() {
 		return this.termsAndPoliciesService.getLatest();

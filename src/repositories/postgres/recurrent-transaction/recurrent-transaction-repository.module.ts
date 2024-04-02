@@ -1,11 +1,14 @@
-import { Module } from '@nestjs/common';
-import { PostgresModule } from '..';
-import { RecurrentTransactionRepositoryService } from './recurrent-transaction-repository.service';
-import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
+import { Module } from "@nestjs/common";
+
+import { UIDAdapterModule } from "adapters/implementations/uid/uid.module";
+
+import { PostgresModule } from "..";
+
+import { RecurrentTransactionRepositoryService } from "./recurrent-transaction-repository.service";
 
 @Module({
 	imports: [
-		PostgresModule.forFeature(['recurrentTransaction']),
+		PostgresModule.forFeature(["recurrentTransaction"]),
 		UIDAdapterModule,
 	],
 	providers: [RecurrentTransactionRepositoryService],

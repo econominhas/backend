@@ -1,4 +1,8 @@
-import type { Account, Onboarding, SignInProvider } from '@prisma/client';
+import {
+	type Account,
+	type Onboarding,
+	type SignInProvider,
+} from "@prisma/client";
 
 /**
  *

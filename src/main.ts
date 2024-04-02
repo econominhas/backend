@@ -1,10 +1,12 @@
-import { NestFactory, Reflector } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { AuthGuard } from './delivery/guards/auth.guard';
-import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
+import { NestFactory, Reflector } from "@nestjs/core";
+import { ValidationPipe, VersioningType } from "@nestjs/common";
 
-import 'reflect-metadata';
+import { PasetoAdapterService } from "adapters/implementations/paseto/paseto.service";
+
+import { AppModule } from "./app.module";
+import { AuthGuard } from "./delivery/guards/auth.guard";
+
+import "reflect-metadata";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -21,7 +23,7 @@ async function bootstrap() {
 
 	app.enableVersioning({
 		type: VersioningType.URI,
-		defaultVersion: '1', // Current version of the API
+		defaultVersion: "1", // Current version of the API
 	});
 
 	const reflector = app.get(Reflector);
@@ -30,6 +32,6 @@ async function bootstrap() {
 
 	app.enableShutdownHooks();
 
-	await app.listen(process.env['PORT']);
+	await app.listen(process.env.PORT);
 }
 bootstrap();

@@ -1,18 +1,19 @@
-import type { INestApplication } from '@nestjs/common';
-import { createTestModule, createTestService } from '../../utils';
-import { AuthService } from 'usecases/auth/auth.service';
-import { AuthModule } from 'usecases/auth/auth.module';
-import { makeMagicLinkCodeRepositoryMock } from '../../mocks/repositories/postgres/magic-link-code';
-import { makeRefreshTokenRepositoryMock } from '../../mocks/repositories/postgres/refresh-token';
-import { makeTermsServiceMock } from '../../mocks/usecases/terms';
-import { makeGoogleAdapterMock } from '../../mocks/adapters/google';
-import { makeTokenAdapterMock } from '../../mocks/adapters/paseto';
-import { makeEmailAdapterMock } from '../../mocks/adapters/email';
-import { makeSmsAdapterMock } from '../../mocks/adapters/sms';
-import { makeAuthRepositoryMock } from '../../mocks/repositories/postgres/auth';
-import { makeTopicAdapterMock } from '../../mocks/adapters/topic';
+import { type INestApplication } from "@nestjs/common";
 
-describe('Usecases > Auth', () => {
+import { AuthModule } from "../../../src/usecases/auth/auth.module";
+import { createTestModule, createTestService } from "../../utils";
+import { AuthService } from "../../../src/usecases/auth/auth.service";
+import { makeMagicLinkCodeRepositoryMock } from "../../mocks/repositories/postgres/magic-link-code";
+import { makeRefreshTokenRepositoryMock } from "../../mocks/repositories/postgres/refresh-token";
+import { makeTermsServiceMock } from "../../mocks/usecases/terms";
+import { makeGoogleAdapterMock } from "../../mocks/adapters/google";
+import { makeTokenAdapterMock } from "../../mocks/adapters/paseto";
+import { makeEmailAdapterMock } from "../../mocks/adapters/email";
+import { makeSmsAdapterMock } from "../../mocks/adapters/sms";
+import { makeAuthRepositoryMock } from "../../mocks/repositories/postgres/auth";
+import { makeTopicAdapterMock } from "../../mocks/adapters/topic";
+
+describe("Usecases > Auth", () => {
 	let service: AuthService;
 	let module: INestApplication;
 
@@ -29,39 +30,35 @@ describe('Usecases > Auth', () => {
 	const topicAdapter = makeTopicAdapterMock();
 
 	beforeAll(async () => {
-		try {
-			service = await createTestService<AuthService>(AuthService, {
-				providers: [
-					authRepository.module,
-					magicLinkCodeRepository.module,
-					refreshTokenRepository.module,
-					termsService.module,
-					googleAdapter.module,
-					tokenAdapter.module,
-					emailAdapter.module,
-					smsAdapter.module,
-					topicAdapter.module,
-				],
-			});
+		service = await createTestService<AuthService>(AuthService, {
+			providers: [
+				authRepository.module,
+				magicLinkCodeRepository.module,
+				refreshTokenRepository.module,
+				termsService.module,
+				googleAdapter.module,
+				tokenAdapter.module,
+				emailAdapter.module,
+				smsAdapter.module,
+				topicAdapter.module,
+			],
+		});
 
-			module = await createTestModule(AuthModule);
-		} catch (err) {
-			console.error(err);
-		}
+		module = await createTestModule(AuthModule);
 	});
 
-	describe('definitions', () => {
-		it('should initialize Service', () => {
+	describe("definitions", () => {
+		it("should initialize Service", () => {
 			expect(service).toBeDefined();
 		});
 
-		it('should initialize Module', async () => {
+		it("should initialize Module", () => {
 			expect(module).toBeDefined();
 		});
 	});
 
-	describe('> createFromGoogleProvider', () => {
-		it('should sign in user', async () => {
+	describe("> createFromGoogleProvider", () => {
+		it("should sign in user", async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.success,
 			);
@@ -84,7 +81,7 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.createFromGoogleProvider({
-					code: 'code',
+					code: "code",
 				});
 			} catch (err) {
 				result = err;
@@ -105,7 +102,7 @@ describe('Usecases > Auth', () => {
 			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
 		});
 
-		it('should sign up user (same providerId)', async () => {
+		it("should sign up user (same providerId)", async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.success,
 			);
@@ -127,7 +124,7 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.createFromGoogleProvider({
-					code: 'code',
+					code: "code",
 				});
 			} catch (err) {
 				result = err;
@@ -149,7 +146,7 @@ describe('Usecases > Auth', () => {
 			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
 		});
 
-		it('should sign up user (same email)', async () => {
+		it("should sign up user (same email)", async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.success,
 			);
@@ -171,7 +168,7 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.createFromGoogleProvider({
-					code: 'code',
+					code: "code",
 				});
 			} catch (err) {
 				result = err;
@@ -193,7 +190,7 @@ describe('Usecases > Auth', () => {
 			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
 		});
 
-		it('should fail if missing scopes', async () => {
+		it("should fail if missing scopes", async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.noScopes,
 			);
@@ -201,7 +198,7 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.createFromGoogleProvider({
-					code: 'code',
+					code: "code",
 				});
 			} catch (err) {
 				result = err;
@@ -211,7 +208,7 @@ describe('Usecases > Auth', () => {
 			expect(result.status).toBe(400);
 			expect(result.message).toBe(
 				`Missing required scopes: ${googleAdapter.mock.requiredScopes.join(
-					' ',
+					" ",
 				)}`,
 			);
 			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
@@ -220,7 +217,7 @@ describe('Usecases > Auth', () => {
 			).not.toHaveBeenCalled();
 		});
 
-		it('should fail if unverified provider email', async () => {
+		it("should fail if unverified provider email", async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.success,
 			);
@@ -231,7 +228,7 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.createFromGoogleProvider({
-					code: 'code',
+					code: "code",
 				});
 			} catch (err) {
 				result = err;
@@ -239,13 +236,13 @@ describe('Usecases > Auth', () => {
 
 			expect(result).toBeInstanceOf(Error);
 			expect(result.status).toBe(403);
-			expect(result.message).toBe('Unverified provider email');
+			expect(result.message).toBe("Unverified provider email");
 			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
 			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
 			expect(authRepository.mock.getManyByProvider).not.toHaveBeenCalled();
 		});
 
-		it('should fail if find account by email related to another google account', async () => {
+		it("should fail if find account by email related to another google account", async () => {
 			googleAdapter.mock.exchangeCode.mockResolvedValue(
 				googleAdapter.outputs.exchangeCode.success,
 			);
@@ -259,7 +256,7 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.createFromGoogleProvider({
-					code: 'code',
+					code: "code",
 				});
 			} catch (err) {
 				result = err;
@@ -268,7 +265,7 @@ describe('Usecases > Auth', () => {
 			expect(result).toBeInstanceOf(Error);
 			expect(result.status).toBe(409);
 			expect(result.message).toBe(
-				'Error finding account, please contact support',
+				"Error finding account, please contact support",
 			);
 			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
 			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
@@ -277,16 +274,16 @@ describe('Usecases > Auth', () => {
 		});
 	});
 
-	describe('> createFromEmailProvider', () => {
-		it.todo('should');
+	describe("> createFromEmailProvider", () => {
+		it.todo("should");
 	});
 
-	describe('> createFromPhoneProvider', () => {
-		it.todo('should');
+	describe("> createFromPhoneProvider", () => {
+		it.todo("should");
 	});
 
-	describe('> exchangeCode', () => {
-		it('should return auth tokens', async () => {
+	describe("> exchangeCode", () => {
+		it("should return auth tokens", async () => {
 			magicLinkCodeRepository.mock.get.mockResolvedValue(
 				magicLinkCodeRepository.outputs.get.success,
 			);
@@ -300,8 +297,8 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.exchangeCode({
-					accountId: 'accountId',
-					code: 'code',
+					accountId: "accountId",
+					code: "code",
 				});
 			} catch (err) {
 				result = err;
@@ -319,14 +316,14 @@ describe('Usecases > Auth', () => {
 			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
 		});
 
-		it('should throw error if magic link code not found', async () => {
+		it("should throw error if magic link code not found", async () => {
 			magicLinkCodeRepository.mock.get.mockResolvedValue(undefined);
 
 			let result;
 			try {
 				result = await service.exchangeCode({
-					accountId: 'accountId',
-					code: 'code',
+					accountId: "accountId",
+					code: "code",
 				});
 			} catch (err) {
 				result = err;
@@ -334,15 +331,15 @@ describe('Usecases > Auth', () => {
 
 			expect(result).toBeInstanceOf(Error);
 			expect(result.status).toBe(404);
-			expect(result.message).toBe('Invalid code');
+			expect(result.message).toBe("Invalid code");
 			expect(magicLinkCodeRepository.mock.get).toHaveBeenCalled();
 			expect(refreshTokenRepository.mock.create).not.toHaveBeenCalled();
 			expect(tokenAdapter.mock.genAccess).not.toHaveBeenCalled();
 		});
 	});
 
-	describe('> refreshToken', () => {
-		it('should regen access token', async () => {
+	describe("> refreshToken", () => {
+		it("should regen access token", async () => {
 			const expiresAt = new Date();
 
 			refreshTokenRepository.mock.get.mockResolvedValue(
@@ -350,34 +347,34 @@ describe('Usecases > Auth', () => {
 			);
 			termsService.mock.hasAcceptedLatest.mockResolvedValue(true);
 			tokenAdapter.mock.genAccess.mockReturnValue({
-				accessToken: 'accessToken',
+				accessToken: "accessToken",
 				expiresAt,
 			});
 
 			let result;
 			try {
 				result = await service.refreshToken({
-					refreshToken: 'refreshToken',
+					refreshToken: "refreshToken",
 				});
 			} catch (err) {
 				result = err;
 			}
 
 			expect(result).toStrictEqual({
-				accessToken: 'accessToken',
+				accessToken: "accessToken",
 				expiresAt,
 				isFirstAccess: false,
 				refreshToken: undefined,
 			});
 		});
 
-		it('should throw error if refresh token not found', async () => {
+		it("should throw error if refresh token not found", async () => {
 			refreshTokenRepository.mock.get.mockResolvedValue(undefined);
 
 			let result;
 			try {
 				result = await service.refreshToken({
-					refreshToken: 'refreshToken',
+					refreshToken: "refreshToken",
 				});
 			} catch (err) {
 				result = err;
@@ -385,14 +382,14 @@ describe('Usecases > Auth', () => {
 
 			expect(result).toBeInstanceOf(Error);
 			expect(result.status).toBe(404);
-			expect(result.message).toBe('Refresh token not found');
+			expect(result.message).toBe("Refresh token not found");
 			expect(refreshTokenRepository.mock.get).toHaveBeenCalled();
 			expect(tokenAdapter.mock.genAccess).not.toHaveBeenCalled();
 		});
 	});
 
-	describe('> genAuthOutput', () => {
-		it('should return access and refresh token', async () => {
+	describe("> genAuthOutput", () => {
+		it("should return access and refresh token", async () => {
 			const expiresAt = new Date();
 
 			refreshTokenRepository.mock.create.mockResolvedValue(
@@ -400,14 +397,14 @@ describe('Usecases > Auth', () => {
 			);
 			termsService.mock.hasAcceptedLatest.mockResolvedValue(true);
 			tokenAdapter.mock.genAccess.mockReturnValue({
-				accessToken: 'accessToken',
+				accessToken: "accessToken",
 				expiresAt,
 			});
 
 			let result;
 			try {
 				result = await service.genAuthOutput({
-					accountId: 'accountId',
+					accountId: "accountId",
 					isFirstAccess: true,
 					refresh: true,
 				});
@@ -416,7 +413,7 @@ describe('Usecases > Auth', () => {
 			}
 
 			expect(result).toStrictEqual({
-				accessToken: 'accessToken',
+				accessToken: "accessToken",
 				expiresAt,
 				refreshToken:
 					refreshTokenRepository.outputs.create.success.refreshToken,
@@ -424,19 +421,19 @@ describe('Usecases > Auth', () => {
 			});
 		});
 
-		it('should return only access token', async () => {
+		it("should return only access token", async () => {
 			const expiresAt = new Date();
 
 			termsService.mock.hasAcceptedLatest.mockResolvedValue(true);
 			tokenAdapter.mock.genAccess.mockReturnValue({
-				accessToken: 'accessToken',
+				accessToken: "accessToken",
 				expiresAt,
 			});
 
 			let result;
 			try {
 				result = await service.genAuthOutput({
-					accountId: 'accountId',
+					accountId: "accountId",
 					isFirstAccess: true,
 					refresh: false,
 				});
@@ -445,7 +442,7 @@ describe('Usecases > Auth', () => {
 			}
 
 			expect(result).toMatchObject({
-				accessToken: 'accessToken',
+				accessToken: "accessToken",
 				expiresAt,
 				isFirstAccess: true,
 			});
@@ -465,7 +462,7 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.genAuthOutput({
-					accountId: 'accountId',
+					accountId: "accountId",
 					isFirstAccess: false,
 					refresh: false,
 				});
@@ -475,7 +472,7 @@ describe('Usecases > Auth', () => {
 
 			expect(result).toMatchObject({
 				accessToken: JSON.stringify({
-					accountId: 'accountId',
+					accountId: "accountId",
 					hasAcceptedLatestTerms: terms,
 				}),
 			});
@@ -493,7 +490,7 @@ describe('Usecases > Auth', () => {
 			let result;
 			try {
 				result = await service.genAuthOutput({
-					accountId: 'accountId',
+					accountId: "accountId",
 					isFirstAccess: false,
 					refresh: false,
 				});
@@ -503,7 +500,7 @@ describe('Usecases > Auth', () => {
 
 			expect(result).toMatchObject({
 				accessToken: JSON.stringify({
-					accountId: 'accountId',
+					accountId: "accountId",
 					hasAcceptedLatestTerms: terms,
 				}),
 			});

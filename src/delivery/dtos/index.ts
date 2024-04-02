@@ -1,5 +1,6 @@
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
-import { IsID } from '../validators/internal';
+import { IsOptional, IsInt, Min, Max } from "class-validator";
+
+import { IsID } from "../validators/internal";
 
 export class PaginatedDto {
 	@IsOptional()

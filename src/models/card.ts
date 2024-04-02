@@ -1,16 +1,17 @@
-import type {
-	Card,
-	CardBill,
-	CardNetworkEnum,
-	CardProvider,
-	CardVariantEnum,
-	PayAtEnum,
-} from '@prisma/client';
-import type {
-	Paginated,
-	PaginatedItems,
-	PaginatedRepository,
-} from 'types/paginated-items';
+import {
+	type Card,
+	type CardBill,
+	type CardNetworkEnum,
+	type CardProvider,
+	type CardVariantEnum,
+	type PayAtEnum,
+} from "@prisma/client";
+
+import {
+	type Paginated,
+	type PaginatedItems,
+	type PaginatedRepository,
+} from "types/paginated-items";
 
 /**
  *

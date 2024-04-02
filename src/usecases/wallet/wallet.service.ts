@@ -1,15 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CardVariantEnum } from '@prisma/client';
-import { BankRepository } from 'models/bank';
-import { CardRepository } from 'models/card';
-import type {
-	BalanceOverviewInput,
-	BalanceOverviewOutput,
-} from 'models/wallet';
-import { WalletUseCase } from 'models/wallet';
+import { Inject, Injectable } from "@nestjs/common";
+import { CardVariantEnum } from "@prisma/client";
 
-import { BankRepositoryService } from 'repositories/postgres/bank/bank-repository.service';
-import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
+import { BankRepository } from "models/bank";
+import { CardRepository } from "models/card";
+import {
+	WalletUseCase,
+	type BalanceOverviewInput,
+	type BalanceOverviewOutput,
+} from "models/wallet";
+import { BankRepositoryService } from "repositories/postgres/bank/bank-repository.service";
+import { CardRepositoryService } from "repositories/postgres/card/card-repository.service";
 
 @Injectable()
 export class WalletService extends WalletUseCase {

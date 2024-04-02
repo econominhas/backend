@@ -15,7 +15,7 @@ cp .env.production dist/.env
 
 # Copy package files
 cp package.json dist/package.json
-cp yarn.lock dist/yarn.lock
+cp pnpm-lock.yaml dist/pnpm-lock.yaml
 
 # Copy database files
 cp -r prisma/migrations dist/prisma/migrations

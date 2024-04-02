@@ -1,18 +1,20 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
-import { PaginatedDto, UserDataDto } from './dtos';
-import { CardService } from 'usecases/card/card.service';
-import { UserData } from './decorators/user-data';
-import { CreateDto, GetBillsToBePaidDto, GetPostpaidDto } from './dtos/card';
-import { CardUseCase } from 'models/card';
+import { Body, Controller, Get, Inject, Post, Query } from "@nestjs/common";
 
-@Controller('cards')
+import { CardService } from "usecases/card/card.service";
+import { CardUseCase } from "models/card";
+
+import { PaginatedDto, UserDataDto } from "./dtos";
+import { UserData } from "./decorators/user-data";
+import { CreateDto, GetBillsToBePaidDto, GetPostpaidDto } from "./dtos/card";
+
+@Controller("cards")
 export class CardController {
 	constructor(
 		@Inject(CardService)
 		private readonly cardService: CardUseCase,
 	) {}
 
-	@Get('/providers')
+	@Get("/providers")
 	getProviders(
 		@Query()
 		pagination: PaginatedDto,
@@ -20,7 +22,7 @@ export class CardController {
 		return this.cardService.getProviders(pagination);
 	}
 
-	@Post('/')
+	@Post("/")
 	create(
 		@UserData()
 		userData: UserDataDto,
@@ -33,7 +35,7 @@ export class CardController {
 		});
 	}
 
-	@Get('/postpaid')
+	@Get("/postpaid")
 	getPostpaid(
 		@UserData()
 		userData: UserDataDto,
@@ -46,7 +48,7 @@ export class CardController {
 		});
 	}
 
-	@Get('/prepaid')
+	@Get("/prepaid")
 	getPrepaid(
 		@UserData()
 		userData: UserDataDto,
@@ -59,7 +61,7 @@ export class CardController {
 		});
 	}
 
-	@Get('/bills')
+	@Get("/bills")
 	getBillsToBePaid(
 		@UserData()
 		userData: UserDataDto,

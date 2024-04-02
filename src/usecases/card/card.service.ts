@@ -3,26 +3,27 @@ import {
 	Inject,
 	Injectable,
 	NotFoundException,
-} from '@nestjs/common';
-import type { CardBill, CardProvider } from '@prisma/client';
-import { CardTypeEnum } from '@prisma/client';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
-import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
-import { UtilsAdapter } from 'adapters/utils';
-import type {
-	CreateInput,
-	CreateNextCardBillsInput,
-	GetBillsToBePaidOutput,
-	GetCardBillsToBePaidInput,
-	GetPostpaidCardsInput,
-	GetPostpaidOutput,
-	GetPrepaidCardsInput,
-	GetPrepaidOutput,
-} from 'models/card';
-import { CardRepository, CardUseCase } from 'models/card';
-import { CardRepositoryService } from 'repositories/postgres/card/card-repository.service';
-import type { Paginated, PaginatedItems } from 'types/paginated-items';
+} from "@nestjs/common";
+import { CardTypeEnum, type CardBill, type CardProvider } from "@prisma/client";
+
+import { DateAdapter } from "adapters/date";
+import { DayjsAdapterService } from "adapters/implementations/dayjs/dayjs.service";
+import { UtilsAdapterService } from "adapters/implementations/utils/utils.service";
+import { UtilsAdapter } from "adapters/utils";
+import {
+	CardRepository,
+	CardUseCase,
+	type CreateInput,
+	type CreateNextCardBillsInput,
+	type GetBillsToBePaidOutput,
+	type GetCardBillsToBePaidInput,
+	type GetPostpaidCardsInput,
+	type GetPostpaidOutput,
+	type GetPrepaidCardsInput,
+	type GetPrepaidOutput,
+} from "models/card";
+import { CardRepositoryService } from "repositories/postgres/card/card-repository.service";
+import { type Paginated, type PaginatedItems } from "types/paginated-items";
 
 interface GetCurBillDataInput {
 	dueDay: number;
@@ -83,42 +84,11 @@ export class CardService extends CardUseCase {
 		}
 
 		if (this.isPostpaid(provider.type)) {
-			if (typeof i.dueDay === 'undefined' || typeof i.limit === 'undefined') {
-				throw new BadRequestException(
-					'Postpaid cards must have "dueDay" and "limit"',
-				);
-			}
-			if (typeof i.balance !== 'undefined') {
-				throw new BadRequestException('Postpaid cards can\'t have "balance"');
-			}
-			if (
-				(typeof i.payAt !== 'undefined' &&
-					typeof i.payWithId === 'undefined') ||
-				(typeof i.payAt === 'undefined' && typeof i.payWithId !== 'undefined')
-			) {
-				throw new BadRequestException(
-					'Both "payAt" and "payWithId" must exist or not exist',
-				);
-			}
+			this.validatePostpaid(i);
 		}
 
 		if (this.isPrepaid(provider.type)) {
-			if (typeof i.balance === 'undefined') {
-				throw new BadRequestException('Prepaid cards must have "balance"');
-			}
-			if (typeof i.dueDay !== 'undefined' || typeof i.limit !== 'undefined') {
-				throw new BadRequestException(
-					'Prepaid cards can\'t have "dueDay" and "limit"',
-				);
-			}
-			if (
-				typeof i.payAt !== 'undefined' ||
-				typeof i.payWithId !== 'undefined'
-			) {
-				throw new BadRequestException(
-					'Only postpaid cards can have "payAt" and "payWithId"',
-				);
-			}
+			this.validatePrepaid(i);
 		}
 
 		await this.cardRepository.create(i);
@@ -171,7 +141,7 @@ export class CardService extends CardUseCase {
 	> {
 		const { limit, offset, paging } = this.utilsAdapter.pagination(pagination);
 
-		const endDate = this.dateAdapter.endOf(date, 'month');
+		const endDate = this.dateAdapter.endOf(date, "month");
 
 		const data = await this.cardRepository.getBillsToBePaid({
 			accountId,
@@ -191,14 +161,14 @@ export class CardService extends CardUseCase {
 		cardId,
 		accountId,
 		amount,
-	}: CreateNextCardBillsInput): Promise<CardBill[]> {
+	}: CreateNextCardBillsInput): Promise<Array<CardBill>> {
 		const card = await this.cardRepository.getById({
 			cardId,
 			accountId,
 		});
 
 		if (!card) {
-			throw new BadRequestException('Invalid card');
+			throw new BadRequestException("Invalid card");
 		}
 
 		const curBillDueDate = this.getCurBillDueDate({
@@ -213,7 +183,7 @@ export class CardService extends CardUseCase {
 		});
 
 		return this.cardRepository.upsertManyBills(
-			allBillsData.map((billDates) => ({
+			allBillsData.map(billDates => ({
 				...billDates,
 				cardId,
 			})),
@@ -230,6 +200,41 @@ export class CardService extends CardUseCase {
 		return [CardTypeEnum.BENEFIT].includes(type as any);
 	}
 
+	private validatePostpaid(i: CreateInput) {
+		if (typeof i.dueDay === "undefined" || typeof i.limit === "undefined") {
+			throw new BadRequestException(
+				'Postpaid cards must have "dueDay" and "limit"',
+			);
+		}
+		if (typeof i.balance !== "undefined") {
+			throw new BadRequestException('Postpaid cards can\'t have "balance"');
+		}
+		if (
+			(typeof i.payAt !== "undefined" && typeof i.payWithId === "undefined") ||
+			(typeof i.payAt === "undefined" && typeof i.payWithId !== "undefined")
+		) {
+			throw new BadRequestException(
+				'Both "payAt" and "payWithId" must exist or not exist',
+			);
+		}
+	}
+
+	private validatePrepaid(i: CreateInput) {
+		if (typeof i.balance === "undefined") {
+			throw new BadRequestException('Prepaid cards must have "balance"');
+		}
+		if (typeof i.dueDay !== "undefined" || typeof i.limit !== "undefined") {
+			throw new BadRequestException(
+				'Prepaid cards can\'t have "dueDay" and "limit"',
+			);
+		}
+		if (typeof i.payAt !== "undefined" || typeof i.payWithId !== "undefined") {
+			throw new BadRequestException(
+				'Only postpaid cards can have "payAt" and "payWithId"',
+			);
+		}
+	}
+
 	private getCurBillDueDate({
 		dueDay,
 		statementDays,
@@ -241,8 +246,10 @@ export class CardService extends CardUseCase {
 			return this.dateAdapter.dueDate(dueDay);
 		}
 
-		// If the statementDay is BEFORE the current day,
-		// the dueDate is in the next month
+		/*
+		 * If the statementDay is BEFORE the current day,
+		 * the dueDate is in the next month
+		 */
 		return this.dateAdapter.dueDate(dueDay, 1);
 	}
 
@@ -272,32 +279,34 @@ export class CardService extends CardUseCase {
 	}: GetBillDatesInput): GetBillDatesOutput {
 		return {
 			// First day of the month
-			month: this.dateAdapter.startOf(dueDate, 'month'),
+			month: this.dateAdapter.startOf(dueDate, "month"),
 
-			// startOfDay: curDueDate - statementDays
+			// StartOfDay: curDueDate - statementDays
 			statementDate: this.dateAdapter.startOf(
-				this.dateAdapter.sub(dueDate, statementDays, 'day'),
-				'day',
+				this.dateAdapter.sub(dueDate, statementDays, "day"),
+				"day",
 			),
 
-			// endOfDay: curDueDate
-			dueDate: this.dateAdapter.endOf(dueDate, 'day'),
+			// EndOfDay: curDueDate
+			dueDate: this.dateAdapter.endOf(dueDate, "day"),
 
-			// startOfDay: prevDueDate - statementDays
+			// StartOfDay: prevDueDate - statementDays
 			startAt: this.dateAdapter.startOf(
 				this.dateAdapter.sub(
-					this.dateAdapter.sub(dueDate, 1, 'month'),
+					this.dateAdapter.sub(dueDate, 1, "month"),
 					statementDays,
-					'day',
+					"day",
 				),
-				'day',
+				"day",
 			),
 
-			// endOfDay: curDueDate - (statementDays + 1)
-			// *: Because when statementDate, cardBill is already closed
+			/*
+			 * EndOfDay: curDueDate - (statementDays + 1)
+			 * *: Because when statementDate, cardBill is already closed
+			 */
 			endAt: this.dateAdapter.endOf(
-				this.dateAdapter.sub(dueDate, statementDays + 1, 'day'),
-				'day',
+				this.dateAdapter.sub(dueDate, statementDays + 1, "day"),
+				"day",
 			),
 		};
 	}

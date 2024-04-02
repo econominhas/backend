@@ -1,21 +1,20 @@
-import type { DynamicModule } from '@nestjs/common';
-import { Inject, Module } from '@nestjs/common';
-import { PostgresCoreModule } from './core';
-import { POSTGRES_CONNECTION_NAME } from './core';
-import type { PrismaClient } from '@prisma/client';
+import { Inject, Module, type DynamicModule } from "@nestjs/common";
+import { type PrismaClient } from "@prisma/client";
+
+import { PostgresCoreModule, POSTGRES_CONNECTION_NAME } from "./core";
 
 type AllTables = Omit<
 	PrismaClient,
-	| '$connect'
-	| '$disconnect'
-	| '$executeRaw'
-	| '$executeRawUnsafe'
-	| '$extends'
-	| '$on'
-	| '$queryRaw'
-	| '$queryRawUnsafe'
-	| '$transaction'
-	| '$use'
+	| "$connect"
+	| "$disconnect"
+	| "$executeRaw"
+	| "$executeRawUnsafe"
+	| "$extends"
+	| "$on"
+	| "$queryRaw"
+	| "$queryRawUnsafe"
+	| "$transaction"
+	| "$use"
 >;
 
 type TablesNames = keyof AllTables;
@@ -30,7 +29,7 @@ export class PostgresModule {
 	}
 
 	static forFeature(tableNames: Array<TablesNames> = []): DynamicModule {
-		const providers = tableNames.map((tableName) => ({
+		const providers = tableNames.map(tableName => ({
 			provide: PostgresCoreModule.getRepositoryToken(tableName as string),
 			useFactory: (connection: PrismaClient) => connection[tableName],
 			inject: [POSTGRES_CONNECTION_NAME],
@@ -46,7 +45,7 @@ export class PostgresModule {
 	static raw(): DynamicModule {
 		const providers = [
 			{
-				provide: PostgresCoreModule.getRepositoryToken('RAW'),
+				provide: PostgresCoreModule.getRepositoryToken("RAW"),
 				useFactory: (connection: PrismaClient) => connection.$queryRaw,
 				inject: [POSTGRES_CONNECTION_NAME],
 			},
@@ -64,8 +63,8 @@ export const InjectRepository = (tableName: TablesNames) =>
 	Inject(PostgresCoreModule.getRepositoryToken(tableName as string));
 
 export const InjectRaw = () =>
-	Inject(PostgresCoreModule.getRepositoryToken('RAW'));
+	Inject(PostgresCoreModule.getRepositoryToken("RAW"));
 
 export type Repository<T extends TablesNames> = AllTables[T];
 
-export type RawPostgres = PrismaClient['$queryRaw'];
+export type RawPostgres = PrismaClient["$queryRaw"];

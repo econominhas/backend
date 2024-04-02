@@ -1,15 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
-import { SMS_TEMPLATES, SmsAdapter } from '../../sms';
-import type { SendInput } from '../../sms';
-import { AppConfig } from 'config';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from "@nestjs/common";
+import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
+import { ConfigService } from "@nestjs/config";
+
+import { AppConfig } from "config";
+
+import { SMS_TEMPLATES, SmsAdapter, type SendInput } from "../../sms";
 
 @Injectable()
 export class SNSSMSAdapterService extends SmsAdapter {
-	private defaultPlaceholders: Record<string, string>;
+	private readonly defaultPlaceholders: Record<string, string>;
 
-	private client: SNSClient;
+	private readonly client: SNSClient;
 
 	constructor(
 		@Inject(ConfigService)
@@ -18,11 +19,11 @@ export class SNSSMSAdapterService extends SmsAdapter {
 		super();
 
 		this.client = new SNSClient({
-			endpoint: this.config.get('AWS_ENDPOINT'),
-			region: this.config.get('AWS_REGION'),
+			endpoint: this.config.get("AWS_ENDPOINT"),
+			region: this.config.get("AWS_REGION"),
 			credentials: {
-				secretAccessKey: this.config.get('AWS_SECRET_ACCESS_KEY'),
-				accessKeyId: this.config.get('AWS_ACCESS_KEY_ID'),
+				secretAccessKey: this.config.get("AWS_SECRET_ACCESS_KEY"),
+				accessKeyId: this.config.get("AWS_ACCESS_KEY_ID"),
 			},
 		});
 
@@ -63,7 +64,7 @@ export class SNSSMSAdapterService extends SmsAdapter {
 			const value = placeholders[key];
 
 			formattedText = formattedText.replace(
-				new RegExp(`{{${key}}}`, 'g'),
+				new RegExp(`{{${key}}}`, "g"),
 				value,
 			);
 		}

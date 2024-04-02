@@ -1,29 +1,31 @@
-import type { INestApplication } from '@nestjs/common';
-import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
-import { createTestModule, createTestService, removeMillis } from '../../utils';
+import { type INestApplication } from "@nestjs/common";
 
-describe('Adapters > DayJs', () => {
+import { DayJsAdapterModule } from "../../../src/adapters/implementations/dayjs/dayjs.module";
+import { DayjsAdapterService } from "../../../src/adapters/implementations/dayjs/dayjs.service";
+import { createTestModule, createTestService, removeMillis } from "../../utils";
+
+const formatDate = (dateArr: [number, number, number]) =>
+	dateArr.map(v => v.toString().padStart(2, "0")).join("-");
+
+describe("Adapters > DayJs", () => {
 	let service: DayjsAdapterService;
 	let module: INestApplication;
 
-	beforeAll(async () => {
-		try {
-			service =
-				await createTestService<DayjsAdapterService>(DayjsAdapterService);
+	const baseDate1 = "2023-01-01";
+	const baseDate2 = "2024-01-01";
 
-			module = await createTestModule(DayJsAdapterModule);
-		} catch (err) {
-			console.error(err);
-		}
+	beforeAll(async () => {
+		service = await createTestService<DayjsAdapterService>(DayjsAdapterService);
+
+		module = await createTestModule(DayJsAdapterModule);
 	});
 
-	describe('definitions', () => {
-		it('should initialize Service', () => {
+	describe("definitions", () => {
+		it("should initialize Service", () => {
 			expect(service).toBeDefined();
 		});
 
-		it('should initialize Module', async () => {
+		it("should initialize Module", () => {
 			expect(module).toBeDefined();
 		});
 	});
@@ -34,8 +36,8 @@ describe('Adapters > DayJs', () => {
 	 *
 	 */
 
-	describe('> today', () => {
-		it('should get todays info', async () => {
+	describe("> today", () => {
+		it("should get todays info", () => {
 			let result;
 			try {
 				result = service.today();
@@ -55,28 +57,24 @@ describe('Adapters > DayJs', () => {
 		});
 	});
 
-	describe('> newDate', () => {
-		it('should create a new UTC date', async () => {
-			const date = '2023-01-01';
-
+	describe("> newDate", () => {
+		it("should create a new UTC date", () => {
 			let result;
 			try {
-				result = service.newDate(date).toISOString();
+				result = service.newDate(baseDate1).toISOString();
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toBe(`${date}T00:00:00.000Z`);
+			expect(result).toBe(`${baseDate1}T00:00:00.000Z`);
 		});
 	});
 
-	describe('> get', () => {
-		it('should get the day', async () => {
-			const date = '2023-01-01';
-
+	describe("> get", () => {
+		it("should get the day", () => {
 			let result;
 			try {
-				result = service.get(date, 'day');
+				result = service.get(baseDate1, "day");
 			} catch (err) {
 				result = err;
 			}
@@ -84,12 +82,10 @@ describe('Adapters > DayJs', () => {
 			expect(result).toBe(1);
 		});
 
-		it('should get the month', async () => {
-			const date = '2023-01-01';
-
+		it("should get the month", () => {
 			let result;
 			try {
-				result = service.get(date, 'month');
+				result = service.get(baseDate1, "month");
 			} catch (err) {
 				result = err;
 			}
@@ -97,12 +93,10 @@ describe('Adapters > DayJs', () => {
 			expect(result).toBe(1);
 		});
 
-		it('should get the year', async () => {
-			const date = '2023-01-01';
-
+		it("should get the year", () => {
 			let result;
 			try {
-				result = service.get(date, 'year');
+				result = service.get(baseDate1, "year");
 			} catch (err) {
 				result = err;
 			}
@@ -111,44 +105,44 @@ describe('Adapters > DayJs', () => {
 		});
 	});
 
-	describe('> getNextMonths', () => {
-		it('should get a list of the next months (same year)', async () => {
+	describe("> getNextMonths", () => {
+		it("should get a list of the next months (same year)", () => {
 			let result;
 			try {
-				result = service.getNextMonths('2023-01-01', 5);
+				result = service.getNextMonths(baseDate1, 5);
 			} catch (err) {
 				result = err;
 			}
 
 			expect(result).toStrictEqual([
-				new Date('2023-01-01T00:00:00.000Z'),
-				new Date('2023-02-01T00:00:00.000Z'),
-				new Date('2023-03-01T00:00:00.000Z'),
-				new Date('2023-04-01T00:00:00.000Z'),
-				new Date('2023-05-01T00:00:00.000Z'),
+				new Date("2023-01-01T00:00:00.000Z"),
+				new Date("2023-02-01T00:00:00.000Z"),
+				new Date("2023-03-01T00:00:00.000Z"),
+				new Date("2023-04-01T00:00:00.000Z"),
+				new Date("2023-05-01T00:00:00.000Z"),
 			]);
 		});
 
-		it('should get a list of the next months (different years)', async () => {
+		it("should get a list of the next months (different years)", () => {
 			let result;
 			try {
-				result = service.getNextMonths('2023-12-01', 5);
+				result = service.getNextMonths("2023-12-01", 5);
 			} catch (err) {
 				result = err;
 			}
 
 			expect(result).toStrictEqual([
-				new Date('2023-12-01T00:00:00.000Z'),
-				new Date('2024-01-01T00:00:00.000Z'),
-				new Date('2024-02-01T00:00:00.000Z'),
-				new Date('2024-03-01T00:00:00.000Z'),
-				new Date('2024-04-01T00:00:00.000Z'),
+				new Date("2023-12-01T00:00:00.000Z"),
+				new Date("2024-01-01T00:00:00.000Z"),
+				new Date("2024-02-01T00:00:00.000Z"),
+				new Date("2024-03-01T00:00:00.000Z"),
+				new Date("2024-04-01T00:00:00.000Z"),
 			]);
 		});
 	});
 
-	describe('> statementDate', () => {
-		it('should get card statement date of current month', async () => {
+	describe("> statementDate", () => {
+		it("should get card statement date of current month", () => {
 			let result;
 			try {
 				result = service.statementDate(15, 7);
@@ -159,15 +153,13 @@ describe('Adapters > DayJs', () => {
 			const today = service.today();
 
 			const expectedResult = service.newDate(
-				[today.year, today.month, 8]
-					.map((v) => v.toString().padStart(2, '0'))
-					.join('-'),
+				formatDate([today.year, today.month, 8]),
 			);
 
 			expect(result).toStrictEqual(expectedResult);
 		});
 
-		it('should get card statement date of prev month', async () => {
+		it("should get card statement date of prev month", () => {
 			const dueDay = 15;
 			const statementDays = 7;
 			const monthsToAdd = -1;
@@ -182,17 +174,17 @@ describe('Adapters > DayJs', () => {
 			const today = service.today();
 
 			const nextMonth = service.sub(
-				[today.year, today.month, dueDay].join('-'),
+				[today.year, today.month, dueDay].join("-"),
 				monthsToAdd * -1,
-				'month',
+				"month",
 			);
 
-			const expectedResult = service.sub(nextMonth, statementDays, 'day');
+			const expectedResult = service.sub(nextMonth, statementDays, "day");
 
 			expect(result).toStrictEqual(expectedResult);
 		});
 
-		it('should get card statement date of next month', async () => {
+		it("should get card statement date of next month", () => {
 			const dueDay = 15;
 			const statementDays = 7;
 			const monthsToAdd = 1;
@@ -207,20 +199,18 @@ describe('Adapters > DayJs', () => {
 			const today = service.today();
 
 			const nextMonth = service.add(
-				[today.year, today.month, dueDay]
-					.map((v) => v.toString().padStart(2, '0'))
-					.join('-'),
+				formatDate([today.year, today.month, dueDay]),
 				monthsToAdd,
-				'month',
+				"month",
 			);
-			const expectedResult = service.sub(nextMonth, statementDays, 'day');
+			const expectedResult = service.sub(nextMonth, statementDays, "day");
 
 			expect(result).toStrictEqual(expectedResult);
 		});
 	});
 
-	describe('> dueDate', () => {
-		it('should get card due date of current month', async () => {
+	describe("> dueDate", () => {
+		it("should get card due date of current month", () => {
 			let result;
 			try {
 				result = service.dueDate(15);
@@ -231,15 +221,13 @@ describe('Adapters > DayJs', () => {
 			const today = service.today();
 
 			const expectedResult = service.newDate(
-				[today.year, today.month, 15]
-					.map((v) => v.toString().padStart(2, '0'))
-					.join('-'),
+				formatDate([today.year, today.month, 15]),
 			);
 
 			expect(result).toStrictEqual(expectedResult);
 		});
 
-		it('should get card due date of prev month', async () => {
+		it("should get card due date of prev month", () => {
 			const dueDay = 15;
 			const monthsToAdd = -1;
 
@@ -253,17 +241,15 @@ describe('Adapters > DayJs', () => {
 			const today = service.today();
 
 			const expectedResult = service.add(
-				[today.year, today.month, dueDay]
-					.map((v) => v.toString().padStart(2, '0'))
-					.join('-'),
+				formatDate([today.year, today.month, dueDay]),
 				monthsToAdd,
-				'month',
+				"month",
 			);
 
 			expect(result).toStrictEqual(expectedResult);
 		});
 
-		it('should get card due date of next month', async () => {
+		it("should get card due date of next month", () => {
 			const dueDay = 15;
 			const monthsToAdd = 1;
 
@@ -277,11 +263,9 @@ describe('Adapters > DayJs', () => {
 			const today = service.today();
 
 			const expectedResult = service.add(
-				[today.year, today.month, dueDay]
-					.map((v) => v.toString().padStart(2, '0'))
-					.join('-'),
+				formatDate([today.year, today.month, dueDay]),
 				monthsToAdd,
-				'month',
+				"month",
 			);
 
 			expect(result).toStrictEqual(expectedResult);
@@ -294,10 +278,10 @@ describe('Adapters > DayJs', () => {
 	 *
 	 */
 
-	describe('> isSameMonth', () => {
-		it('should check if two dates are in the same year and month (true)', async () => {
-			const date1 = '2023-01-01';
-			const date2 = '2023-01-07';
+	describe("> isSameMonth", () => {
+		it("should check if two dates are in the same year and month (true)", () => {
+			const date1 = baseDate1;
+			const date2 = "2023-01-07";
 
 			let result;
 			try {
@@ -309,9 +293,9 @@ describe('Adapters > DayJs', () => {
 			expect(result).toBeTruthy();
 		});
 
-		it('should check if two dates are in the same year and month (false - different years)', async () => {
-			const date1 = '2023-01-01';
-			const date2 = '2024-01-01';
+		it("should check if two dates are in the same year and month (false - different years)", () => {
+			const date1 = baseDate1;
+			const date2 = baseDate2;
 
 			let result;
 			try {
@@ -323,9 +307,9 @@ describe('Adapters > DayJs', () => {
 			expect(result).toBeFalsy();
 		});
 
-		it('should check if two dates are in the same year and month (false - different months)', async () => {
-			const date1 = '2023-01-01';
-			const date2 = '2023-02-01';
+		it("should check if two dates are in the same year and month (false - different months)", () => {
+			const date1 = baseDate1;
+			const date2 = "2023-02-01";
 
 			let result;
 			try {
@@ -338,9 +322,9 @@ describe('Adapters > DayJs', () => {
 		});
 	});
 
-	describe('> isAfterToday', () => {
-		it('should check if a date is after today (true)', async () => {
-			const tomorrow = service.add(service.today().date, 1, 'day');
+	describe("> isAfterToday", () => {
+		it("should check if a date is after today (true)", () => {
+			const tomorrow = service.add(service.today().date, 1, "day");
 
 			let result;
 			try {
@@ -352,7 +336,7 @@ describe('Adapters > DayJs', () => {
 			expect(result).toBeTruthy();
 		});
 
-		it('should check if a date is after today (false = is today)', async () => {
+		it("should check if a date is after today (false = is today)", () => {
 			let result;
 			try {
 				result = service.isAfterToday(service.today().date);
@@ -363,8 +347,8 @@ describe('Adapters > DayJs', () => {
 			expect(result).toBeFalsy();
 		});
 
-		it('should check if a date is after today (false - yesterday)', async () => {
-			const yesterday = service.sub(service.today().date, 1, 'day');
+		it("should check if a date is after today (false - yesterday)", () => {
+			const yesterday = service.sub(service.today().date, 1, "day");
 
 			let result;
 			try {
@@ -383,13 +367,13 @@ describe('Adapters > DayJs', () => {
 	 *
 	 */
 
-	describe('> nowPlus', () => {
-		it('should add 1 day', async () => {
-			const tomorrow = service.add(service.today().date, 1, 'day');
+	describe("> nowPlus", () => {
+		it("should add 1 day", () => {
+			const tomorrow = service.add(service.today().date, 1, "day");
 
 			let result;
 			try {
-				result = service.nowPlus(1, 'day');
+				result = service.nowPlus(1, "day");
 			} catch (err) {
 				result = err;
 			}
@@ -397,12 +381,12 @@ describe('Adapters > DayJs', () => {
 			expect(removeMillis(result)).toBe(removeMillis(tomorrow));
 		});
 
-		it('should subtract 1 day', async () => {
-			const yesterday = service.add(service.today().date, -1, 'day');
+		it("should subtract 1 day", () => {
+			const yesterday = service.add(service.today().date, -1, "day");
 
 			let result;
 			try {
-				result = service.nowPlus(-1, 'day');
+				result = service.nowPlus(-1, "day");
 			} catch (err) {
 				result = err;
 			}
@@ -411,198 +395,198 @@ describe('Adapters > DayJs', () => {
 		});
 	});
 
-	describe('> add', () => {
-		it('should add 1 day', async () => {
+	describe("> add", () => {
+		it("should add 1 day", () => {
 			let result;
 			try {
-				result = service.add('2024-01-01', 1, 'day');
+				result = service.add(baseDate2, 1, "day");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-01-02'));
+			expect(result).toStrictEqual(service.newDate("2024-01-02"));
 		});
 
-		it('should add 1 month', async () => {
+		it("should add 1 month", () => {
 			let result;
 			try {
-				result = service.add('2024-01-01', 1, 'month');
+				result = service.add(baseDate2, 1, "month");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-02-01'));
+			expect(result).toStrictEqual(service.newDate("2024-02-01"));
 		});
 
-		it('should add 1 year', async () => {
+		it("should add 1 year", () => {
 			let result;
 			try {
-				result = service.add('2023-01-01', 1, 'year');
+				result = service.add(baseDate1, 1, "year");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-01-01'));
+			expect(result).toStrictEqual(service.newDate(baseDate2));
 		});
 
-		it('should add 1 month (february)', async () => {
+		it("should add 1 month (february)", () => {
 			let result;
 			try {
-				result = service.add('2024-01-30', 1, 'month');
+				result = service.add("2024-01-30", 1, "month");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-02-29'));
+			expect(result).toStrictEqual(service.newDate("2024-02-29"));
 		});
 
-		it('should add 1 month (february - leap)', async () => {
+		it("should add 1 month (february - leap)", () => {
 			let result;
 			try {
-				result = service.add('2024-01-29', 1, 'month');
+				result = service.add("2024-01-29", 1, "month");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-02-29'));
-		});
-	});
-
-	describe('> sub', () => {
-		it('should subtract 1 day', async () => {
-			let result;
-			try {
-				result = service.sub('2024-01-02', 1, 'day');
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toStrictEqual(service.newDate('2024-01-01'));
-		});
-
-		it('should subtract 1 month', async () => {
-			let result;
-			try {
-				result = service.sub('2024-02-01', 1, 'month');
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toStrictEqual(service.newDate('2024-01-01'));
-		});
-
-		it('should subtract 2 months', async () => {
-			let result;
-			try {
-				result = service.sub('2024-02-01', 2, 'month');
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toStrictEqual(service.newDate('2023-12-01'));
-		});
-
-		it('should subtract 1 year', async () => {
-			let result;
-			try {
-				result = service.sub('2024-01-01', 1, 'year');
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toStrictEqual(service.newDate('2023-01-01'));
-		});
-
-		it('should subtract 1 month (february)', async () => {
-			let result;
-			try {
-				result = service.sub('2024-03-30', 1, 'month');
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toStrictEqual(service.newDate('2024-02-29'));
-		});
-
-		it('should subtract 1 month (february - leap)', async () => {
-			let result;
-			try {
-				result = service.sub('2024-03-29', 1, 'month');
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toStrictEqual(service.newDate('2024-02-29'));
+			expect(result).toStrictEqual(service.newDate("2024-02-29"));
 		});
 	});
 
-	describe('> startOf', () => {
-		it('should get the start of the day', async () => {
+	describe("> sub", () => {
+		it("should subtract 1 day", () => {
 			let result;
 			try {
-				result = service.startOf('2024-01-01T16:00:00.000Z', 'day');
+				result = service.sub("2024-01-02", 1, "day");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-01-01T00:00:00.000Z'));
+			expect(result).toStrictEqual(service.newDate(baseDate2));
 		});
 
-		it('should get the start of the month', async () => {
+		it("should subtract 1 month", () => {
 			let result;
 			try {
-				result = service.startOf('2024-01-15', 'month');
+				result = service.sub("2024-02-01", 1, "month");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-01-01'));
+			expect(result).toStrictEqual(service.newDate(baseDate2));
 		});
 
-		it('should get the start of the year', async () => {
+		it("should subtract 2 months", () => {
 			let result;
 			try {
-				result = service.startOf('2024-01-15', 'year');
+				result = service.sub("2024-02-01", 2, "month");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-01-01'));
+			expect(result).toStrictEqual(service.newDate("2023-12-01"));
+		});
+
+		it("should subtract 1 year", () => {
+			let result;
+			try {
+				result = service.sub(baseDate2, 1, "year");
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toStrictEqual(service.newDate(baseDate1));
+		});
+
+		it("should subtract 1 month (february)", () => {
+			let result;
+			try {
+				result = service.sub("2024-03-30", 1, "month");
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toStrictEqual(service.newDate("2024-02-29"));
+		});
+
+		it("should subtract 1 month (february - leap)", () => {
+			let result;
+			try {
+				result = service.sub("2024-03-29", 1, "month");
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toStrictEqual(service.newDate("2024-02-29"));
 		});
 	});
 
-	describe('> endOf', () => {
-		it('should get the end of the day', async () => {
+	describe("> startOf", () => {
+		it("should get the start of the day", () => {
 			let result;
 			try {
-				result = service.endOf('2024-01-01T16:00:00.000Z', 'day');
+				result = service.startOf("2024-01-01T16:00:00.000Z", "day");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-01-01T23:59:59.999Z'));
+			expect(result).toStrictEqual(service.newDate("2024-01-01T00:00:00.000Z"));
 		});
 
-		it('should get the end of the month', async () => {
+		it("should get the start of the month", () => {
 			let result;
 			try {
-				result = service.endOf('2024-01-15', 'month');
+				result = service.startOf("2024-01-15", "month");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-01-31T23:59:59.999Z'));
+			expect(result).toStrictEqual(service.newDate(baseDate2));
 		});
 
-		it('should get the end of the year', async () => {
+		it("should get the start of the year", () => {
 			let result;
 			try {
-				result = service.endOf('2024-01-15', 'year');
+				result = service.startOf("2024-01-15", "year");
 			} catch (err) {
 				result = err;
 			}
 
-			expect(result).toStrictEqual(service.newDate('2024-12-31T23:59:59.999Z'));
+			expect(result).toStrictEqual(service.newDate(baseDate2));
+		});
+	});
+
+	describe("> endOf", () => {
+		it("should get the end of the day", () => {
+			let result;
+			try {
+				result = service.endOf("2024-01-01T16:00:00.000Z", "day");
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toStrictEqual(service.newDate("2024-01-01T23:59:59.999Z"));
+		});
+
+		it("should get the end of the month", () => {
+			let result;
+			try {
+				result = service.endOf("2024-01-15", "month");
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toStrictEqual(service.newDate("2024-01-31T23:59:59.999Z"));
+		});
+
+		it("should get the end of the year", () => {
+			let result;
+			try {
+				result = service.endOf("2024-01-15", "year");
+			} catch (err) {
+				result = err;
+			}
+
+			expect(result).toStrictEqual(service.newDate("2024-12-31T23:59:59.999Z"));
 		});
 	});
 });

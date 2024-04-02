@@ -1,18 +1,20 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
-import { UserDataDto } from './dtos';
-import { UserData } from './decorators/user-data';
-import { BudgetService } from 'usecases/budget/budget.service';
-import { CreateBasicDto, CreateDto, OverviewDtoDto } from './dtos/budget';
-import { BudgetUseCase } from 'models/budget';
+import { Body, Controller, Get, Inject, Post, Query } from "@nestjs/common";
 
-@Controller('budgets')
+import { BudgetService } from "usecases/budget/budget.service";
+import { BudgetUseCase } from "models/budget";
+
+import { UserDataDto } from "./dtos";
+import { UserData } from "./decorators/user-data";
+import { CreateBasicDto, CreateDto, OverviewDtoDto } from "./dtos/budget";
+
+@Controller("budgets")
 export class BudgetController {
 	constructor(
 		@Inject(BudgetService)
 		private readonly budgetService: BudgetUseCase,
 	) {}
 
-	@Post('/')
+	@Post("/")
 	create(
 		@UserData()
 		userData: UserDataDto,
@@ -25,7 +27,7 @@ export class BudgetController {
 		});
 	}
 
-	@Post('/basic')
+	@Post("/basic")
 	createBasic(
 		@UserData()
 		userData: UserDataDto,
@@ -38,7 +40,7 @@ export class BudgetController {
 		});
 	}
 
-	@Get('/overview')
+	@Get("/overview")
 	overview(
 		@UserData()
 		userData: UserDataDto,

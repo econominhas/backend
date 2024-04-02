@@ -1,6 +1,6 @@
-import type { SmsAdapter } from 'adapters/sms';
-import type { Mock } from '../types';
-import { SNSSMSAdapterService } from 'adapters/implementations/sns-sms/sns.service';
+import { SNSSMSAdapterService } from "../../../src/adapters/implementations/sns-sms/sns.service";
+import { type SmsAdapter } from "../../../src/adapters/sms";
+import { type Mock } from "../types";
 
 export const makeSmsAdapterMock = () => {
 	const mock: Mock<SmsAdapter> = {

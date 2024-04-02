@@ -1,6 +1,6 @@
-import { TransactionRepository } from 'models/transaction';
-import type { Mock } from '../../types';
-import { TransactionRepositoryService } from 'repositories/postgres/transaction/transaction-repository.service';
+import { TransactionRepositoryService } from "../../../../src/repositories/postgres/transaction/transaction-repository.service";
+import { type Mock } from "../../types";
+import { type TransactionRepository } from "../../../../src/models/transaction";
 
 export const makeTransactionRepositoryMock = () => {
 	const mock: Mock<TransactionRepository> = {

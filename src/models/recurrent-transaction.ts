@@ -1,13 +1,14 @@
-import type {
-	RecurrenceCreateEnum,
-	RecurrenceExcludeEnum,
-	RecurrenceFormulaEnum,
-	RecurrenceFrequencyEnum,
-	RecurrenceTryAgainEnum,
-	RecurrentTransaction,
-	TransactionTypeEnum,
-} from '@prisma/client';
-import type { PaginatedRepository } from 'types/paginated-items';
+import {
+	type RecurrenceCreateEnum,
+	type RecurrenceExcludeEnum,
+	type RecurrenceFormulaEnum,
+	type RecurrenceFrequencyEnum,
+	type RecurrenceTryAgainEnum,
+	type RecurrentTransaction,
+	type TransactionTypeEnum,
+} from "@prisma/client";
+
+import { type PaginatedRepository } from "types/paginated-items";
 
 /**
  *

@@ -1,8 +1,12 @@
-import type { CanActivate, ExecutionContext } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { TokenAdapter } from 'adapters/token';
-import { SetMetadata } from '@nestjs/common';
+import {
+	Injectable,
+	SetMetadata,
+	type CanActivate,
+	type ExecutionContext,
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+
+import { TokenAdapter } from "adapters/token";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,17 +18,19 @@ export class AuthGuard implements CanActivate {
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const isPublic = this.reflector.get<boolean>(
-			'isPublic',
+			"isPublic",
 			context.getHandler(),
 		);
 
-		if (isPublic) return true;
+		if (isPublic) {
+			return true;
+		}
 
 		const request = context.switchToHttp().getRequest();
 
-		const [type, token] = request.headers.authorization?.split(' ') ?? [];
+		const [type, token] = request.headers.authorization?.split(" ") ?? [];
 
-		if (type !== 'Bearer' || !token) {
+		if (type !== "Bearer" || !token) {
 			return false;
 		}
 
@@ -36,7 +42,7 @@ export class AuthGuard implements CanActivate {
 			}
 
 			const ignoreTermsCheck = this.reflector.get<boolean>(
-				'ignoreTermsCheck',
+				"ignoreTermsCheck",
 				context.getHandler(),
 			);
 
@@ -55,10 +61,10 @@ export class AuthGuard implements CanActivate {
  * Decorator to allow user to use the route
  * even if he isn't logged in
  */
-export const Public = () => SetMetadata('isPublic', true);
+export const Public = () => SetMetadata("isPublic", true);
 
 /**
  * Decorator to allow user to use the route
  * even if he didn't accepted the terms of use
  */
-export const IgnoreTermsCheck = () => SetMetadata('ignoreTermsCheck', true);
+export const IgnoreTermsCheck = () => SetMetadata("ignoreTermsCheck", true);

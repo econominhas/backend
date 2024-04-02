@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - '**/*.prisma'
+      - "**/*.prisma"
 
 jobs:
   dbdocs-validate:
@@ -16,10 +16,12 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version-file: .nvmrc
+
+      - uses: pnpm/action-setup@v3
 
       - name: Install prisma & dbdocs
-        run: yarn add --ignore-scripts -D dbdocs prisma prisma-dbml-generator
+        run: pnpm add --ignore-scripts -D dbdocs prisma prisma-dbml-generator
 
       - name: Generate schema.dbml
         run: npx prisma generate --generator dbml

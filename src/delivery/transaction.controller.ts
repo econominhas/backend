@@ -1,24 +1,26 @@
-import { Controller, Inject, Get, Query, Body, Post } from '@nestjs/common';
-import { UserData } from './decorators/user-data';
-import { UserDataDto } from './dtos';
+import { Controller, Inject, Get, Query, Body, Post } from "@nestjs/common";
+
+import { TransactionService } from "usecases/transaction/transaction.service";
+import { TransactionUseCase } from "models/transaction";
+
+import { UserData } from "./decorators/user-data";
+import { UserDataDto } from "./dtos";
 import {
 	CreditDto,
 	GetListDto,
 	InOutDto,
 	TransferDto,
-} from './dtos/transaction';
-import { TransactionService } from 'usecases/transaction/transaction.service';
-import { TransactionUseCase } from 'models/transaction';
+} from "./dtos/transaction";
 
-@Controller('transactions')
+@Controller("transactions")
 export class TransactionController {
 	constructor(
 		@Inject(TransactionService)
 		private readonly transactionService: TransactionUseCase,
 	) {}
 
-	@Get('/')
-	async getList(
+	@Get("/")
+	getList(
 		@UserData()
 		userData: UserDataDto,
 		@Query()
@@ -30,8 +32,8 @@ export class TransactionController {
 		});
 	}
 
-	@Post('/transfer')
-	async transfer(
+	@Post("/transfer")
+	transfer(
 		@UserData()
 		userData: UserDataDto,
 		@Body()
@@ -43,8 +45,8 @@ export class TransactionController {
 		});
 	}
 
-	@Post('/in-out')
-	async inOut(
+	@Post("/in-out")
+	inOut(
 		@UserData()
 		userData: UserDataDto,
 		@Body()
@@ -56,8 +58,8 @@ export class TransactionController {
 		});
 	}
 
-	@Post('/credit')
-	async credit(
+	@Post("/credit")
+	credit(
 		@UserData()
 		userData: UserDataDto,
 		@Body()

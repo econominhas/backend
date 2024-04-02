@@ -3,14 +3,14 @@ FROM node:20
 WORKDIR /app
 
 COPY ./package.json ./package.json
-COPY ./yarn.lock ./yarn.lock
+COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
 
-RUN yarn install --ignore-scripts
+RUN pnpm i --ignore-scripts
 
 ADD ./prisma ./prisma
 
-RUN yarn prepare
+RUN pnpm run prepare
 
 ADD ./ ./
 
-CMD yarn start:docker
+CMD pnpm run start:docker

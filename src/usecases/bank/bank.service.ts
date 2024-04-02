@@ -3,24 +3,24 @@ import {
 	Inject,
 	Injectable,
 	NotFoundException,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {
 	TransactionTypeEnum,
 	type BankAccount,
 	type BankProvider,
-} from '@prisma/client';
-import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
-import { UtilsAdapter } from 'adapters/utils';
-import type {
-	CreateInput,
-	InOutInput,
-	ListInput,
-	TransferInput,
-} from 'models/bank';
-import { BankUseCase } from 'models/bank';
+} from "@prisma/client";
 
-import { BankRepositoryService } from 'repositories/postgres/bank/bank-repository.service';
-import type { Paginated, PaginatedItems } from 'types/paginated-items';
+import { UtilsAdapterService } from "adapters/implementations/utils/utils.service";
+import { UtilsAdapter } from "adapters/utils";
+import {
+	BankUseCase,
+	type CreateInput,
+	type InOutInput,
+	type ListInput,
+	type TransferInput,
+} from "models/bank";
+import { BankRepositoryService } from "repositories/postgres/bank/bank-repository.service";
+import { type Paginated, type PaginatedItems } from "types/paginated-items";
 
 @Injectable()
 export class BankService extends BankUseCase {
@@ -45,7 +45,7 @@ export class BankService extends BankUseCase {
 		};
 	}
 
-	async create(i: CreateInput): Promise<BankAccount> {
+	create(i: CreateInput): Promise<BankAccount> {
 		return this.bankRepository.create(i);
 	}
 
@@ -78,7 +78,7 @@ export class BankService extends BankUseCase {
 		 * important that this value is ONLY positive
 		 */
 		if (amount <= 0) {
-			throw new BadRequestException('amount must be bigger than 0');
+			throw new BadRequestException("amount must be bigger than 0");
 		}
 
 		const bankAccountFrom = await this.bankRepository.getById({
@@ -87,11 +87,11 @@ export class BankService extends BankUseCase {
 		});
 
 		if (!bankAccountFrom) {
-			throw new NotFoundException('Bank account not found');
+			throw new NotFoundException("Bank account not found");
 		}
 
 		if (bankAccountFrom.balance < amount) {
-			throw new BadRequestException('No funds to perform this action');
+			throw new BadRequestException("No funds to perform this action");
 		}
 
 		await Promise.all([
@@ -119,7 +119,7 @@ export class BankService extends BankUseCase {
 		 * important that this value is ONLY positive
 		 */
 		if (amount <= 0) {
-			throw new BadRequestException('amount must be bigger than 0');
+			throw new BadRequestException("amount must be bigger than 0");
 		}
 
 		if (type === TransactionTypeEnum.IN) {

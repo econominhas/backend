@@ -1,11 +1,14 @@
-import { Module } from '@nestjs/common';
-import { AuthRepositoryService } from './auth-repository.service';
-import { PostgresModule } from '..';
-import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
+import { Module } from "@nestjs/common";
+
+import { UIDAdapterModule } from "adapters/implementations/uid/uid.module";
+
+import { PostgresModule } from "..";
+
+import { AuthRepositoryService } from "./auth-repository.service";
 
 @Module({
 	imports: [
-		PostgresModule.forFeature(['account', 'signInProvider']),
+		PostgresModule.forFeature(["account", "signInProvider"]),
 		UIDAdapterModule,
 	],
 	providers: [AuthRepositoryService],

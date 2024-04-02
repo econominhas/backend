@@ -1,6 +1,6 @@
-import type { EmailAdapter } from 'adapters/email';
-import { SESAdapterService } from 'adapters/implementations/ses/ses.service';
-import type { Mock } from '../types';
+import { SESAdapterService } from "../../../src/adapters/implementations/ses/ses.service";
+import { type Mock } from "../types";
+import { type EmailAdapter } from "../../../src/adapters/email";
 
 export const makeEmailAdapterMock = () => {
 	const mock: Mock<EmailAdapter> = {

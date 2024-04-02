@@ -1,12 +1,12 @@
 {
 	"openapi/**/*": [
-		"bash -c \"yarn lint:openapi\"",
-		"bash -c \"yarn openapi:postman\""
+		"bash -c \"pnpm run lint:openapi\"",
+		"bash -c \"pnpm run openapi:postman\""
 	],
-	"prisma/**/*": "bash -c \"yarn lint:prisma\"",
+	"prisma/**/*": "bash -c \"pnpm run lint:prisma\"",
 	"(src|tests)/**/*": [
-		"bash -c \"yarn lint:ts\"",
-		"bash -c \"yarn lint:code\"",
-		"bash -c \"yarn test\""
+		"bash -c \"pnpm run lint:ts\"",
+		"bash -c \"pnpm run lint:code\"",
+		"bash -c \"pnpm run test\""
 	]
 }

@@ -1,13 +1,15 @@
-import type {
-	DynamicModule,
-	OnApplicationShutdown,
-	Provider,
-} from '@nestjs/common';
-import { Global, Logger, Module } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
-import { PrismaClient } from '@prisma/client';
+import {
+	Global,
+	Logger,
+	Module,
+	type DynamicModule,
+	type OnApplicationShutdown,
+	type Provider,
+} from "@nestjs/common";
+import { ModuleRef } from "@nestjs/core";
+import { PrismaClient } from "@prisma/client";
 
-export const POSTGRES_CONNECTION_NAME = 'POSTGRES_CONNECTION';
+export const POSTGRES_CONNECTION_NAME = "POSTGRES_CONNECTION";
 
 @Global()
 @Module({})
@@ -22,7 +24,7 @@ export class PostgresCoreModule implements OnApplicationShutdown {
 
 				await connection.$connect();
 
-				Logger.log('Connected to postgres!');
+				Logger.log("Connected to postgres!");
 
 				return connection;
 			},

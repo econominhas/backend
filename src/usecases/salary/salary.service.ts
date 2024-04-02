@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import type { CreateInput } from 'models/salary';
-import { SalaryUseCase } from 'models/salary';
+import { Injectable } from "@nestjs/common";
+
+import { SalaryUseCase, type CreateInput } from "models/salary";
 
 @Injectable()
 export class SalaryService extends SalaryUseCase {

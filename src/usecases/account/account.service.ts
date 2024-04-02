@@ -1,24 +1,25 @@
-import { AccountRepositoryService } from 'repositories/postgres/account/account-repository.service';
 import {
 	Inject,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException,
-} from '@nestjs/common';
-import type {
-	GetOnboardingInput,
-	GetOnboardingOutput,
-	IamInput,
-	IamOutput,
-	SetBudgetInput,
-	UpdateNameInput,
-	UpdateOnboardingInput,
-	UpdateOnboardingRecordInput,
-} from 'models/account';
-import { AccountUseCase } from 'models/account';
-import { SignInProviderEnum } from '@prisma/client';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
+} from "@nestjs/common";
+import { SignInProviderEnum } from "@prisma/client";
+
+import {
+	AccountUseCase,
+	type GetOnboardingInput,
+	type GetOnboardingOutput,
+	type IamInput,
+	type IamOutput,
+	type SetBudgetInput,
+	type UpdateNameInput,
+	type UpdateOnboardingInput,
+	type UpdateOnboardingRecordInput,
+} from "models/account";
+import { AccountRepositoryService } from "repositories/postgres/account/account-repository.service";
+import { DateAdapter } from "adapters/date";
+import { DayjsAdapterService } from "adapters/implementations/dayjs/dayjs.service";
 
 @Injectable()
 export class AccountService extends AccountUseCase {
@@ -38,11 +39,11 @@ export class AccountService extends AccountUseCase {
 		});
 
 		if (!account) {
-			throw new UnauthorizedException('User not found');
+			throw new UnauthorizedException("User not found");
 		}
 
 		const google = account.signInProviders.find(
-			(p) => p.provider === SignInProviderEnum.GOOGLE,
+			p => p.provider === SignInProviderEnum.GOOGLE,
 		);
 
 		return {
@@ -70,7 +71,7 @@ export class AccountService extends AccountUseCase {
 		});
 
 		if (!onboarding) {
-			throw new NotFoundException('User not found');
+			throw new NotFoundException("User not found");
 		}
 
 		const entries = Object.entries(onboarding);

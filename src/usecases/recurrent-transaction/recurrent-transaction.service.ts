@@ -1,22 +1,23 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { TransactionTypeEnum, type RecurrentTransaction } from '@prisma/client';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
+import { Inject, Injectable } from "@nestjs/common";
+import { TransactionTypeEnum, type RecurrentTransaction } from "@prisma/client";
+import { Cron } from "@nestjs/schedule";
 
+import { DateAdapter } from "adapters/date";
+import { DayjsAdapterService } from "adapters/implementations/dayjs/dayjs.service";
 import {
 	RecurrentTransactionRepository,
 	RecurrentTransactionUseCase,
-} from 'models/recurrent-transaction';
-import { RecurrentTransactionRepositoryService } from 'repositories/postgres/recurrent-transaction/recurrent-transaction-repository.service';
-import { MatchingDates } from './utils/matching-dates/matching-dates.service';
-import { Formulas } from './utils/formula/formula.service';
-import { TransactionUseCase } from 'models/transaction';
-import { BudgetUseCase } from 'models/budget';
-import { BudgetService } from 'usecases/budget/budget.service';
-import { Cron } from '@nestjs/schedule';
-import { UtilsAdapter } from 'adapters/utils';
-import { UtilsAdapterService } from 'adapters/implementations/utils/utils.service';
-import { TransactionService } from 'usecases/transaction/transaction.service';
+} from "models/recurrent-transaction";
+import { RecurrentTransactionRepositoryService } from "repositories/postgres/recurrent-transaction/recurrent-transaction-repository.service";
+import { TransactionUseCase } from "models/transaction";
+import { BudgetUseCase } from "models/budget";
+import { BudgetService } from "usecases/budget/budget.service";
+import { UtilsAdapter } from "adapters/utils";
+import { UtilsAdapterService } from "adapters/implementations/utils/utils.service";
+import { TransactionService } from "usecases/transaction/transaction.service";
+
+import { Formulas } from "./utils/formula/formula.service";
+import { MatchingDates } from "./utils/matching-dates/matching-dates.service";
 
 interface ReplaceVarsInput {
 	text: string;
@@ -48,7 +49,7 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 	}
 
 	// Every first day of the month
-	@Cron('0 0 1 * *')
+	@Cron("0 0 1 * *")
 	/**
 	 * @private
 	 */
@@ -64,6 +65,7 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 			});
 
 			recurrentTransactions =
+				// eslint-disable-next-line no-await-in-loop
 				await this.recurrentTransactionRepository.findMonthly({
 					offset,
 					limit,
@@ -73,14 +75,15 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 				break;
 			}
 
-			await Promise.all(recurrentTransactions.map((rt) => this.create(rt)));
+			// eslint-disable-next-line no-await-in-loop
+			await Promise.all(recurrentTransactions.map(rt => this.create(rt)));
 
 			page++;
 		} while (recurrentTransactions.length === limit);
 	}
 
 	// Every year, on the first day of January
-	@Cron('0 0 1 1 *')
+	@Cron("0 0 1 1 *")
 	/**
 	 * @private
 	 */
@@ -96,6 +99,7 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 			});
 
 			recurrentTransactions =
+				// eslint-disable-next-line no-await-in-loop
 				await this.recurrentTransactionRepository.findYearly({
 					offset,
 					limit,
@@ -105,7 +109,8 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 				break;
 			}
 
-			await Promise.all(recurrentTransactions.map((rt) => this.create(rt)));
+			// eslint-disable-next-line no-await-in-loop
+			await Promise.all(recurrentTransactions.map(rt => this.create(rt)));
 
 			page++;
 		} while (recurrentTransactions.length === limit);
@@ -143,14 +148,16 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 			cTryAgains,
 		});
 
-		if (dates.length === 0) return;
+		if (dates.length === 0) {
+			return;
+		}
 
 		/**
 		 * As the transactions always are in the same month,
 		 * we only need to get/create 1 budgetDate
 		 */
 		const budgetDates = await this.budgetService.getOrCreateMany({
-			dates: dates,
+			dates,
 			budgetId,
 			accountId,
 		});
@@ -163,9 +170,9 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 			});
 
 			const budgetDate = budgetDates.find(
-				(bd) =>
-					bd.month === this.dateAdapter.get(date, 'month') &&
-					bd.year === this.dateAdapter.get(date, 'year'),
+				bd =>
+					bd.month === this.dateAdapter.get(date, "month") &&
+					bd.year === this.dateAdapter.get(date, "year"),
 			);
 
 			if (type === TransactionTypeEnum.CREDIT) {
@@ -243,7 +250,7 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 	getAmount(baseAmounts: Array<number>, idx: number) {
 		const value = baseAmounts[idx];
 
-		return typeof value === 'number' ? value : baseAmounts[0];
+		return typeof value === "number" ? value : baseAmounts[0];
 	}
 
 	/**
@@ -253,16 +260,16 @@ export class RecurrentTransactionService extends RecurrentTransactionUseCase {
 		let finalText = text;
 
 		finalText = finalText.replaceAll(
-			'${DAY}',
-			this.dateAdapter.get(date, 'day').toString(),
+			"${DAY}",
+			this.dateAdapter.get(date, "day").toString(),
 		);
 		finalText = finalText.replaceAll(
-			'${MONTH}',
-			this.dateAdapter.get(date, 'month').toString(),
+			"${MONTH}",
+			this.dateAdapter.get(date, "month").toString(),
 		);
 		finalText = finalText.replaceAll(
-			'${YEAR}',
-			this.dateAdapter.get(date, 'year').toString(),
+			"${YEAR}",
+			this.dateAdapter.get(date, "year").toString(),
 		);
 
 		return finalText;

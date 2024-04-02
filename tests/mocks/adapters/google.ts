@@ -1,5 +1,5 @@
-import type { GoogleAdapter } from 'adapters/google';
-import { GoogleAdapterService } from 'adapters/implementations/google/google.service';
+import type { GoogleAdapter } from '../../../src/adapters/google';
+import { GoogleAdapterService } from '../../../src/adapters/implementations/google/google.service';
 import type { Mock } from '../types';
 
 export const makeGoogleAdapterMock = () => {

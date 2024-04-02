@@ -1,6 +1,6 @@
-import { BudgetRepository } from 'models/budget';
-import type { Mock } from '../../types';
-import { BudgetRepositoryService } from 'repositories/postgres/budget/budget-repository.service';
+import { type BudgetRepository } from "../../../../src/models/budget";
+import { BudgetRepositoryService } from "../../../../src/repositories/postgres/budget/budget-repository.service";
+import { type Mock } from "../../types";
 
 export const makeBudgetRepositoryMock = () => {
 	const mock: Mock<BudgetRepository> = {
@@ -18,17 +18,17 @@ export const makeBudgetRepositoryMock = () => {
 	const outputs = {
 		createWithItems: {
 			sucess: {
-				id: '1',
-				accountId: 'accountId',
-				name: 'Test Budget',
-				description: 'Test Budget Description',
+				id: "1",
+				accountId: "accountId",
+				name: "Test Budget",
+				description: "Test Budget Description",
 			},
 		},
 		upsertManyBudgetDates: {
-			sucess: [
+			success: [
 				{
-					id: '1',
-					budgetId: '1',
+					id: "1",
+					budgetId: "1",
 					month: 1,
 					year: 2024,
 					date: new Date(2024, 1, 24, 3, 0, 0),

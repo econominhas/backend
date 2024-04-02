@@ -1,5 +1,6 @@
-import { IsNumberString, Length } from 'class-validator';
-import { IsAmount, IsID, IsName } from '../validators/internal';
+import { IsNumberString, Length } from "class-validator";
+
+import { IsAmount, IsID, IsName } from "../validators/internal";
 
 export class CreateDto {
 	@IsName()

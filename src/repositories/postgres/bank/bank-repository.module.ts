@@ -1,11 +1,14 @@
-import { Module } from '@nestjs/common';
-import { PostgresModule } from '..';
-import { BankRepositoryService } from './bank-repository.service';
-import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
+import { Module } from "@nestjs/common";
+
+import { UIDAdapterModule } from "adapters/implementations/uid/uid.module";
+
+import { PostgresModule } from "..";
+
+import { BankRepositoryService } from "./bank-repository.service";
 
 @Module({
 	imports: [
-		PostgresModule.forFeature(['bankProvider', 'bankAccount']),
+		PostgresModule.forFeature(["bankProvider", "bankAccount"]),
 		UIDAdapterModule,
 	],
 	providers: [BankRepositoryService],

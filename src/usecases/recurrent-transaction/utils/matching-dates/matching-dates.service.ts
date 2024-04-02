@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from "@nestjs/common";
 import {
 	RecurrenceCreateEnum,
 	RecurrenceExcludeEnum,
 	RecurrenceTryAgainEnum,
-} from '@prisma/client';
-import type { WeekDays } from 'adapters/date';
-import { DateAdapter } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
+} from "@prisma/client";
+
+import { DateAdapter, type WeekDays } from "adapters/date";
+import { DayjsAdapterService } from "adapters/implementations/dayjs/dayjs.service";
 
 interface GetDatesInput {
 	cCreates: Array<RecurrenceCreateEnum>;
@@ -40,21 +40,21 @@ interface FindAlternativeInput {
 }
 
 const HOLIDAYS = [
-	'2024-01-01', // Ano Novo
-	'2024-02-12', // Carnaval
-	'2024-02-13', // Carnaval
-	'2024-02-14', // Carnaval
-	'2024-03-29', // Sexta-Feira Santa
-	'2024-04-21', // Dia de Tiradentes
-	'2024-05-01', // Dia do Trabalho
-	'2024-05-30', // Corpus Christi
-	'2024-09-07', // Independência do Brasil
-	'2024-10-12', // Nossa Senhora Aparecida
-	'2024-10-15', // Dia do Professor
-	'2024-10-28', // Dia do Servidor Público
-	'2024-11-02', // Dia de Finados
-	'2024-11-15', // Proclamação da República
-	'2024-12-25', // Natal
+	"2024-01-01", // Ano Novo
+	"2024-02-12", // Carnaval
+	"2024-02-13", // Carnaval
+	"2024-02-14", // Carnaval
+	"2024-03-29", // Sexta-Feira Santa
+	"2024-04-21", // Dia de Tiradentes
+	"2024-05-01", // Dia do Trabalho
+	"2024-05-30", // Corpus Christi
+	"2024-09-07", // Independência do Brasil
+	"2024-10-12", // Nossa Senhora Aparecida
+	"2024-10-15", // Dia do Professor
+	"2024-10-28", // Dia do Servidor Público
+	"2024-11-02", // Dia de Finados
+	"2024-11-15", // Proclamação da República
+	"2024-12-25", // Natal
 ];
 
 @Injectable()
@@ -90,9 +90,9 @@ export class MatchingDates {
 		date,
 		cCreates,
 	}: GetMatchingDatesInput): Array<DatesFound> {
-		const startOfTheMonth = this.dateAdapter.startOf(date, 'month');
+		const startOfTheMonth = this.dateAdapter.startOf(date, "month");
 
-		return cCreates.map((param) => {
+		return cCreates.map(param => {
 			if (param === RecurrenceCreateEnum.FIFTH_BUSINESS_DAY) {
 				/**
 				 * Days to add to get to the fifth business day,
@@ -111,7 +111,7 @@ export class MatchingDates {
 				const fifthBusinessDay = this.dateAdapter.add(
 					startOfTheMonth,
 					daysToAdd[this.dateAdapter.getDayOfWeek(date)],
-					'day',
+					"day",
 				);
 
 				return {
@@ -134,14 +134,14 @@ export class MatchingDates {
 					valid: true,
 					cCreates: param,
 					date: this.dateAdapter.startOf(
-						this.dateAdapter.endOf(startOfTheMonth, 'month'),
-						'day',
+						this.dateAdapter.endOf(startOfTheMonth, "month"),
+						"day",
 					),
 				};
 			}
 
 			if (/^DAY_[\d]{1,2}$/.test(param)) {
-				const day = parseInt(param.replace('DAY_', ''), 10);
+				const day = parseInt(param.replace("DAY_", ""));
 
 				return {
 					valid: true,
@@ -151,7 +151,7 @@ export class MatchingDates {
 			}
 
 			if (/^DAY_[\d]{1,2}_OR_LAST_DAY_OF_MONTH$/.test(param)) {
-				const day = parseInt(param.replace('DAY_', ''), 10);
+				const day = parseInt(param.replace("DAY_", ""));
 
 				return {
 					valid: true,
@@ -170,7 +170,7 @@ export class MatchingDates {
 		cExcludes,
 		cTryAgains,
 	}: FilterDatesInput): Array<DatesFound> {
-		return matchingDates.map((dateData) => {
+		return matchingDates.map(dateData => {
 			if (this.isDateValid(dateData.date, cExcludes)) {
 				return {
 					...dateData,
@@ -178,9 +178,11 @@ export class MatchingDates {
 				};
 			}
 
-			const alternativeDate = cTryAgains.reduce<undefined | Date>(
+			const alternativeDate = cTryAgains.reduce<Date | undefined>(
 				(acc, cur) => {
-					if (acc) return acc;
+					if (acc) {
+						return acc;
+					}
 
 					if (cur === RecurrenceTryAgainEnum.IF_NOT_BEFORE) {
 						return this.ifNotBefore(dateData.date, cExcludes);
@@ -205,17 +207,17 @@ export class MatchingDates {
 	 * @private
 	 */
 	isDateValid(date: Date, conditions: Array<RecurrenceExcludeEnum>) {
-		return conditions.every((condition) => {
+		return conditions.every(condition => {
 			if (condition === RecurrenceExcludeEnum.IN_BUSINESS_DAY) {
 				const weekDay = this.dateAdapter.getDayOfWeek(date);
 
-				return !['sunday', 'saturday'].includes(weekDay);
+				return !["sunday", "saturday"].includes(weekDay);
 			}
 
 			if (condition === RecurrenceExcludeEnum.IN_WEEKEND) {
 				const weekDay = this.dateAdapter.getDayOfWeek(date);
 
-				return ['sunday', 'saturday'].includes(weekDay);
+				return ["sunday", "saturday"].includes(weekDay);
 			}
 
 			if (condition === RecurrenceExcludeEnum.IN_HOLIDAY) {
@@ -232,8 +234,10 @@ export class MatchingDates {
 	 * @private
 	 */
 	findAlternative({ date, cTryAgains, cExcludes }: FindAlternativeInput) {
-		return cTryAgains.reduce<undefined | Date>((acc, cur) => {
-			if (acc) return acc;
+		return cTryAgains.reduce<Date | undefined>((acc, cur) => {
+			if (acc) {
+				return acc;
+			}
 
 			if (cur === RecurrenceTryAgainEnum.IF_NOT_BEFORE) {
 				return this.ifNotBefore(date, cExcludes);
@@ -252,11 +256,11 @@ export class MatchingDates {
 		date: Date,
 		conditions: Array<RecurrenceExcludeEnum>,
 	): Date | undefined {
-		const month = this.dateAdapter.get(date, 'month');
+		const month = this.dateAdapter.get(date, "month");
 		let curDate = date;
 
-		while (this.dateAdapter.get(curDate, 'month') === month) {
-			curDate = this.dateAdapter.sub(curDate, 1, 'day');
+		while (this.dateAdapter.get(curDate, "month") === month) {
+			curDate = this.dateAdapter.sub(curDate, 1, "day");
 
 			if (this.isDateValid(curDate, conditions)) {
 				return curDate;
@@ -271,11 +275,11 @@ export class MatchingDates {
 		date: Date,
 		conditions: Array<RecurrenceExcludeEnum>,
 	): Date | undefined {
-		const month = this.dateAdapter.get(date, 'month');
+		const month = this.dateAdapter.get(date, "month");
 		let curDate = date;
 
-		while (this.dateAdapter.get(curDate, 'month') === month) {
-			curDate = this.dateAdapter.add(curDate, 1, 'day');
+		while (this.dateAdapter.get(curDate, "month") === month) {
+			curDate = this.dateAdapter.add(curDate, 1, "day");
 
 			if (this.isDateValid(curDate, conditions)) {
 				return curDate;

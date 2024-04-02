@@ -2,11 +2,11 @@ import {
 	Inject,
 	Injectable,
 	InternalServerErrorException,
-} from '@nestjs/common';
-import { RecurrenceFormulaEnum } from '@prisma/client';
-import { DateAdapter } from 'adapters/date';
-import type { DateUnit } from 'adapters/date';
-import { DayjsAdapterService } from 'adapters/implementations/dayjs/dayjs.service';
+} from "@nestjs/common";
+import { RecurrenceFormulaEnum } from "@prisma/client";
+
+import { DateAdapter, type DateUnit } from "adapters/date";
+import { DayjsAdapterService } from "adapters/implementations/dayjs/dayjs.service";
 
 interface CalcAmountInput {
 	formulaToUse: RecurrenceFormulaEnum;
@@ -22,7 +22,7 @@ interface FormulaPMGInput {
 	baseAmount: number;
 	startAt: Date;
 	gapAmount: number;
-	gapUnit: DateUnit | 'week';
+	gapUnit: DateUnit | "week";
 }
 
 @Injectable()
@@ -50,7 +50,7 @@ export class Formulas {
 				baseAmount: amount,
 				startAt,
 				gapAmount: 1,
-				gapUnit: 'week',
+				gapUnit: "week",
 			});
 		}
 
@@ -65,7 +65,7 @@ export class Formulas {
 				baseAmount: amount,
 				startAt,
 				gapAmount: 2,
-				gapUnit: 'week',
+				gapUnit: "week",
 			});
 		}
 
@@ -91,14 +91,14 @@ export class Formulas {
 		gapUnit,
 	}: FormulaPMGInput): number {
 		const prevMonth = this.dateAdapter.startOf(
-			this.dateAdapter.sub(this.dateAdapter.newDate(), 1, 'month'),
-			'month',
+			this.dateAdapter.sub(this.dateAdapter.newDate(), 1, "month"),
+			"month",
 		);
-		const diff = Math.ceil(this.dateAdapter.diff(startAt, prevMonth, 'month'));
-		const firstDay = this.dateAdapter.add(startAt, diff, 'month');
+		const diff = Math.ceil(this.dateAdapter.diff(startAt, prevMonth, "month"));
+		const firstDay = this.dateAdapter.add(startAt, diff, "month");
 
 		const startOfCurMonthTime = this.dateAdapter
-			.startOf(this.dateAdapter.newDate(), 'month')
+			.startOf(this.dateAdapter.newDate(), "month")
 			.getTime();
 
 		let amountOfDays = 0;

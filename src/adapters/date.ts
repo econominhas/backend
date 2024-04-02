@@ -1,4 +1,4 @@
-import type { TimezoneEnum } from 'types/enums/timezone';
+import { type TimezoneEnum } from "types/enums/timezone";
 
 export interface TodayOutput {
 	day: number;
@@ -7,19 +7,19 @@ export interface TodayOutput {
 	date: Date;
 }
 
-export type DateUnit = 'second' | 'day' | 'month' | 'year' | 'minute';
+export type DateUnit = "day" | "minute" | "month" | "second" | "year";
 
 export type YearMonth = `${number}-${number}`;
 export type YearMonthDay = `${number}-${number}-${number}`;
 
 export type WeekDays =
-	| 'sunday'
-	| 'monday'
-	| 'tuesday'
-	| 'wednesday'
-	| 'thursday'
-	| 'friday'
-	| 'saturday';
+	| "friday"
+	| "monday"
+	| "saturday"
+	| "sunday"
+	| "thursday"
+	| "tuesday"
+	| "wednesday";
 
 export abstract class DateAdapter {
 	/**
@@ -30,7 +30,7 @@ export abstract class DateAdapter {
 
 	abstract today(timezone?: TimezoneEnum): TodayOutput;
 
-	abstract newDate(date?: string | Date, timezone?: TimezoneEnum): Date;
+	abstract newDate(date?: Date | string, timezone?: TimezoneEnum): Date;
 
 	abstract get(date: Date | string, unit: DateUnit): number;
 
@@ -40,7 +40,7 @@ export abstract class DateAdapter {
 		unit: DateUnit,
 	): number;
 
-	abstract getDayOfWeek(date: string | Date): WeekDays;
+	abstract getDayOfWeek(date: Date | string): WeekDays;
 
 	abstract getNextMonths(startDate: Date | string, amount: number): Array<Date>;
 
@@ -80,13 +80,13 @@ export abstract class DateAdapter {
 	abstract add(
 		date: Date | string,
 		amount: number,
-		unit: DateUnit | 'week',
+		unit: DateUnit | "week",
 	): Date;
 
 	abstract sub(
 		date: Date | string,
 		amount: number,
-		unit: DateUnit | 'week',
+		unit: DateUnit | "week",
 	): Date;
 
 	abstract startOf(

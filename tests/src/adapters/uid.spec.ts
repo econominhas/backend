@@ -1,42 +1,39 @@
-import { UIDAdapterModule } from 'adapters/implementations/uid/uid.module';
-import type { INestApplication } from '@nestjs/common';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
-import { uid } from 'uid/secure';
-import { createTestModule, createTestService } from '../../utils';
+import { uid } from "uid/secure";
+import { type INestApplication } from "@nestjs/common";
 
-describe('Adapters > UID', () => {
+import { UIDAdapterModule } from "../../../src/adapters/implementations/uid/uid.module";
+import { UIDAdapterService } from "../../../src/adapters/implementations/uid/uid.service";
+import { createTestModule, createTestService } from "../../utils";
+
+describe("Adapters > UID", () => {
 	let service: UIDAdapterService;
 	let module: INestApplication;
 
 	beforeAll(async () => {
-		try {
-			service = await createTestService<UIDAdapterService>(UIDAdapterService, {
-				providers: [
-					{
-						provide: 'uid/secure',
-						useValue: uid,
-					},
-				],
-			});
+		service = await createTestService<UIDAdapterService>(UIDAdapterService, {
+			providers: [
+				{
+					provide: "uid/secure",
+					useValue: uid,
+				},
+			],
+		});
 
-			module = await createTestModule(UIDAdapterModule);
-		} catch (err) {
-			console.error(err);
-		}
+		module = await createTestModule(UIDAdapterModule);
 	});
 
-	describe('definitions', () => {
-		it('should initialize Service', () => {
+	describe("definitions", () => {
+		it("should initialize Service", () => {
 			expect(service).toBeDefined();
 		});
 
-		it('should initialize Module', async () => {
+		it("should initialize Module", () => {
 			expect(module).toBeDefined();
 		});
 	});
 
-	describe('> genId', () => {
-		it('should generate ID', async () => {
+	describe("> genId", () => {
+		it("should generate ID", () => {
 			let result;
 			try {
 				result = service.genId();
@@ -44,14 +41,14 @@ describe('Adapters > UID', () => {
 				result = err;
 			}
 
-			expect(typeof result).toBe('string');
+			expect(typeof result).toBe("string");
 			expect(result).toHaveLength(16);
 			expect(result).toMatch(/^[a-fA-F0-9]*$/);
 		});
 	});
 
-	describe('> genSecret', () => {
-		it('should generate Secret', async () => {
+	describe("> genSecret", () => {
+		it("should generate Secret", () => {
 			let result;
 			try {
 				result = service.genSecret();
@@ -59,14 +56,14 @@ describe('Adapters > UID', () => {
 				result = err;
 			}
 
-			expect(typeof result).toBe('string');
+			expect(typeof result).toBe("string");
 			expect(result).toHaveLength(32);
 			expect(result).toMatch(/^[a-fA-F0-9]*$/);
 		});
 	});
 
-	describe('> genSuperSecret', () => {
-		it('should generate Super Secret', async () => {
+	describe("> genSuperSecret", () => {
+		it("should generate Super Secret", () => {
 			let result;
 			try {
 				result = service.genSuperSecret();
@@ -74,7 +71,7 @@ describe('Adapters > UID', () => {
 				result = err;
 			}
 
-			expect(typeof result).toBe('string');
+			expect(typeof result).toBe("string");
 			expect(result).toHaveLength(64);
 			expect(result).toMatch(/^[a-fA-F0-9]*$/);
 		});

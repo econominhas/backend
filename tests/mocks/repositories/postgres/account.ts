@@ -1,12 +1,13 @@
-import type { AccountRepository } from 'models/account';
-import type { Mock } from '../../types';
-import { AccountRepositoryService } from 'repositories/postgres/account/account-repository.service';
-import type { Account } from '@prisma/client';
+import { type Account } from "@prisma/client";
+
+import { AccountRepositoryService } from "../../../../src/repositories/postgres/account/account-repository.service";
+import { type AccountRepository } from "../../../../src/models/account";
+import { type Mock } from "../../types";
 
 export const makeAccountRepositoryMock = () => {
 	const base: Account = {
-		id: 'accountId',
-		email: 'foo@bar',
+		id: "accountId",
+		email: "foo@bar",
 		phone: null,
 		createdAt: new Date(),
 	};

@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
-import { DayjsAdapterService } from './dayjs.service';
+import { Module } from "@nestjs/common";
+
+import { DayjsAdapterService } from "./dayjs.service";
 
 @Module({
 	providers: [DayjsAdapterService],

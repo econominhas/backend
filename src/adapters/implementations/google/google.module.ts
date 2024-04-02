@@ -1,14 +1,16 @@
-import { Module } from '@nestjs/common';
-import { GoogleAdapterService } from './google.service';
-import { DayJsAdapterModule } from '../dayjs/dayjs.module';
-import { ConfigModule } from '@nestjs/config';
-import axios from 'axios';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import axios from "axios";
+
+import { DayJsAdapterModule } from "../dayjs/dayjs.module";
+
+import { GoogleAdapterService } from "./google.service";
 
 @Module({
 	imports: [DayJsAdapterModule, ConfigModule],
 	providers: [
 		{
-			provide: 'axios',
+			provide: "axios",
 			useValue: axios,
 		},
 		GoogleAdapterService,

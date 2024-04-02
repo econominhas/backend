@@ -1,23 +1,25 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { InjectRepository, Repository } from '..';
-import type { Category, DefaultCategory } from '@prisma/client';
-import type {
-	CreateManyInput,
-	GetByIdInput,
-	GetByUserInput,
-} from 'models/category';
-import { CategoryRepository } from 'models/category';
-import type { PaginatedRepository } from 'types/paginated-items';
-import { IdAdapter } from 'adapters/id';
-import { UIDAdapterService } from 'adapters/implementations/uid/uid.service';
+import { Inject, Injectable } from "@nestjs/common";
+import { type Category, type DefaultCategory } from "@prisma/client";
+
+import {
+	CategoryRepository,
+	type CreateManyInput,
+	type GetByIdInput,
+	type GetByUserInput,
+} from "models/category";
+import { type PaginatedRepository } from "types/paginated-items";
+import { IdAdapter } from "adapters/id";
+import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class CategoryRepositoryService extends CategoryRepository {
 	constructor(
-		@InjectRepository('defaultCategory')
-		private readonly defaultCategoryRepository: Repository<'defaultCategory'>,
-		@InjectRepository('category')
-		private readonly categoryRepository: Repository<'category'>,
+		@InjectRepository("defaultCategory")
+		private readonly defaultCategoryRepository: Repository<"defaultCategory">,
+		@InjectRepository("category")
+		private readonly categoryRepository: Repository<"category">,
 
 		@Inject(UIDAdapterService)
 		private readonly idAdapter: IdAdapter,
@@ -36,7 +38,7 @@ export class CategoryRepositoryService extends CategoryRepository {
 	}
 
 	async createMany({ accountId, categories }: CreateManyInput): Promise<void> {
-		const data = categories.map((c) => ({
+		const data = categories.map(c => ({
 			...c,
 			accountId,
 			id: this.idAdapter.genId(),
@@ -53,18 +55,18 @@ export class CategoryRepositoryService extends CategoryRepository {
 		onlyActive,
 		limit,
 		offset,
-	}: GetByUserInput): Promise<Category[]> {
+	}: GetByUserInput): Promise<Array<Category>> {
 		return this.categoryRepository.findMany({
 			where: {
 				accountId,
 				...(onlyActive
 					? {
 							active: true,
-					  }
+						}
 					: {}),
 			},
 			orderBy: {
-				name: 'asc',
+				name: "asc",
 			},
 			take: limit,
 			skip: offset,
@@ -76,10 +78,10 @@ export class CategoryRepositoryService extends CategoryRepository {
 			where: {
 				id: categoryId,
 				accountId,
-				...(typeof active !== 'undefined'
+				...(typeof active !== "undefined"
 					? {
 							active,
-					  }
+						}
 					: {}),
 			},
 		});

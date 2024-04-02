@@ -1,9 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { SendInput, SendSecureInput } from 'adapters/queue';
-import { QueueAdapter } from 'adapters/queue';
-import { SqsService } from '@ssut/nestjs-sqs';
-import { IdAdapter } from 'adapters/id';
-import { UIDAdapterService } from '../uid/uid.service';
+import { Inject, Injectable } from "@nestjs/common";
+import { SqsService } from "@ssut/nestjs-sqs";
+
+import {
+	QueueAdapter,
+	type SendInput,
+	type SendSecureInput,
+} from "adapters/queue";
+import { IdAdapter } from "adapters/id";
+
+import { UIDAdapterService } from "../uid/uid.service";
 
 @Injectable()
 export class SQSAdapterService extends QueueAdapter {

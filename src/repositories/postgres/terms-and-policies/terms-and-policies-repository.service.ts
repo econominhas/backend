@@ -3,25 +3,27 @@ import {
 	Injectable,
 	InternalServerErrorException,
 	NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository, Repository } from '..';
-import type {
-	AcceptInput,
-	GetLatestAcceptedInput,
-} from 'models/terms-and-policies';
-import { TermsAndPoliciesRepository } from 'models/terms-and-policies';
-import type {
-	TermsAndPolicies,
-	TermsAndPoliciesAccepted,
-} from '@prisma/client';
+} from "@nestjs/common";
+import {
+	type TermsAndPolicies,
+	type TermsAndPoliciesAccepted,
+} from "@prisma/client";
+
+import {
+	TermsAndPoliciesRepository,
+	type AcceptInput,
+	type GetLatestAcceptedInput,
+} from "models/terms-and-policies";
+
+import { InjectRepository, Repository } from "..";
 
 @Injectable()
 export class TermsAndPoliciesRepositoryService extends TermsAndPoliciesRepository {
 	constructor(
-		@InjectRepository('termsAndPolicies')
-		private readonly termsAndPoliciesRepository: Repository<'termsAndPolicies'>,
-		@InjectRepository('termsAndPoliciesAccepted')
-		private readonly termsAndPoliciesAcceptedRepository: Repository<'termsAndPoliciesAccepted'>,
+		@InjectRepository("termsAndPolicies")
+		private readonly termsAndPoliciesRepository: Repository<"termsAndPolicies">,
+		@InjectRepository("termsAndPoliciesAccepted")
+		private readonly termsAndPoliciesAcceptedRepository: Repository<"termsAndPoliciesAccepted">,
 	) {
 		super();
 	}
@@ -36,12 +38,12 @@ export class TermsAndPoliciesRepositoryService extends TermsAndPoliciesRepositor
 			});
 		} catch (err) {
 			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2003
-			if (err.code === 'P2003') {
+			if (err.code === "P2003") {
 				throw new NotFoundException("Version doesn't exists");
 			}
 			// https://www.prisma.io/docs/reference/api-reference/error-reference#p2004
-			if (err.code === 'P2004') {
-				throw new ConflictException('Version already accepted');
+			if (err.code === "P2004") {
+				throw new ConflictException("Version already accepted");
 			}
 
 			throw new InternalServerErrorException(
@@ -58,7 +60,7 @@ export class TermsAndPoliciesRepositoryService extends TermsAndPoliciesRepositor
 				},
 			},
 			orderBy: {
-				liveAt: 'desc',
+				liveAt: "desc",
 			},
 		});
 	}
@@ -71,7 +73,7 @@ export class TermsAndPoliciesRepositoryService extends TermsAndPoliciesRepositor
 				accountId,
 			},
 			orderBy: {
-				acceptedAt: 'desc',
+				acceptedAt: "desc",
 			},
 		});
 	}

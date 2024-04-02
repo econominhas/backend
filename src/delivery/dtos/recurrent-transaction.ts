@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from "class-transformer";
 import {
 	ArrayMaxSize,
 	ArrayMinSize,
@@ -7,8 +7,9 @@ import {
 	Max,
 	Min,
 	ValidateNested,
-} from 'class-validator';
-import { IsAmount, IsID } from '../validators/internal';
+} from "class-validator";
+
+import { IsAmount, IsID } from "../validators/internal";
 
 class SalaryInstallment {
 	@IsInt()

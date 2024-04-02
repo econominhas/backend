@@ -1,6 +1,6 @@
-import type { TermsAndPoliciesUseCase } from 'models/terms-and-policies';
-import { TermsAndPoliciesService } from 'usecases/terms-and-policies/terms-and-policies.service';
-import type { Mock } from '../types';
+import { TermsAndPoliciesService } from "../../../src/usecases/terms-and-policies/terms-and-policies.service";
+import { type TermsAndPoliciesUseCase } from "../../../src/models/terms-and-policies";
+import { type Mock } from "../types";
 
 export const makeTermsServiceMock = () => {
 	const mock: Mock<TermsAndPoliciesUseCase> = {

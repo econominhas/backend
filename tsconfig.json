@@ -19,5 +19,6 @@
 		"forceConsistentCasingInFileNames": false,
 		"noFallthroughCasesInSwitch": false
 	},
+	"include": ["src"],
 	"exclude": ["dist", "dist-lint"]
 }

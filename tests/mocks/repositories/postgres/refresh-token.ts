@@ -1,12 +1,13 @@
-import type { RefreshToken } from '@prisma/client';
-import type { Mock } from '../../types';
-import type { RefreshTokenRepository } from 'models/refresh-token';
-import { RefreshTokenRepositoryService } from 'repositories/postgres/refresh-token/refresh-token-repository.service';
+import { type RefreshToken } from "@prisma/client";
+
+import { RefreshTokenRepositoryService } from "../../../../src/repositories/postgres/refresh-token/refresh-token-repository.service";
+import { type Mock } from "../../types";
+import { type RefreshTokenRepository } from "../../../../src/models/refresh-token";
 
 export const makeRefreshTokenRepositoryMock = () => {
 	const base: RefreshToken = {
-		accountId: 'accountId',
-		refreshToken: 'refreshToken',
+		accountId: "accountId",
+		refreshToken: "refreshToken",
 		createdAt: new Date(),
 	};
 
@@ -26,8 +27,8 @@ export const makeRefreshTokenRepositoryMock = () => {
 		},
 		get: {
 			success: {
-				accountId: 'accountId',
-				refreshToken: 'refreshToken',
+				accountId: "accountId",
+				refreshToken: "refreshToken",
 				createdAt: new Date(),
 			},
 		},

@@ -6,37 +6,38 @@ import {
 	Injectable,
 	Logger,
 	NotFoundException,
-} from '@nestjs/common';
-import type {
-	AuthOutput,
-	CreateWith3rdPartyProviderInput,
-	CreateWithEmailProviderInput,
-	CreateWithPhoneProviderInput,
-	ExchangeCodeInput,
-	RefreshOutput,
-	RefreshTokenInput,
-} from 'models/auth';
-import { AuthRepository } from 'models/auth';
-import { MagicLinkCodeRepositoryService } from 'repositories/postgres/magic-link-code/magic-link-code-repository.service';
-import { RefreshTokenRepositoryService } from 'repositories/postgres/refresh-token/refresh-token-repository.service';
-import type { Account } from '@prisma/client';
-import { SignInProviderEnum } from '@prisma/client';
-import { TermsAndPoliciesService } from '../terms-and-policies/terms-and-policies.service';
-import { AuthUseCase } from 'models/auth';
-import { AuthRepositoryService } from 'repositories/postgres/auth/auth-repository.service';
-import { TermsAndPoliciesUseCase } from 'models/terms-and-policies';
-import { MagicLinkCodeRepository } from 'models/magic-link-code';
-import { RefreshTokenRepository } from 'models/refresh-token';
-import { GoogleAdapter } from 'adapters/google';
-import { TokenAdapter } from 'adapters/token';
-import { EmailAdapter } from 'adapters/email';
-import { SmsAdapter } from 'adapters/sms';
-import { GoogleAdapterService } from 'adapters/implementations/google/google.service';
-import { SESAdapterService } from 'adapters/implementations/ses/ses.service';
-import { SNSSMSAdapterService } from 'adapters/implementations/sns-sms/sns.service';
-import { TopicAdapter } from 'adapters/topic';
-import { SNSAdapterService } from 'adapters/implementations/sns/sns.service';
-import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
+} from "@nestjs/common";
+import { SignInProviderEnum, type Account } from "@prisma/client";
+
+import { RefreshTokenRepositoryService } from "repositories/postgres/refresh-token/refresh-token-repository.service";
+import { MagicLinkCodeRepositoryService } from "repositories/postgres/magic-link-code/magic-link-code-repository.service";
+import {
+	AuthRepository,
+	AuthUseCase,
+	type AuthOutput,
+	type CreateWith3rdPartyProviderInput,
+	type CreateWithEmailProviderInput,
+	type CreateWithPhoneProviderInput,
+	type ExchangeCodeInput,
+	type RefreshOutput,
+	type RefreshTokenInput,
+} from "models/auth";
+import { AuthRepositoryService } from "repositories/postgres/auth/auth-repository.service";
+import { TermsAndPoliciesUseCase } from "models/terms-and-policies";
+import { MagicLinkCodeRepository } from "models/magic-link-code";
+import { RefreshTokenRepository } from "models/refresh-token";
+import { GoogleAdapter } from "adapters/google";
+import { TokenAdapter } from "adapters/token";
+import { EmailAdapter } from "adapters/email";
+import { SmsAdapter } from "adapters/sms";
+import { GoogleAdapterService } from "adapters/implementations/google/google.service";
+import { SESAdapterService } from "adapters/implementations/ses/ses.service";
+import { SNSSMSAdapterService } from "adapters/implementations/sns-sms/sns.service";
+import { TopicAdapter } from "adapters/topic";
+import { SNSAdapterService } from "adapters/implementations/sns/sns.service";
+import { PasetoAdapterService } from "adapters/implementations/paseto/paseto.service";
+
+import { TermsAndPoliciesService } from "../terms-and-policies/terms-and-policies.service";
 
 interface GenTokensInput {
 	accountId: string;
@@ -75,19 +76,19 @@ export class AuthService extends AuthUseCase {
 	}: CreateWith3rdPartyProviderInput): Promise<AuthOutput> {
 		const { scopes, ...providerTokens } = await this.googleAdapter
 			.exchangeCode({ code, originUrl })
-			.catch((err) => {
+			.catch(err => {
 				Logger.error(err);
 
-				throw new BadRequestException('Invalid code');
+				throw new BadRequestException("Invalid code");
 			});
 
 		const missingScopes = this.googleAdapter.requiredScopes.filter(
-			(s) => !scopes.includes(s),
+			s => !scopes.includes(s),
 		);
 
 		if (missingScopes.length > 0) {
 			throw new BadRequestException(
-				`Missing required scopes: ${missingScopes.join(' ')}`,
+				`Missing required scopes: ${missingScopes.join(" ")}`,
 			);
 		}
 
@@ -96,7 +97,7 @@ export class AuthService extends AuthUseCase {
 		);
 
 		if (!providerData.isEmailVerified) {
-			throw new ForbiddenException('Unverified provider email');
+			throw new ForbiddenException("Unverified provider email");
 		}
 
 		const relatedAccounts = await this.authRepository.getManyByProvider({
@@ -109,36 +110,40 @@ export class AuthService extends AuthUseCase {
 		let isFirstAccess = false;
 
 		if (relatedAccounts.length > 0) {
-			const sameProviderId = relatedAccounts.find((a) =>
-				a.signInProviders.find((p) => p.providerId === providerData.id),
+			const sameProviderId = relatedAccounts.find(a =>
+				a.signInProviders.find(p => p.providerId === providerData.id),
 			);
 			const sameEmail = relatedAccounts.find(
-				(a) => a.email === providerData.email,
+				a => a.email === providerData.email,
 			);
 
-			// Has an account with the same email, and it
-			// isn't linked with another provider account
+			/*
+			 * Has an account with the same email, and it
+			 * isn't linked with another provider account
+			 */
 			if (
 				sameEmail &&
 				!sameProviderId &&
 				!sameEmail.signInProviders.find(
-					(p) => p.provider === SignInProviderEnum.GOOGLE,
+					p => p.provider === SignInProviderEnum.GOOGLE,
 				)
 			) {
 				account = sameEmail;
 			}
 
-			// Account with same provider id (it can have a different email,
-			// in case that the user updated it in provider or on our platform)
-			// More descriptive IF:
-			// if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
+			/*
+			 * Account with same provider id (it can have a different email,
+			 * in case that the user updated it in provider or on our platform)
+			 * More descriptive IF:
+			 * if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
+			 */
 			if (sameProviderId) {
 				account = sameProviderId;
 			}
 
 			if (!account) {
 				throw new ConflictException(
-					'Error finding account, please contact support',
+					"Error finding account, please contact support",
 				);
 			}
 
@@ -162,7 +167,7 @@ export class AuthService extends AuthUseCase {
 			});
 
 			await this.topicAdapter.send({
-				topicName: 'USER_CREATED',
+				topicName: "USER_CREATED",
 				body: {
 					accountId: account.id,
 				},
@@ -192,7 +197,7 @@ export class AuthService extends AuthUseCase {
 			});
 
 			await this.topicAdapter.send({
-				topicName: 'USER_CREATED',
+				topicName: "USER_CREATED",
 				body: {
 					accountId: account.id,
 				},
@@ -203,13 +208,13 @@ export class AuthService extends AuthUseCase {
 
 		const { code } = await this.magicLinkCodeRepository.upsert({
 			accountId: account.id,
-			isFirstAccess: isFirstAccess,
+			isFirstAccess,
 		});
 
 		await this.emailAdapter.send({
 			to: account.email!,
 			account,
-			templateId: 'MAGIC_LINK_LOGIN',
+			templateId: "MAGIC_LINK_LOGIN",
 			placeholders: {
 				code,
 			},
@@ -230,7 +235,7 @@ export class AuthService extends AuthUseCase {
 			});
 
 			await this.topicAdapter.send({
-				topicName: 'USER_CREATED',
+				topicName: "USER_CREATED",
 				body: {
 					accountId: account.id,
 				},
@@ -241,13 +246,13 @@ export class AuthService extends AuthUseCase {
 
 		const { code } = await this.magicLinkCodeRepository.upsert({
 			accountId: account.id,
-			isFirstAccess: isFirstAccess,
+			isFirstAccess,
 		});
 
 		await this.smsAdapter.send({
 			to: account.phone!,
 			account,
-			templateId: 'MAGIC_LINK_LOGIN',
+			templateId: "MAGIC_LINK_LOGIN",
 			placeholders: {
 				code,
 			},
@@ -264,12 +269,12 @@ export class AuthService extends AuthUseCase {
 		});
 
 		if (!magicLinkCode) {
-			throw new NotFoundException('Invalid code');
+			throw new NotFoundException("Invalid code");
 		}
 
 		if (magicLinkCode.isFirstAccess) {
 			await this.topicAdapter.send({
-				topicName: 'USER_CREATED',
+				topicName: "USER_CREATED",
 				body: {
 					accountId: magicLinkCode.accountId,
 				},
@@ -291,7 +296,7 @@ export class AuthService extends AuthUseCase {
 		});
 
 		if (!refreshTokenData) {
-			throw new NotFoundException('Refresh token not found');
+			throw new NotFoundException("Refresh token not found");
 		}
 
 		return this.genAuthOutput({
@@ -320,7 +325,7 @@ export class AuthService extends AuthUseCase {
 		if (refresh) {
 			promises.push(
 				this.refreshTokenRepository.create({
-					accountId: accountId,
+					accountId,
 				}),
 			);
 		} else {
@@ -330,7 +335,7 @@ export class AuthService extends AuthUseCase {
 		if (!isFirstAccess) {
 			promises.push(
 				this.termsAndPoliciesService.hasAcceptedLatest({
-					accountId: accountId,
+					accountId,
 				}),
 			);
 		} else {
@@ -342,7 +347,7 @@ export class AuthService extends AuthUseCase {
 		)) as [{ refreshToken: string }, boolean];
 
 		const { accessToken, expiresAt } = await this.tokenAdapter.genAccess({
-			accountId: accountId,
+			accountId,
 			hasAcceptedLatestTerms,
 		});
 
