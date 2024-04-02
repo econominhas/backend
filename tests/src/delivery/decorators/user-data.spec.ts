@@ -10,7 +10,7 @@ describe('Delivery > Decorators', () => {
 						getRequest: () => ({
 							headers: {
 								authorization:
-									'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhY2NvdW50SWQiLCJ0ZXJtcyI6dHJ1ZX0._Xha--8lvBSdfY8cQ3_Kup1eEM12N4nHceflRXtuZHY',
+									'Bearer v4.public.eyJzdWIiOiJhY2NvdW50SWQiLCJ0ZXJtcyI6dHJ1ZSwiZXhwIjoiMjAyNC0wMS0wMVQwMzowMDowMC4wMDBaIiwiaWF0IjoiMjAyNC0wNC0wMlQxMTo1MDoyMi41NDBaIn1KoyJFS_wNB6nqMHV8N92RL3kJoPdy3ONjBe5OoLUsd62l5EhJi2OYXe8aHXMhBDpkS2jmUAyYQTxXGuY0fJwM',
 							},
 						}),
 					}),

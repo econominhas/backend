@@ -1,27 +1,31 @@
 import type { ExecutionContext } from '@nestjs/common';
 import { createParamDecorator } from '@nestjs/common';
 import type { Request } from 'express';
-import { decode } from 'jsonwebtoken';
+import { decode } from 'paseto';
 import type { TokenPayload, UserData as UserDataType } from 'adapters/token';
 
 export const validate = (
-	data: undefined,
+	_data: undefined,
 	ctx: ExecutionContext,
 ): UserDataType => {
-	const request = ctx.switchToHttp().getRequest<Request>();
+	try {
+		const request = ctx.switchToHttp().getRequest<Request>();
 
-	const [, token] = request.headers.authorization?.split(' ') ?? [];
+		const [, token] = request.headers.authorization?.split(' ') ?? [];
 
-	const payload = decode(token) as TokenPayload | undefined;
+		const payload = decode<TokenPayload>(token)?.payload;
 
-	if (!payload) {
-		return {} as UserDataType;
+		if (!payload) {
+			return {} as UserDataType;
+		}
+
+		return {
+			accountId: payload.sub,
+			hasAcceptedLatestTerms: payload.terms,
+		};
+	} catch (err) {
+		return {} as any;
 	}
-
-	return {
-		accountId: payload.sub,
-		hasAcceptedLatestTerms: payload.terms,
-	};
 };
 
 export const UserData = createParamDecorator(validate);

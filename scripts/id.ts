@@ -1,3 +1,9 @@
+/**
+ *
+ * Generates one or more user IDs
+ *
+ */
+
 import { createInterface } from 'readline';
 import { uid } from 'uid/secure';
 

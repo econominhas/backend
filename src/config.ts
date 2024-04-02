@@ -35,7 +35,7 @@ class EnvVars {
 	GOOGLE_CLIENT_SECRET: string;
 
 	@IsString()
-	JWT_SECRET: string;
+	PASETO_PRIVATE_KEY: string;
 
 	@IsString()
 	DATABASE_URL: string;

@@ -22,5 +22,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --ignore-scripts
 
+      - name: Gen prisma types
+        run: yarn db:prisma
+
       - name: Run tests
         run: yarn test:cov

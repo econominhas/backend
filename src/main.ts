@@ -1,9 +1,8 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-
 import { AuthGuard } from './delivery/guards/auth.guard';
-import { JWTAdapterService } from './adapters/implementations/jwt/token.service';
+import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
 
 import 'reflect-metadata';
 
@@ -26,7 +25,7 @@ async function bootstrap() {
 	});
 
 	const reflector = app.get(Reflector);
-	const tokenAdapter = app.get(JWTAdapterService);
+	const tokenAdapter = app.get(PasetoAdapterService);
 	app.useGlobalGuards(new AuthGuard(reflector, tokenAdapter));
 
 	app.enableShutdownHooks();

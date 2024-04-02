@@ -8,7 +8,7 @@ import { RefreshTokenRepository } from 'models/refresh-token';
 import { InjectRepository, Repository } from '..';
 import type { RefreshToken } from '@prisma/client';
 import { TokenAdapter } from 'adapters/token';
-import { JWTAdapterService } from 'adapters/implementations/jwt/token.service';
+import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
 
 @Injectable()
 export class RefreshTokenRepositoryService extends RefreshTokenRepository {
@@ -16,7 +16,7 @@ export class RefreshTokenRepositoryService extends RefreshTokenRepository {
 		@InjectRepository('refreshToken')
 		private readonly refreshTokenRepository: Repository<'refreshToken'>,
 
-		@Inject(JWTAdapterService)
+		@Inject(PasetoAdapterService)
 		private readonly tokenAdapter: TokenAdapter,
 	) {
 		super();

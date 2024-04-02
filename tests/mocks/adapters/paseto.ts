@@ -1,4 +1,4 @@
-import { JWTAdapterService } from 'adapters/implementations/jwt/token.service';
+import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
 import type { TokenAdapter } from 'adapters/token';
 import type { Mock } from '../types';
 
@@ -10,7 +10,7 @@ export const makeTokenAdapterMock = () => {
 	};
 
 	const module = {
-		provide: JWTAdapterService,
+		provide: PasetoAdapterService,
 		useValue: mock,
 	};
 
