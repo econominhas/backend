@@ -7,7 +7,7 @@ export interface TodayOutput {
 	date: Date;
 }
 
-export type DateUnit = 'second' | 'day' | 'month' | 'year';
+export type DateUnit = 'second' | 'day' | 'month' | 'year' | 'minute';
 
 export type YearMonth = `${number}-${number}`;
 export type YearMonthDay = `${number}-${number}-${number}`;

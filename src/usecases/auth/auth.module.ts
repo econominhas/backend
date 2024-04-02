@@ -6,7 +6,7 @@ import { MagicLinkCodeRepositoryModule } from 'repositories/postgres/magic-link-
 import { RefreshTokenRepositoryModule } from 'repositories/postgres/refresh-token/refresh-token-repository.module';
 import { AuthRepositoryModule } from 'repositories/postgres/auth/auth-repository.module';
 import { GoogleAdapterModule } from 'adapters/implementations/google/google.module';
-import { PasetoAdapterModule } from 'adapters/implementations/paseto/token.module';
+import { PasetoAdapterModule } from 'adapters/implementations/paseto/paseto.module';
 import { SESAdapterModule } from 'adapters/implementations/ses/ses.module';
 import { SNSSMSAdapterModule } from 'adapters/implementations/sns-sms/sns.module';
 import { SNSAdapterModule } from 'adapters/implementations/sns/sns.module';

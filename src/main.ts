@@ -2,7 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AuthGuard } from './delivery/guards/auth.guard';
-import { PasetoAdapterService } from 'adapters/implementations/paseto/token.service';
+import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
 
 import 'reflect-metadata';
 

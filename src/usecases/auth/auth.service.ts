@@ -36,7 +36,7 @@ import { SESAdapterService } from 'adapters/implementations/ses/ses.service';
 import { SNSSMSAdapterService } from 'adapters/implementations/sns-sms/sns.service';
 import { TopicAdapter } from 'adapters/topic';
 import { SNSAdapterService } from 'adapters/implementations/sns/sns.service';
-import { PasetoAdapterService } from 'adapters/implementations/paseto/token.service';
+import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
 
 interface GenTokensInput {
 	accountId: string;

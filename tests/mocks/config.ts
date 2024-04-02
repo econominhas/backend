@@ -1,14 +1,19 @@
 import { ConfigService } from '@nestjs/config';
 
-const configMock = new Map<string, string>();
+export const makeConfigMock = () => {
+	const mock = new Map<string, string>();
 
-configMock.set('GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_ID');
-configMock.set('GOOGLE_CLIENT_SECRET', 'GOOGLE_CLIENT_SECRET');
-configMock.set('PASETO_SECRET', 'PASETO_SECRET');
+	mock.set('GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_ID');
+	mock.set('GOOGLE_CLIENT_SECRET', 'GOOGLE_CLIENT_SECRET');
+	mock.set('PASETO_PRIVATE_KEY', 'PASETO_PRIVATE_KEY');
 
-const configMockModule = {
-	provide: ConfigService,
-	useValue: configMock,
+	const module = {
+		provide: ConfigService,
+		useValue: mock,
+	};
+
+	return {
+		mock,
+		module,
+	};
 };
-
-export { configMock, configMockModule };

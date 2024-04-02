@@ -4,7 +4,7 @@ import { GoogleAdapterService } from 'adapters/implementations/google/google.ser
 import { makeAxiosMock } from '../../mocks/libs/axios';
 import { DayJsAdapterModule } from 'adapters/implementations/dayjs/dayjs.module';
 import { createTestModule, createTestService, removeMillis } from '../../utils';
-import { configMock, configMockModule } from '../../mocks/config';
+import { makeConfigMock } from '../../mocks/config';
 
 const googleTokenUrl = 'https://oauth2.googleapis.com/token';
 const googleUserDataUrl = 'https://openidconnect.googleapis.com/v1/userinfo';
@@ -13,6 +13,7 @@ describe('Adapters > Google', () => {
 	let service: GoogleAdapterService;
 	let module: INestApplication;
 
+	const configMock = makeConfigMock();
 	const axiosMock = makeAxiosMock();
 
 	beforeAll(async () => {
@@ -26,7 +27,7 @@ describe('Adapters > Google', () => {
 							provide: 'axios',
 							useValue: axiosMock,
 						},
-						configMockModule,
+						configMock.module,
 					],
 				},
 			);
@@ -51,8 +52,8 @@ describe('Adapters > Google', () => {
 		it('should return auth data', async () => {
 			const body = {
 				code: 'foo',
-				client_id: configMock.get('GOOGLE_CLIENT_ID'),
-				client_secret: configMock.get('GOOGLE_CLIENT_SECRET'),
+				client_id: configMock.mock.get('GOOGLE_CLIENT_ID'),
+				client_secret: configMock.mock.get('GOOGLE_CLIENT_SECRET'),
 				grant_type: 'authorization_code',
 			};
 
@@ -101,8 +102,8 @@ describe('Adapters > Google', () => {
 		it('should return auth data (with originUrl)', async () => {
 			const body = {
 				code: 'foo',
-				client_id: configMock.get('GOOGLE_CLIENT_ID'),
-				client_secret: configMock.get('GOOGLE_CLIENT_SECRET'),
+				client_id: configMock.mock.get('GOOGLE_CLIENT_ID'),
+				client_secret: configMock.mock.get('GOOGLE_CLIENT_SECRET'),
 				redirect_uri: 'originUrl',
 				grant_type: 'authorization_code',
 			};

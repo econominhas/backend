@@ -1,6 +1,7 @@
 export interface TokenPayload {
 	sub: string; // Account ID
 	terms: boolean; // Tells if the user accepted the latest terms and policies
+	exp: string; // Expiration ISO date
 }
 
 export interface UserData {
@@ -24,6 +25,8 @@ export interface GenRefreshOutput {
 }
 
 export abstract class TokenAdapter {
+	protected expiration = 15; // Amount of time that the access token should be valid, in minutes
+
 	abstract genAccess(i: GenAccessInput): Promise<GenAccessOutput>;
 
 	abstract validateAccess(

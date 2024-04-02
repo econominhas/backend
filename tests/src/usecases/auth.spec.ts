@@ -6,7 +6,7 @@ import { makeMagicLinkCodeRepositoryMock } from '../../mocks/repositories/postgr
 import { makeRefreshTokenRepositoryMock } from '../../mocks/repositories/postgres/refresh-token';
 import { makeTermsServiceMock } from '../../mocks/usecases/terms';
 import { makeGoogleAdapterMock } from '../../mocks/adapters/google';
-import { makeTokenAdapterMock } from '../../mocks/adapters/token';
+import { makeTokenAdapterMock } from '../../mocks/adapters/paseto';
 import { makeEmailAdapterMock } from '../../mocks/adapters/email';
 import { makeSmsAdapterMock } from '../../mocks/adapters/sms';
 import { makeAuthRepositoryMock } from '../../mocks/repositories/postgres/auth';

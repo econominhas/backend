@@ -31,12 +31,11 @@ class EnvVars {
 
 	@IsString()
 	GOOGLE_CLIENT_ID: string;
-
 	@IsString()
 	GOOGLE_CLIENT_SECRET: string;
 
 	@IsString()
-	PASETO_SECRET: string;
+	PASETO_PRIVATE_KEY: string;
 
 	@IsString()
 	DATABASE_URL: string;

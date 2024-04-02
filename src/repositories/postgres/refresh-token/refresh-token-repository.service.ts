@@ -8,7 +8,7 @@ import { RefreshTokenRepository } from 'models/refresh-token';
 import { InjectRepository, Repository } from '..';
 import type { RefreshToken } from '@prisma/client';
 import { TokenAdapter } from 'adapters/token';
-import { PasetoAdapterService } from 'adapters/implementations/paseto/token.service';
+import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
 
 @Injectable()
 export class RefreshTokenRepositoryService extends RefreshTokenRepository {

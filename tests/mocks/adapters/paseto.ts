@@ -1,4 +1,4 @@
-import { PasetoAdapterService } from 'adapters/implementations/paseto/token.service';
+import { PasetoAdapterService } from 'adapters/implementations/paseto/paseto.service';
 import type { TokenAdapter } from 'adapters/token';
 import type { Mock } from '../types';
 

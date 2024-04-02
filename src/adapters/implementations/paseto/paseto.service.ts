@@ -13,6 +13,8 @@ import { UIDAdapterService } from '../uid/uid.service';
 import { AppConfig } from 'config';
 import { ConfigService } from '@nestjs/config';
 import type { KeyObject } from 'crypto';
+import { DateAdapter } from 'adapters/date';
+import { DayjsAdapterService } from '../dayjs/dayjs.service';
 
 @Injectable()
 export class PasetoAdapterService extends TokenAdapter {
@@ -22,6 +24,8 @@ export class PasetoAdapterService extends TokenAdapter {
 
 		@Inject(UIDAdapterService)
 		protected readonly secretAdapter: SecretAdapter,
+		@Inject(DayjsAdapterService)
+		protected readonly dateAdapter: DateAdapter,
 
 		@Inject(ConfigService)
 		protected readonly config: AppConfig,
@@ -30,7 +34,7 @@ export class PasetoAdapterService extends TokenAdapter {
 	}
 
 	private getSecret(): KeyObject {
-		const secretString = this.config.get('PASETO_SECRET');
+		const secretString = this.config.get('PASETO_PRIVATE_KEY');
 		const secretBuffer = Buffer.from(secretString, 'base64');
 		const secretKeyObject = this.paseto.bytesToKeyObject(secretBuffer);
 		return secretKeyObject;
@@ -43,9 +47,8 @@ export class PasetoAdapterService extends TokenAdapter {
 		const payload: TokenPayload = {
 			sub: accountId,
 			terms: hasAcceptedLatestTerms,
+			exp: this.dateAdapter.nowPlus(this.expiration, 'minute').toISOString(),
 		};
-
-		const expiresAt = '';
 
 		const secret = this.getSecret();
 
@@ -53,7 +56,7 @@ export class PasetoAdapterService extends TokenAdapter {
 
 		return {
 			accessToken,
-			expiresAt,
+			expiresAt: payload.exp,
 		};
 	}
 
