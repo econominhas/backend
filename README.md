@@ -1,5 +1,8 @@
 # Econominhas - Expenses Tracker
 
+[![Style Guide: Econominhas](https://img.shields.io/badge/style%20guide-Econominhas-4B00FA?style=square)](https://github.com/econominhas/eslint-config)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=square)](http://commitizen.github.io/cz-cli/)
+
 An app to track your finances and check if you are spending within your budget.
 
 ## About
