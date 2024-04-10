@@ -65,6 +65,8 @@ servers:
 paths:
   /auth/google:
     $ref: paths/auth/google.yaml
+  /auth/facebook:
+    $ref: paths/auth/facebook.yaml
   /auth/email:
     $ref: paths/auth/email.yaml
   /auth/phone:

@@ -8,7 +8,7 @@ import { GoogleAdapterModule } from "adapters/implementations/google/google.modu
 import { PasetoAdapterModule } from "adapters/implementations/paseto/paseto.module";
 import { SESAdapterModule } from "adapters/implementations/ses/ses.module";
 import { SNSSMSAdapterModule } from "adapters/implementations/sns-sms/sns.module";
-import { SNSAdapterModule } from "adapters/implementations/sns/sns.module";
+import { FacebookAdapterModule } from "adapters/implementations/facebook/facebook.module";
 
 import { TermsAndPoliciesModule } from "../terms-and-policies/terms-and-policies.module";
 
@@ -22,10 +22,10 @@ import { AuthService } from "./auth.service";
 		RefreshTokenRepositoryModule,
 
 		GoogleAdapterModule,
+		FacebookAdapterModule,
 		PasetoAdapterModule,
 		SESAdapterModule,
 		SNSSMSAdapterModule,
-		SNSAdapterModule,
 
 		TermsAndPoliciesModule,
 	],

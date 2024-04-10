@@ -6,7 +6,7 @@ export interface ExchangeCodeInput {
 export interface ExchangeCodeOutput {
 	scopes: Array<string>;
 	accessToken: string;
-	refreshToken: string;
+	refreshToken?: string;
 	expiresAt: Date;
 }
 
@@ -17,12 +17,8 @@ export interface GetAuthenticatedUserDataOutput {
 	isEmailVerified: boolean;
 }
 
-export abstract class GoogleAdapter {
-	readonly requiredScopes = [
-		"https://www.googleapis.com/auth/userinfo.profile",
-		"openid",
-		"https://www.googleapis.com/auth/userinfo.email",
-	];
+export abstract class AuthProviderAdapter {
+	abstract requiredScopes: Array<string>;
 
 	abstract exchangeCode(i: ExchangeCodeInput): Promise<ExchangeCodeOutput>;
 

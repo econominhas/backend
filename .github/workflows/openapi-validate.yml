@@ -19,6 +19,8 @@ jobs:
           node-version-file: .nvmrc
 
       - uses: pnpm/action-setup@v3
+        with:
+          version: 8
 
       - name: Install redocly
         run: pnpm add --ignore-scripts -D @redocly/cli

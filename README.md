@@ -38,6 +38,13 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 - [API](https://econominhas.readme.io/reference/)
 - [Database](https://dbdocs.io/henriqueleite42/Econominhas?view=relationships)
 
+### Running the API for the first time
+
+1. Copy and paste <code>.env.example</code> and rename the copy to <code>.env.docker</code>
+2. Run <code>pnpm run start:db</code>
+3. Open another console tab and run `pnpm run db:gen-migration <MIGRATION_NAME>`
+4. The API will be available at http://localhost:3000/v1
+
 ## Useful commands
 
 | Command                   | Description                                                                                                                    |
@@ -208,15 +215,5 @@ This phase is were we convert the documentation to code and make everything work
 		</tr>
 	</tbody>
 </table>
-
-### Running the API for the first time
-
-1. Copy and paste <code>.env.example</code> and rename the copy to <code>.env</code>
-2. Run <code>pnpm run start:dev</code>
-3. Run econominhas-api migrations
-   - Step 2.1: List id container Run<code>docker ps</code>
-   - Step 2.2: Run <code>docker exec -it \<container id\> sh</code>
-   - Step 2.3: Run <code>pnpm run db:migrate</code>
-4. Available at http://localhost:3000/v1
 
 <br/>

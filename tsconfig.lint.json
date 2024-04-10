@@ -3,6 +3,6 @@
 	"compilerOptions": {
 		"outDir": "./dist-lint"
 	},
-	"include": ["src", "tests", ".eslintrc.js", "commitlint.config.ts"],
+	"include": ["src", "tests", ".eslintrc.js"],
 	"exclude": ["node_modules", "dist", "dist-lint"]
 }
