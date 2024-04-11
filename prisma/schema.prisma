@@ -27,7 +27,6 @@ datasource db {
 // **********************************
 
 enum SignInProviderEnum {
-  FACEBOOK
   GOOGLE
 
   @@map("sign_in_provider_enum")
@@ -65,8 +64,8 @@ model SignInProvider {
   accountId    String             @map("account_id") @db.Char(16)
   provider     SignInProviderEnum
   providerId   String             @map("provider_id") @db.VarChar(50)
-  accessToken  String             @map("access_token") @db.VarChar(300)
-  refreshToken String?            @map("refresh_token") @db.VarChar(300)
+  accessToken  String             @map("access_token") @db.VarChar(250)
+  refreshToken String             @map("refresh_token") @db.VarChar(250)
   expiresAt    DateTime           @map("expires_at")
 
   account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)

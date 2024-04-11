@@ -40,12 +40,6 @@ class EnvVars {
 	GOOGLE_CLIENT_SECRET: string;
 
 	@IsString()
-	FACEBOOK_CLIENT_ID: string;
-
-	@IsString()
-	FACEBOOK_CLIENT_SECRET: string;
-
-	@IsString()
 	PASETO_PRIVATE_KEY: string;
 
 	@IsString()

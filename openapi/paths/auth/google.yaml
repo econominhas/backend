@@ -9,7 +9,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../components/schemas/auth-with-external-provider.yaml
+          $ref: ../../components/schemas/auth-with-3rd-party.yaml
     required: true
   responses:
     $ref: ../../components/responses/auth.yaml
