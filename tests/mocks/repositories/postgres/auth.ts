@@ -1,5 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
-
 import { SignInProviderEnum } from "@prisma/client";
 
 import { AuthRepositoryService } from "../../../../src/repositories/postgres/auth/auth-repository.service";
@@ -49,23 +47,6 @@ export const makeAuthRepositoryMock = () => {
 					],
 				},
 			],
-			facebook: [
-				{
-					id: "accountId",
-					email: "foo@bar.com",
-					createdAt: new Date(),
-					signInProviders: [
-						{
-							accountId: "accountId",
-							provider: SignInProviderEnum.FACEBOOK,
-							providerId: "providerId",
-							accessToken: "accessToken",
-							refreshToken: "refreshToken",
-							expiresAt: new Date(),
-						},
-					],
-				},
-			],
 			sameEmailDifferentGoogle: [
 				{
 					id: "accountId",
@@ -83,31 +64,9 @@ export const makeAuthRepositoryMock = () => {
 					],
 				},
 			],
-			sameEmailDifferentFacebook: [
-				{
-					id: "accountId",
-					email: "foo@bar.com",
-					createdAt: new Date(),
-					signInProviders: [
-						{
-							accountId: "accountId",
-							provider: SignInProviderEnum.FACEBOOK,
-							providerId: "differentProviderId",
-							accessToken: "accessToken",
-							refreshToken: "refreshToken",
-							expiresAt: new Date(),
-						},
-					],
-				},
-			],
 		},
 		create: {
 			successGoogle: {
-				id: "accountId",
-				email: "foo@bar.com",
-				createdAt: new Date(),
-			},
-			successFacebook: {
 				id: "accountId",
 				email: "foo@bar.com",
 				createdAt: new Date(),

@@ -27,20 +27,8 @@ export interface CreateWithGoogle {
 		expiresAt: Date;
 	};
 }
-export interface CreateWithFacebook {
-	email: string;
-	facebook: {
-		id: string;
-		accessToken: string;
-		expiresAt: Date;
-	};
-}
 
-export type CreateInput =
-	| CreateWithEmail
-	| CreateWithFacebook
-	| CreateWithGoogle
-	| CreateWithPhone;
+export type CreateInput = CreateWithEmail | CreateWithGoogle | CreateWithPhone;
 
 export interface GetByEmailInput {
 	email: string;
@@ -118,7 +106,7 @@ export interface RefreshOutput {
 	expiresAt: string;
 }
 
-export interface CreateWithExternalProviderInput {
+export interface CreateWith3rdPartyProviderInput {
 	code: string;
 	originUrl?: string;
 }
@@ -142,11 +130,7 @@ export interface RefreshTokenInput {
 
 export abstract class AuthUseCase {
 	abstract createFromGoogleProvider(
-		i: CreateWithExternalProviderInput,
-	): Promise<AuthOutput>;
-
-	abstract createFromFacebookProvider(
-		i: CreateWithExternalProviderInput,
+		i: CreateWith3rdPartyProviderInput,
 	): Promise<AuthOutput>;
 
 	abstract createFromEmailProvider(

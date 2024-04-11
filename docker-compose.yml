@@ -37,14 +37,14 @@ services:
       dockerfile: Dockerfile.dev
     image: econominhas-api
     container_name: econominhas-api
-    command: npm run start:docker
+    command: pnpm run start:docker
     depends_on:
       - postgres
       - localstack
     ports:
       - 3000:3000
     env_file:
-      - .env.docker
+      - .env
     volumes:
       - ./:/app/
     networks:

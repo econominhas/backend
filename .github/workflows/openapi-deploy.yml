@@ -19,19 +19,11 @@ jobs:
           node-version-file: .nvmrc
 
       - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-
-      - name: Install redocly
-        run: pnpm add --ignore-scripts -D @redocly/cli
 
       - name: Validate openapi
         run: pnpm run lint:openapi
 
-      - name: Build openapi
-        run: pnpm run openapi:bundle
-
-      - name: Deploy to readme
+      - name: GitHub Action
         uses: readmeio/rdme@v8
         with:
-          rdme: openapi ./openapi/bundle.yaml --key=${{ secrets.README_API_KEY }} --version=1.0 --id=${{ secrets.READMEIO_API_ID}}
+          rdme: docs ./openapi/bundle.yaml --key=${{ secrets.README_API_KEY }} --version=1.0

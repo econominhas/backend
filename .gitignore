@@ -39,7 +39,6 @@ lerna-debug.log*
 .env
 .env.*
 !.env.example
-!/prisma/.env
 
 # Temp
 /tmp

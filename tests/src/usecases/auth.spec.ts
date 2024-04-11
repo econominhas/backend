@@ -11,7 +11,7 @@ import { makeTokenAdapterMock } from "../../mocks/adapters/paseto";
 import { makeEmailAdapterMock } from "../../mocks/adapters/email";
 import { makeSmsAdapterMock } from "../../mocks/adapters/sms";
 import { makeAuthRepositoryMock } from "../../mocks/repositories/postgres/auth";
-import { makeFacebookAdapterMock } from "../../mocks/adapters/facebook";
+import { makeTopicAdapterMock } from "../../mocks/adapters/topic";
 
 describe("Usecases > Auth", () => {
 	let service: AuthService;
@@ -24,10 +24,10 @@ describe("Usecases > Auth", () => {
 	const termsService = makeTermsServiceMock();
 
 	const googleAdapter = makeGoogleAdapterMock();
-	const facebookAdapter = makeFacebookAdapterMock();
 	const tokenAdapter = makeTokenAdapterMock();
 	const emailAdapter = makeEmailAdapterMock();
 	const smsAdapter = makeSmsAdapterMock();
+	const topicAdapter = makeTopicAdapterMock();
 
 	beforeAll(async () => {
 		service = await createTestService<AuthService>(AuthService, {
@@ -37,10 +37,10 @@ describe("Usecases > Auth", () => {
 				refreshTokenRepository.module,
 				termsService.module,
 				googleAdapter.module,
-				facebookAdapter.module,
 				tokenAdapter.module,
 				emailAdapter.module,
 				smsAdapter.module,
+				topicAdapter.module,
 			],
 		});
 
@@ -269,223 +269,6 @@ describe("Usecases > Auth", () => {
 			);
 			expect(googleAdapter.mock.exchangeCode).toHaveBeenCalled();
 			expect(googleAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
-			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
-			expect(authRepository.mock.updateProvider).not.toHaveBeenCalled();
-		});
-	});
-
-	describe("> createFromFacebookProvider", () => {
-		it("should sign in user", async () => {
-			facebookAdapter.mock.exchangeCode.mockResolvedValue(
-				facebookAdapter.outputs.exchangeCode.success,
-			);
-			facebookAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
-				facebookAdapter.outputs.getAuthenticatedUserData.success,
-			);
-			authRepository.mock.getManyByProvider.mockResolvedValue(
-				authRepository.outputs.getManyByProvider.empty,
-			);
-			authRepository.mock.create.mockResolvedValue(
-				authRepository.outputs.create.successFacebook,
-			);
-			refreshTokenRepository.mock.create.mockResolvedValue(
-				refreshTokenRepository.outputs.create.success,
-			);
-			tokenAdapter.mock.genAccess.mockReturnValue(
-				tokenAdapter.outputs.genAccess.success,
-			);
-
-			let result;
-			try {
-				result = await service.createFromFacebookProvider({
-					code: "code",
-				});
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toStrictEqual({
-				accessToken: tokenAdapter.outputs.genAccess.success.accessToken,
-				expiresAt: tokenAdapter.outputs.genAccess.success.expiresAt,
-				refreshToken:
-					refreshTokenRepository.outputs.create.success.refreshToken,
-				isFirstAccess: true,
-			});
-			expect(facebookAdapter.mock.exchangeCode).toHaveBeenCalled();
-			expect(facebookAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
-			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
-			expect(authRepository.mock.create).toHaveBeenCalled();
-			expect(refreshTokenRepository.mock.create).toHaveBeenCalled();
-			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
-		});
-
-		it("should sign up user (same providerId)", async () => {
-			facebookAdapter.mock.exchangeCode.mockResolvedValue(
-				facebookAdapter.outputs.exchangeCode.success,
-			);
-			facebookAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
-				facebookAdapter.outputs.getAuthenticatedUserData.success,
-			);
-			authRepository.mock.getManyByProvider.mockResolvedValue(
-				authRepository.outputs.getManyByProvider.facebook,
-			);
-			authRepository.mock.updateProvider.mockResolvedValue(undefined);
-			refreshTokenRepository.mock.create.mockResolvedValue(
-				refreshTokenRepository.outputs.create.success,
-			);
-			termsService.mock.hasAcceptedLatest.mockResolvedValue(true);
-			tokenAdapter.mock.genAccess.mockReturnValue(
-				tokenAdapter.outputs.genAccess.success,
-			);
-
-			let result;
-			try {
-				result = await service.createFromFacebookProvider({
-					code: "code",
-				});
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toMatchObject({
-				accessToken: tokenAdapter.outputs.genAccess.success.accessToken,
-				expiresAt: tokenAdapter.outputs.genAccess.success.expiresAt,
-				refreshToken:
-					refreshTokenRepository.outputs.create.success.refreshToken,
-				isFirstAccess: false,
-			});
-			expect(facebookAdapter.mock.exchangeCode).toHaveBeenCalled();
-			expect(facebookAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
-			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
-			expect(authRepository.mock.updateProvider).toHaveBeenCalled();
-			expect(refreshTokenRepository.mock.create).toHaveBeenCalled();
-			expect(termsService.mock.hasAcceptedLatest).toHaveBeenCalled();
-			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
-		});
-
-		it("should sign up user (same email)", async () => {
-			facebookAdapter.mock.exchangeCode.mockResolvedValue(
-				facebookAdapter.outputs.exchangeCode.success,
-			);
-			facebookAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
-				facebookAdapter.outputs.getAuthenticatedUserData.success,
-			);
-			authRepository.mock.getManyByProvider.mockResolvedValue(
-				authRepository.outputs.getManyByProvider.email,
-			);
-			authRepository.mock.updateProvider.mockResolvedValue(undefined);
-			refreshTokenRepository.mock.create.mockResolvedValue(
-				refreshTokenRepository.outputs.create.success,
-			);
-			termsService.mock.hasAcceptedLatest.mockResolvedValue(true);
-			tokenAdapter.mock.genAccess.mockReturnValue(
-				tokenAdapter.outputs.genAccess.success,
-			);
-
-			let result;
-			try {
-				result = await service.createFromFacebookProvider({
-					code: "code",
-				});
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toMatchObject({
-				accessToken: tokenAdapter.outputs.genAccess.success.accessToken,
-				expiresAt: tokenAdapter.outputs.genAccess.success.expiresAt,
-				refreshToken:
-					refreshTokenRepository.outputs.create.success.refreshToken,
-				isFirstAccess: false,
-			});
-			expect(facebookAdapter.mock.exchangeCode).toHaveBeenCalled();
-			expect(facebookAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
-			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
-			expect(authRepository.mock.updateProvider).toHaveBeenCalled();
-			expect(refreshTokenRepository.mock.create).toHaveBeenCalled();
-			expect(termsService.mock.hasAcceptedLatest).toHaveBeenCalled();
-			expect(tokenAdapter.mock.genAccess).toHaveBeenCalled();
-		});
-
-		it("should fail if missing scopes", async () => {
-			facebookAdapter.mock.exchangeCode.mockResolvedValue(
-				facebookAdapter.outputs.exchangeCode.noScopes,
-			);
-
-			let result;
-			try {
-				result = await service.createFromFacebookProvider({
-					code: "code",
-				});
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toBeInstanceOf(Error);
-			expect(result.status).toBe(400);
-			expect(result.message).toBe(
-				`Missing required scopes: ${facebookAdapter.mock.requiredScopes.join(
-					" ",
-				)}`,
-			);
-			expect(facebookAdapter.mock.exchangeCode).toHaveBeenCalled();
-			expect(
-				facebookAdapter.mock.getAuthenticatedUserData,
-			).not.toHaveBeenCalled();
-		});
-
-		it("should fail if unverified provider email", async () => {
-			facebookAdapter.mock.exchangeCode.mockResolvedValue(
-				facebookAdapter.outputs.exchangeCode.success,
-			);
-			facebookAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
-				facebookAdapter.outputs.getAuthenticatedUserData.unverified,
-			);
-
-			let result;
-			try {
-				result = await service.createFromFacebookProvider({
-					code: "code",
-				});
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toBeInstanceOf(Error);
-			expect(result.status).toBe(403);
-			expect(result.message).toBe("Unverified provider email");
-			expect(facebookAdapter.mock.exchangeCode).toHaveBeenCalled();
-			expect(facebookAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
-			expect(authRepository.mock.getManyByProvider).not.toHaveBeenCalled();
-		});
-
-		it("should fail if find account by email related to another facebook account", async () => {
-			facebookAdapter.mock.exchangeCode.mockResolvedValue(
-				facebookAdapter.outputs.exchangeCode.success,
-			);
-			facebookAdapter.mock.getAuthenticatedUserData.mockResolvedValue(
-				facebookAdapter.outputs.getAuthenticatedUserData.success,
-			);
-			authRepository.mock.getManyByProvider.mockResolvedValue(
-				authRepository.outputs.getManyByProvider.sameEmailDifferentFacebook,
-			);
-
-			let result;
-			try {
-				result = await service.createFromFacebookProvider({
-					code: "code",
-				});
-			} catch (err) {
-				result = err;
-			}
-
-			expect(result).toBeInstanceOf(Error);
-			expect(result.status).toBe(409);
-			expect(result.message).toBe(
-				"Error finding account, please contact support",
-			);
-			expect(facebookAdapter.mock.exchangeCode).toHaveBeenCalled();
-			expect(facebookAdapter.mock.getAuthenticatedUserData).toHaveBeenCalled();
 			expect(authRepository.mock.getManyByProvider).toHaveBeenCalled();
 			expect(authRepository.mock.updateProvider).not.toHaveBeenCalled();
 		});
