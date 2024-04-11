@@ -1,18 +1,18 @@
-import { GoogleAdapterService } from "../../../src/adapters/implementations/google/google.service";
+import { FacebookAdapterService } from "../../../src/adapters/implementations/facebook/facebook.service";
 import { type Mock } from "../types";
 import { type AuthProviderAdapter } from "../../../src/adapters/auth-provider";
 
-export const makeGoogleAdapterMock = () => {
+export const makeFacebookAdapterMock = () => {
 	const mock: Mock<Omit<AuthProviderAdapter, "requiredScopes">> & {
 		requiredScopes: Array<string>;
 	} = {
-		requiredScopes: ["email", "openid", "profile"],
+		requiredScopes: ["email", "profile"],
 		exchangeCode: jest.fn(),
 		getAuthenticatedUserData: jest.fn(),
 	};
 
 	const module = {
-		provide: GoogleAdapterService,
+		provide: FacebookAdapterService,
 		useValue: mock,
 	};
 

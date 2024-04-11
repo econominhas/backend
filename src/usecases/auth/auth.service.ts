@@ -9,13 +9,14 @@ import {
 } from "@nestjs/common";
 import { SignInProviderEnum, type Account } from "@prisma/client";
 
+import { AuthProviderAdapter } from "adapters/auth-provider";
 import { RefreshTokenRepositoryService } from "repositories/postgres/refresh-token/refresh-token-repository.service";
 import { MagicLinkCodeRepositoryService } from "repositories/postgres/magic-link-code/magic-link-code-repository.service";
 import {
 	AuthRepository,
 	AuthUseCase,
 	type AuthOutput,
-	type CreateWith3rdPartyProviderInput,
+	type CreateWithExternalProviderInput,
 	type CreateWithEmailProviderInput,
 	type CreateWithPhoneProviderInput,
 	type ExchangeCodeInput,
@@ -26,18 +27,22 @@ import { AuthRepositoryService } from "repositories/postgres/auth/auth-repositor
 import { TermsAndPoliciesUseCase } from "models/terms-and-policies";
 import { MagicLinkCodeRepository } from "models/magic-link-code";
 import { RefreshTokenRepository } from "models/refresh-token";
-import { GoogleAdapter } from "adapters/google";
 import { TokenAdapter } from "adapters/token";
 import { EmailAdapter } from "adapters/email";
 import { SmsAdapter } from "adapters/sms";
 import { GoogleAdapterService } from "adapters/implementations/google/google.service";
 import { SESAdapterService } from "adapters/implementations/ses/ses.service";
 import { SNSSMSAdapterService } from "adapters/implementations/sns-sms/sns.service";
-import { TopicAdapter } from "adapters/topic";
-import { SNSAdapterService } from "adapters/implementations/sns/sns.service";
 import { PasetoAdapterService } from "adapters/implementations/paseto/paseto.service";
+import { FacebookAdapterService } from "adapters/implementations/facebook/facebook.service";
 
 import { TermsAndPoliciesService } from "../terms-and-policies/terms-and-policies.service";
+
+interface CreateFromExternalProviderInput
+	extends CreateWithExternalProviderInput {
+	provider: AuthProviderAdapter;
+	providerType: SignInProviderEnum;
+}
 
 interface GenTokensInput {
 	accountId: string;
@@ -54,132 +59,45 @@ export class AuthService extends AuthUseCase {
 		private readonly magicLinkCodeRepository: MagicLinkCodeRepository,
 		@Inject(RefreshTokenRepositoryService)
 		private readonly refreshTokenRepository: RefreshTokenRepository,
+
 		@Inject(TermsAndPoliciesService)
 		private readonly termsAndPoliciesService: TermsAndPoliciesUseCase,
+
 		@Inject(GoogleAdapterService)
-		private readonly googleAdapter: GoogleAdapter,
+		private readonly googleAdapter: AuthProviderAdapter,
+		@Inject(FacebookAdapterService)
+		private readonly facebookAdapter: AuthProviderAdapter,
 		@Inject(PasetoAdapterService)
 		private readonly tokenAdapter: TokenAdapter,
 		@Inject(SESAdapterService)
 		private readonly emailAdapter: EmailAdapter,
 		@Inject(SNSSMSAdapterService)
 		private readonly smsAdapter: SmsAdapter,
-		@Inject(SNSAdapterService)
-		private readonly topicAdapter: TopicAdapter,
 	) {
 		super();
 	}
 
-	async createFromGoogleProvider({
+	createFromGoogleProvider({
 		code,
 		originUrl,
-	}: CreateWith3rdPartyProviderInput): Promise<AuthOutput> {
-		const { scopes, ...providerTokens } = await this.googleAdapter
-			.exchangeCode({ code, originUrl })
-			.catch(err => {
-				Logger.error(err);
-
-				throw new BadRequestException("Invalid code");
-			});
-
-		const missingScopes = this.googleAdapter.requiredScopes.filter(
-			s => !scopes.includes(s),
-		);
-
-		if (missingScopes.length > 0) {
-			throw new BadRequestException(
-				`Missing required scopes: ${missingScopes.join(" ")}`,
-			);
-		}
-
-		const providerData = await this.googleAdapter.getAuthenticatedUserData(
-			providerTokens.accessToken,
-		);
-
-		if (!providerData.isEmailVerified) {
-			throw new ForbiddenException("Unverified provider email");
-		}
-
-		const relatedAccounts = await this.authRepository.getManyByProvider({
-			providerId: providerData.id,
-			email: providerData.email,
-			provider: SignInProviderEnum.GOOGLE,
+	}: CreateWithExternalProviderInput): Promise<AuthOutput> {
+		return this.createFromExternalProvider({
+			provider: this.googleAdapter,
+			providerType: SignInProviderEnum.GOOGLE,
+			code,
+			originUrl,
 		});
+	}
 
-		let account: Account;
-		let isFirstAccess = false;
-
-		if (relatedAccounts.length > 0) {
-			const sameProviderId = relatedAccounts.find(a =>
-				a.signInProviders.find(p => p.providerId === providerData.id),
-			);
-			const sameEmail = relatedAccounts.find(
-				a => a.email === providerData.email,
-			);
-
-			/*
-			 * Has an account with the same email, and it
-			 * isn't linked with another provider account
-			 */
-			if (
-				sameEmail &&
-				!sameProviderId &&
-				!sameEmail.signInProviders.find(
-					p => p.provider === SignInProviderEnum.GOOGLE,
-				)
-			) {
-				account = sameEmail;
-			}
-
-			/*
-			 * Account with same provider id (it can have a different email,
-			 * in case that the user updated it in provider or on our platform)
-			 * More descriptive IF:
-			 * if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
-			 */
-			if (sameProviderId) {
-				account = sameProviderId;
-			}
-
-			if (!account) {
-				throw new ConflictException(
-					"Error finding account, please contact support",
-				);
-			}
-
-			await this.authRepository.updateProvider({
-				accountId: account.id,
-				provider: SignInProviderEnum.GOOGLE,
-				providerId: providerData.id,
-				accessToken: providerTokens.accessToken,
-				refreshToken: providerTokens.refreshToken,
-				expiresAt: providerTokens.expiresAt,
-			});
-		} else {
-			account = await this.authRepository.create({
-				email: providerData.email,
-				google: {
-					id: providerData.id,
-					accessToken: providerTokens.accessToken,
-					refreshToken: providerTokens.refreshToken,
-					expiresAt: providerTokens.expiresAt,
-				},
-			});
-
-			await this.topicAdapter.send({
-				topicName: "USER_CREATED",
-				body: {
-					accountId: account.id,
-				},
-			});
-
-			isFirstAccess = true;
-		}
-
-		return this.genAuthOutput({
-			accountId: account.id,
-			isFirstAccess,
-			refresh: true,
+	createFromFacebookProvider({
+		code,
+		originUrl,
+	}: CreateWithExternalProviderInput): Promise<AuthOutput> {
+		return this.createFromExternalProvider({
+			provider: this.facebookAdapter,
+			providerType: SignInProviderEnum.FACEBOOK,
+			code,
+			originUrl,
 		});
 	}
 
@@ -194,13 +112,6 @@ export class AuthService extends AuthUseCase {
 		if (!account) {
 			account = await this.authRepository.create({
 				email: i.email,
-			});
-
-			await this.topicAdapter.send({
-				topicName: "USER_CREATED",
-				body: {
-					accountId: account.id,
-				},
 			});
 
 			isFirstAccess = true;
@@ -234,13 +145,6 @@ export class AuthService extends AuthUseCase {
 				phone: i.phone,
 			});
 
-			await this.topicAdapter.send({
-				topicName: "USER_CREATED",
-				body: {
-					accountId: account.id,
-				},
-			});
-
 			isFirstAccess = true;
 		}
 
@@ -270,15 +174,6 @@ export class AuthService extends AuthUseCase {
 
 		if (!magicLinkCode) {
 			throw new NotFoundException("Invalid code");
-		}
-
-		if (magicLinkCode.isFirstAccess) {
-			await this.topicAdapter.send({
-				topicName: "USER_CREATED",
-				body: {
-					accountId: magicLinkCode.accountId,
-				},
-			});
 		}
 
 		return this.genAuthOutput({
@@ -311,6 +206,112 @@ export class AuthService extends AuthUseCase {
 	 *
 	 * We set their accessibility to public so we can test it
 	 */
+
+	public async createFromExternalProvider({
+		provider,
+		providerType,
+		code,
+		originUrl,
+	}: CreateFromExternalProviderInput): Promise<AuthOutput> {
+		const { scopes, ...providerTokens } = await provider
+			.exchangeCode({ code, originUrl })
+			.catch(err => {
+				Logger.error(err);
+
+				throw new BadRequestException("Invalid code");
+			});
+
+		const missingScopes = provider.requiredScopes.filter(
+			s => !scopes.includes(s),
+		);
+
+		if (missingScopes.length > 0) {
+			throw new BadRequestException(
+				`Missing required scopes: ${missingScopes.join(" ")}`,
+			);
+		}
+
+		const providerData = await provider.getAuthenticatedUserData(
+			providerTokens.accessToken,
+		);
+
+		if (!providerData.isEmailVerified) {
+			throw new ForbiddenException("Unverified provider email");
+		}
+
+		const relatedAccounts = await this.authRepository.getManyByProvider({
+			providerId: providerData.id,
+			email: providerData.email,
+			provider: providerType,
+		});
+
+		let account: Account;
+		let isFirstAccess = false;
+
+		if (relatedAccounts.length > 0) {
+			const sameProviderId = relatedAccounts.find(a =>
+				a.signInProviders.find(p => p.providerId === providerData.id),
+			);
+			const sameEmail = relatedAccounts.find(
+				a => a.email === providerData.email,
+			);
+
+			/*
+			 * Has an account with the same email, and it
+			 * isn't linked with another provider account
+			 */
+			if (
+				sameEmail &&
+				!sameProviderId &&
+				!sameEmail.signInProviders.find(p => p.provider === providerType)
+			) {
+				account = sameEmail;
+			}
+
+			/*
+			 * Account with same provider id (it can have a different email,
+			 * in case that the user updated it in provider or on our platform)
+			 * More descriptive IF:
+			 * if ((sameProviderId && !sameEmail) || (sameProviderId && sameEmail)) {
+			 */
+			if (sameProviderId) {
+				account = sameProviderId;
+			}
+
+			if (!account) {
+				throw new ConflictException(
+					"Error finding account, please contact support",
+				);
+			}
+
+			await this.authRepository.updateProvider({
+				accountId: account.id,
+				provider: providerType,
+				providerId: providerData.id,
+				accessToken: providerTokens.accessToken,
+				refreshToken: providerTokens.refreshToken,
+				expiresAt: providerTokens.expiresAt,
+			});
+		} else {
+			account = await this.authRepository.create({
+				email: providerData.email,
+				[providerType.toLowerCase()]: {
+					id: providerData.id,
+					accessToken: providerTokens.accessToken,
+					refreshToken: providerTokens.refreshToken,
+					expiresAt: providerTokens.expiresAt,
+				},
+			});
+
+			isFirstAccess = true;
+		}
+
+		return this.genAuthOutput({
+			accountId: account.id,
+			isFirstAccess,
+			refresh: true,
+		});
+	}
 
 	/**
 	 * @private

@@ -20,6 +20,8 @@ jobs:
           node-version-file: .nvmrc
 
       - uses: pnpm/action-setup@v3
+        with:
+          version: 8
 
       - name: Create .env file
         uses: SpicyPizza/create-envfile@v2.0
@@ -33,7 +35,9 @@ jobs:
           envkey_AWS_REGION: ${{ secrets.AWS_REGION }}
           envkey_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           envkey_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          envkey_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          envkey_FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
+          envkey_FACEBOOK_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
+          envkey_PASETO_PRIVATE_KEY: ${{ secrets.PASETO_PRIVATE_KEY }}
           envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Build
