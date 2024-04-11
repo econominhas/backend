@@ -24,17 +24,6 @@ export const makeBudgetRepositoryMock = () => {
 				description: "Test Budget Description",
 			},
 		},
-		upsertManyBudgetDates: {
-			success: [
-				{
-					id: "1",
-					budgetId: "1",
-					month: 1,
-					year: 2024,
-					date: new Date(2024, 1, 24, 3, 0, 0),
-				},
-			],
-		},
 		getMonthlyByCategory: {
 			positiveBudget: [
 				{ categoryId: 1, amount: 100 },

@@ -45,9 +45,6 @@ describe("Usecases > Budget", () => {
 		accountService.mock.setBudget.mockResolvedValue(
 			accountService.outputs.setBudget.sucess,
 		);
-		budgetRepository.mock.upsertManyBudgetDates.mockResolvedValue(
-			budgetRepository.outputs.upsertManyBudgetDates.success,
-		);
 		categoryRepository.mock.getByUser.mockResolvedValue(
 			categoryRepository.outputs.getByUser.activeCategory,
 		);
@@ -184,7 +181,18 @@ describe("Usecases > Budget", () => {
 				accountId: "1",
 				dates: [new Date(2024, 2, 1)],
 			};
+
 			dayjsAdapter.mock.get.mockReturnValueOnce(2).mockReturnValueOnce(2024);
+			budgetRepository.mock.upsertManyBudgetDates.mockResolvedValue([
+				{
+					id: "1",
+					budgetId: "1",
+					month: 1,
+					year: 2024,
+					date: new Date(2024, 1, 24),
+				},
+			]);
+
 			let result;
 			try {
 				result = await service.getOrCreateMany(input);
@@ -198,7 +206,7 @@ describe("Usecases > Budget", () => {
 					budgetId: "1",
 					month: 1,
 					year: 2024,
-					date: new Date(2024, 1, 24, 3, 0, 0),
+					date: new Date(2024, 1, 24),
 				},
 			]);
 			expect(budgetRepository.mock.upsertManyBudgetDates).toHaveBeenCalledWith([
@@ -269,7 +277,7 @@ describe("Usecases > Budget", () => {
 	describe("overview", () => {
 		it("should correctly handle active categories with expenses", async () => {
 			const input = {
-				accountId: "exemploAccountId",
+				accountId: "accountId",
 				budgetId: "1",
 				month: 2,
 				year: 2024,
@@ -338,7 +346,7 @@ describe("Usecases > Budget", () => {
 
 		it("should correctly handle inactive categories with expenses", async () => {
 			const input = {
-				accountId: "exemploAccountId",
+				accountId: "accountId",
 				budgetId: "1",
 				month: 2,
 				year: 2024,
@@ -401,7 +409,7 @@ describe("Usecases > Budget", () => {
 
 		it("should correctly handle negative budgets and expenses", async () => {
 			const input = {
-				accountId: "exemploAccountId",
+				accountId: "accountId",
 				budgetId: "1",
 				month: 2,
 				year: 2024,
@@ -491,27 +499,38 @@ describe("Usecases > Budget", () => {
 				amount: 14,
 			};
 			const dates = [
-				"2024-04-02T03:00:00.000Z",
-				"2024-05-02T03:00:00.000Z",
-				"2024-06-02T03:00:00.000Z",
-				"2024-07-02T03:00:00.000Z",
-				"2024-08-02T03:00:00.000Z",
-				"2024-09-02T03:00:00.000Z",
-				"2024-10-02T03:00:00.000Z",
-				"2024-11-02T03:00:00.000Z",
-				"2024-12-02T03:00:00.000Z",
-				"2025-01-02T03:00:00.000Z",
-				"2025-02-02T03:00:00.000Z",
-				"2025-03-02T03:00:00.000Z",
-				"2025-04-02T03:00:00.000Z",
-				"2025-05-02T03:00:00.000Z",
+				new Date(2024, 3, 2),
+				new Date(2024, 4, 2),
+				new Date(2024, 5, 2),
+				new Date(2024, 6, 2),
+				new Date(2024, 7, 2),
+				new Date(2024, 8, 2),
+				new Date(2024, 9, 2),
+				new Date(2024, 10, 2),
+				new Date(2024, 11, 2),
+				new Date(2025, 0, 2),
+				new Date(2025, 1, 2),
+				new Date(2025, 2, 2),
+				new Date(2025, 3, 2),
+				new Date(2025, 4, 2),
 			];
+
 			dayjsAdapter.mock.getNextMonths.mockReturnValue(dates);
 			for (let index = 0; index < input.amount; index++) {
 				dayjsAdapter.mock.get
-					.mockReturnValueOnce(new Date(dates[index]).getMonth() + 1)
-					.mockReturnValueOnce(new Date(dates[index]).getFullYear());
+					.mockReturnValueOnce(dates[index].getMonth() + 1)
+					.mockReturnValueOnce(dates[index].getFullYear());
 			}
+			budgetRepository.mock.upsertManyBudgetDates.mockResolvedValue([
+				{
+					id: "1",
+					budgetId: "1",
+					month: 1,
+					year: 2024,
+					date: new Date(2024, 1, 24),
+				},
+			]);
+
 			let result;
 			try {
 				result = await service.createNextBudgetDates(input);
@@ -532,10 +551,10 @@ describe("Usecases > Budget", () => {
 			expect(
 				budgetRepository.mock.upsertManyBudgetDates.mock.calls[0][0],
 			).toHaveLength(14);
-			expect(result).toStrictEqual([
+			expect(result).toMatchObject([
 				{
 					budgetId: "1",
-					date: new Date("2024-02-24T06:00:00.000Z"),
+					date: new Date(2024, 1, 24),
 					id: "1",
 					month: 1,
 					year: 2024,

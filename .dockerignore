@@ -1,9 +1,38 @@
+# Git
+/.git
+/.gitignore
+
+# GitHub
 /.github
-/.husky
-/.vscode
+
+# Build
 /dist
 /dist-lint
-/localstack
 /node_modules
+/coverage
+
+# DevTools
+/.husky
+/.vscode
+/localstack
+/.czrc
+/.editorconfig
+/.eslintrc.js
+/.lintstagedrc
+/.nvmrc
+/jest.config.json
+/LICENSE
+/redocly.yaml
+
+# Env
+.env.*
+!.env.docker
+!/prisma/.env
+
+# Deploy
+/appspec.yml
+
+# Unnecessary
 /openapi
 /scripts
+/testes
