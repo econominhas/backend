@@ -6,11 +6,11 @@ import { DateAdapter } from "adapters/date";
 import { AppConfig } from "config";
 
 import {
-	GoogleAdapter,
+	AuthProviderAdapter,
 	type ExchangeCodeInput,
 	type ExchangeCodeOutput,
 	type GetAuthenticatedUserDataOutput,
-} from "../../google";
+} from "../../auth-provider";
 import { DayjsAdapterService } from "../dayjs/dayjs.service";
 
 interface ExchangeCodeAPIOutput {
@@ -29,7 +29,13 @@ interface GetUserDataAPIOutput {
 }
 
 @Injectable()
-export class GoogleAdapterService extends GoogleAdapter {
+export class GoogleAdapterService extends AuthProviderAdapter {
+	readonly requiredScopes = [
+		"https://www.googleapis.com/auth/userinfo.profile",
+		"openid",
+		"https://www.googleapis.com/auth/userinfo.email",
+	];
+
 	constructor(
 		@Inject("axios")
 		protected readonly axios: Axios,

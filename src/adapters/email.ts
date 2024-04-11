@@ -2,7 +2,7 @@ import { type Account } from "@prisma/client";
 
 export const EMAIL_TEMPLATES = {
 	MAGIC_LINK_LOGIN: {
-		from: "",
+		from: "no-reply@econominhas.com.br",
 		title: "",
 		body: "",
 	},

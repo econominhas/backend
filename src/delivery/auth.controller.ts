@@ -14,7 +14,7 @@ import { AuthUseCase } from "models/auth";
 
 import {
 	CreateFromEmailProviderDto,
-	CreateFromGoogleProviderDto,
+	CreateFromExternalProviderDto,
 	CreateFromPhoneProviderDto,
 	ExchangeCodeDto,
 	RefreshTokenDto,
@@ -32,12 +32,32 @@ export class AuthController {
 	@Public()
 	async createFromGoogleProvider(
 		@Body()
-		body: CreateFromGoogleProviderDto,
+		body: CreateFromExternalProviderDto,
 		@Res({ passthrough: true })
 		res: Response,
 	) {
 		const { isFirstAccess, ...data } =
 			await this.authService.createFromGoogleProvider(body);
+
+		if (isFirstAccess) {
+			res.status(HttpStatus.CREATED);
+		} else {
+			res.status(HttpStatus.OK);
+		}
+
+		return data;
+	}
+
+	@Post("/facebook")
+	@Public()
+	async createFromFacebookProvider(
+		@Body()
+		body: CreateFromExternalProviderDto,
+		@Res({ passthrough: true })
+		res: Response,
+	) {
+		const { isFirstAccess, ...data } =
+			await this.authService.createFromFacebookProvider(body);
 
 		if (isFirstAccess) {
 			res.status(HttpStatus.CREATED);

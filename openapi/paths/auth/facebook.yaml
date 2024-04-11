@@ -1,10 +1,10 @@
 post:
   tags:
     - Auth
-  summary: Sign In/Up with Google
+  summary: Sign In/Up with Facebook
   description: |
-    Sign Ins or Sign Ups a user using a google account
-  operationId: auth-google
+    Sign Ins or Sign Ups a user using a facebook account
+  operationId: auth-facebook
   requestBody:
     content:
       application/json:

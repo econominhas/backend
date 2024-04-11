@@ -12,7 +12,6 @@
 		"type": "git",
 		"url": "git+https://github.com/econominhas/backend.git"
 	},
-	"packageManager": "^pnpm@8.15.6",
 	"engines": {
 		"node": ">=20"
 	},
@@ -81,14 +80,14 @@
 		"webpack-cli": "^5.1.4"
 	},
 	"scripts": {
-		"prepare": "husky install && pnpm run db:prisma",
-		"db:prisma": "pnpm run lint:prisma && prisma generate --generator client",
-		"db:docs": "pnpm run lint:prisma && prisma generate --generator dbml && dbdocs build ./prisma/schema.dbml",
-		"db:gen-migration": "pnpm run lint:prisma && prisma migrate dev --name",
+		"prepare": "husky install && npm run db:prisma",
+		"db:prisma": "npm run lint:prisma && prisma generate --generator client",
+		"db:docs": "npm run lint:prisma && prisma generate --generator dbml && dbdocs build ./prisma/schema.dbml",
+		"db:gen-migration": "npm run lint:prisma && prisma migrate dev --name",
 		"db:migrate": "prisma migrate deploy",
 		"openapi:serve": "redocly preview-docs",
-		"openapi:bundle": "pnpm run lint:openapi && redocly bundle -o openapi/bundle.yaml",
-		"openapi:postman": "pnpm run openapi:bundle && openapi2postmanv2 -s openapi/bundle.yaml -o openapi/postman.json -O folderStrategy=Tags,requestParametersResolution=Example",
+		"openapi:bundle": "npm run lint:openapi && redocly bundle -o openapi/bundle.yaml",
+		"openapi:postman": "npm run openapi:bundle && openapi2postmanv2 -s openapi/bundle.yaml -o openapi/postman.json -O folderStrategy=Tags,requestParametersResolution=Example",
 		"build": "./scripts/ci-cd/build.sh",
 		"release": "standard-version",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -98,7 +97,7 @@
 		"start:db": "docker compose up postgres",
 		"start:prod": "node main",
 		"clean:docker": "docker container rm econominhas-api && docker image rm econominhas-api",
-		"lint:all": "pnpm run lint:ts && pnpm run lint:code && pnpm run lint:prisma && pnpm run lint:openapi",
+		"lint:all": "npm run lint:ts && npm run lint:code && npm run lint:prisma && npm run lint:openapi",
 		"lint:ts": "tsc --project tsconfig.lint.json",
 		"lint:code": "eslint \"src/**/*.ts\" --fix --quiet",
 		"lint:prisma": "prisma-case-format --file prisma/schema.prisma --map-table-case snake,plural --map-field-case snake --map-enum-case snake -p",

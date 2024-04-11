@@ -17,6 +17,7 @@ import {
 	type CreateWithEmail,
 	type UpdateProviderInput,
 	type GetManyByProviderOutput,
+	CreateWithFacebook,
 } from "models/auth";
 import { IdAdapter } from "adapters/id";
 import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
@@ -67,6 +68,24 @@ export class AuthRepositoryService extends AuthRepository {
 							accessToken: iAsGoogle.google.accessToken,
 							refreshToken: iAsGoogle.google.refreshToken,
 							expiresAt: iAsGoogle.google.expiresAt,
+						},
+					},
+				},
+			});
+		}
+
+		const iAsFacebook = i as CreateWithFacebook;
+		if (iAsFacebook.facebook) {
+			return this.accountRepository.create({
+				data: {
+					...baseAccount,
+					email: iAsFacebook.email,
+					signInProviders: {
+						create: {
+							provider: SignInProviderEnum.FACEBOOK,
+							providerId: iAsFacebook.facebook.id,
+							accessToken: iAsFacebook.facebook.accessToken,
+							expiresAt: iAsFacebook.facebook.expiresAt,
 						},
 					},
 				},
