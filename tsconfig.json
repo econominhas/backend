@@ -19,6 +19,11 @@
 		"forceConsistentCasingInFileNames": false,
 		"noFallthroughCasesInSwitch": false
 	},
+	"watchOptions": {
+		"watchFile": "dynamicPriorityPolling",
+		"watchDirectory": "dynamicPriorityPolling",
+		"excludeDirectories": ["**/node_modules", "dist", "dist-lint"]
+	},
 	"include": ["src"],
 	"exclude": ["dist", "dist-lint"]
 }

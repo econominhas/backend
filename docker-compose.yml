@@ -46,7 +46,8 @@ services:
     env_file:
       - .env.docker
     volumes:
-      - ./:/app/
+      - ./:/app
+      - /node_modules
     networks:
       - econominhas-api_network
 

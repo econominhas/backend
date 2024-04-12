@@ -1,11 +1,16 @@
 FROM node:20
 
+WORKDIR /app
+
+RUN npm i --global pnpm
+
 COPY ./package.json ./package.json
+COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
 
-RUN npm i --ignore-scripts --no-package-lock
+RUN pnpm i --ignore-scripts --frozen-lockfile
 
-ADD ./ ./
+COPY ./ ./
 
-RUN npm run db:prisma
+RUN pnpm run db:prisma
 
-CMD npm run start:docker
+CMD pnpm run start:docker
