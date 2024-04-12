@@ -92,7 +92,7 @@
 		"release": "standard-version",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"start": "nest start",
-		"start:docker": "nest start --watch",
+		"start:docker": "nest start --tsc --watch",
 		"start:dev": "docker compose up",
 		"start:db": "docker compose up postgres",
 		"start:prod": "node main",
