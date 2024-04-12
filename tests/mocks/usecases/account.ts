@@ -4,16 +4,14 @@ import { type AccountUseCase } from "../../../src/models/account";
 
 export const makeAccountServiceMock = () => {
 	const mock: Mock<AccountUseCase> = {
-		getOnboarding: jest.fn(),
 		iam: jest.fn(),
 		setBudget: jest.fn(),
 		updateName: jest.fn(),
-		updateOnboarding: jest.fn(),
 	};
 
 	const outputs = {
 		setBudget: {
-			sucess: undefined,
+			success: undefined,
 		},
 	};
 	const module = {
