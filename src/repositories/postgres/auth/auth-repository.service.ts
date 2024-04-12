@@ -48,11 +48,6 @@ export class AuthRepositoryService extends AuthRepository {
 					id: accountId,
 				},
 			},
-			onboarding: {
-				create: {
-					id: accountId,
-				},
-			},
 		};
 
 		const iAsGoogle = i as CreateWithGoogle;

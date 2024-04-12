@@ -43,7 +43,7 @@ describe("Usecases > Budget", () => {
 			budgetRepository.outputs.createWithItems.sucess,
 		);
 		accountService.mock.setBudget.mockResolvedValue(
-			accountService.outputs.setBudget.sucess,
+			accountService.outputs.setBudget.success,
 		);
 		categoryRepository.mock.getByUser.mockResolvedValue(
 			categoryRepository.outputs.getByUser.activeCategory,

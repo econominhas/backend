@@ -41,8 +41,6 @@ model Account {
   createdAt DateTime @default(now()) @map("created_at")
 
   config                    Config?
-  salary                    Salary?
-  onboarding                Onboarding?
   magicLinkCode             MagicLinkCode?
   signInProviders           SignInProvider[]
   refreshTokens             RefreshToken[]
@@ -90,23 +88,6 @@ model Config {
   @@map("configs")
 }
 
-/// Contains data about the user's onboarding and the steps concluded
-model Onboarding {
-  id           String    @id @db.Char(16) /// Same as accountId
-  accountId    String    @map("account_id") @db.Char(16)
-  name         DateTime? @db.Timestamp
-  categories   DateTime? @db.Timestamp
-  bankAccounts DateTime? @map("bank_accounts") @db.Timestamp
-  creditCards  DateTime? @map("credit_cards") @db.Timestamp
-  budget       DateTime? @db.Timestamp
-  salary       DateTime? @db.Timestamp
-
-  account Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
-
-  @@unique([accountId])
-  @@map("onboardings")
-}
-
 /// Contains codes to be used by the users to login
 model MagicLinkCode {
   accountId     String   @id @map("account_id") @db.Char(16)
@@ -130,53 +111,6 @@ model RefreshToken {
   @@id([accountId, refreshToken])
   @@unique([refreshToken])
   @@map("refresh_tokens")
-}
-
-// **********************************
-//
-// Salary
-//
-// **********************************
-
-enum EmploymentContractTypeEnum {
-  CLT
-  PJ
-
-  @@map("employment_contract_type_enum")
-}
-
-enum SalaryTypeEnum {
-  MONEY
-  BENEFIT_VA
-  BENEFIT_VT
-
-  @@map("salary_type_enum")
-}
-
-model Salary {
-  id                     String                     @id @db.Char(16) /// Same as accountId
-  accountId              String                     @map("account_id") @db.Char(16)
-  employmentContractType EmploymentContractTypeEnum @map("employment_contract_type")
-  startAt                DateTime?                  @map("start_at")
-
-  account                     Account                      @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  salaryRecurrentTransactions SalaryRecurrentTransaction[]
-
-  @@unique([accountId])
-  @@map("salaries")
-}
-
-model SalaryRecurrentTransaction {
-  id                     String         @id @db.Char(16)
-  salaryId               String         @map("salary_id") @db.Char(16)
-  recurrentTransactionId String         @map("recurrent_transaction_id") @db.Char(16)
-  type                   SalaryTypeEnum
-
-  salary               Salary               @relation(fields: [salaryId], references: [id], onDelete: Cascade)
-  recurrentTransaction RecurrentTransaction @relation(fields: [recurrentTransactionId], references: [id], onDelete: Cascade)
-
-  @@unique([salaryId, type])
-  @@map("salary_recurrent_transactions")
 }
 
 // **********************************
@@ -734,7 +668,7 @@ model RecurrentTransaction {
   type              TransactionTypeEnum
   name              String                   @db.VarChar(30)
   description       String                   @db.VarChar(300)
-  isSystemManagedT  Boolean                  @map("is_system_managed_t") /// Same as "isSystemManaged". It exists because some RecurrentTransactions may be system managed, but the Trasactions created by this RecurrentTransaction aren't. An example of it it's the salary, we have a specific interface for the user to managed it, and it shouldn't be managed directly by the user like other RecurrentTransactions, but the transactions created by it are normal Transactions, that the user can edit freely.
+  isSystemManagedT  Boolean                  @map("is_system_managed_t") /// Same as "isSystemManaged". It exists because some RecurrentTransactions may be system managed, but the Transactions created by this RecurrentTransaction aren't.
   // Transaction type=IN,OUT,CREDIT
   categoryId        String?                  @map("category_id") @db.Char(16) /// Only type=IN,OUT,CREDIT transactions have this column
   // Transaction type=CREDIT
@@ -745,18 +679,17 @@ model RecurrentTransaction {
   bankAccountFromId String?                  @map("bank_account_from_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
   bankAccountToId   String?                  @map("bank_account_to_id") @db.Char(16) /// Only type=TRANSFER transactions have this column
 
-  account                     Account                      @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  budget                      Budget                       @relation(fields: [budgetId], references: [id], onDelete: Restrict)
-  salaryRecurrentTransactions SalaryRecurrentTransaction[]
+  account         Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  budget          Budget       @relation(fields: [budgetId], references: [id], onDelete: Restrict)
   // Transaction type=IN,OUT,CREDIT
-  category                    Category?                    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  category        Category?    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   // Transaction type=CREDIT
-  card                        Card?                        @relation(fields: [cardId], references: [id], onDelete: Restrict)
+  card            Card?        @relation(fields: [cardId], references: [id], onDelete: Restrict)
   // Transaction type=IN,OUT
-  bankAccount                 BankAccount?                 @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
+  bankAccount     BankAccount? @relation(name: "RecurrentTransactionBankAccount", fields: [bankAccountId], references: [id], onDelete: Restrict)
   // Transaction type=TRANSFER
-  bankAccountFrom             BankAccount?                 @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
-  bankAccountTo               BankAccount?                 @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
+  bankAccountFrom BankAccount? @relation(name: "RecurrentTransactionBankAccountFrom", fields: [bankAccountFromId], references: [id], onDelete: Restrict)
+  bankAccountTo   BankAccount? @relation(name: "RecurrentTransactionBankAccountTo", fields: [bankAccountToId], references: [id], onDelete: Restrict)
 
   @@map("recurrent_transactions")
 }
