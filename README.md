@@ -24,6 +24,7 @@ This project use lot's of tools to be as efficient as possible, here's the list 
 - [docker](https://www.docker.com/) & [docker-compose](https://docs.docker.com/compose/) to orchestrate (to "run") the api, database, localstack and all the heavy-external tools that we need to make the project work
 - [nestjs](https://nestjs.com/) framework to help with dependency injection and make the code more readable
 - [github actions](https://docs.github.com/en/actions) to run pipelines to deploy and validate things
+- [pnpm](https://pnpm.io/) package manager to decrease the size of the packages used for development
 
 ### Documentation
 
