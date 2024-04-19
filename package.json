@@ -95,6 +95,7 @@
 		"start": "nest start",
 		"start:docker": "nest start --tsc --watch",
 		"start:dev": "docker compose up",
+        "start:dev:macos-detach": "docker-compose up -d",
 		"start:db": "docker compose up postgres",
 		"start:prod": "node main",
 		"clean:docker": "docker container rm econominhas-api && docker image rm econominhas-api",
