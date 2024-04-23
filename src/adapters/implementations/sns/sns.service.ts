@@ -10,7 +10,7 @@ import {
 } from "adapters/topic";
 import { IdAdapter } from "adapters/id";
 
-import { UIDAdapterService } from "../uid/uid.service";
+import { UlidAdapterService } from "../ulid/ulid.service";
 
 @Injectable()
 export class SNSAdapterService extends TopicAdapter {
@@ -20,7 +20,7 @@ export class SNSAdapterService extends TopicAdapter {
 		@Inject(ConfigService)
 		protected config: AppConfig,
 
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

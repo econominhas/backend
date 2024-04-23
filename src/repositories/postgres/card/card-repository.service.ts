@@ -33,8 +33,8 @@ import {
 	type UpsertManyBillsInput,
 } from "models/card";
 import { IdAdapter } from "adapters/id";
-import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
 import { type PaginatedRepository } from "types/paginated-items";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 import { InjectRaw, InjectRepository, RawPostgres, Repository } from "..";
 
@@ -50,7 +50,7 @@ export class CardRepositoryService extends CardRepository {
 		@InjectRaw()
 		private readonly rawPostgres: RawPostgres,
 
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

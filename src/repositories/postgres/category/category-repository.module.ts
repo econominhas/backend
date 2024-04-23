@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { UIDAdapterModule } from "adapters/implementations/uid/uid.module";
+import { ULIDAdapterModule } from "adapters/implementations/ulid/ulid.module";
 
 import { PostgresModule } from "..";
 
@@ -9,7 +9,7 @@ import { CategoryRepositoryService } from "./category-repository.service";
 @Module({
 	imports: [
 		PostgresModule.forFeature(["defaultCategory", "category"]),
-		UIDAdapterModule,
+		ULIDAdapterModule,
 	],
 	providers: [CategoryRepositoryService],
 	exports: [CategoryRepositoryService],

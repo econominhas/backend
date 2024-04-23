@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 
-import { UIDAdapterModule } from "adapters/implementations/uid/uid.module";
 import { DayJsAdapterModule } from "adapters/implementations/dayjs/dayjs.module";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 import { PostgresModule } from "..";
 
@@ -11,7 +11,7 @@ import { CardRepositoryService } from "./card-repository.service";
 	imports: [
 		PostgresModule.forFeature(["cardProvider", "card", "cardBill"]),
 		PostgresModule.raw(),
-		UIDAdapterModule,
+		UlidAdapterService,
 		DayJsAdapterModule,
 	],
 	providers: [CardRepositoryService],

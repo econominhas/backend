@@ -6,7 +6,6 @@ import {
 } from "@nestjs/common";
 
 import { IdAdapter } from "adapters/id";
-import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
 import { UtilsAdapterService } from "adapters/implementations/utils/utils.service";
 import { UtilsAdapter } from "adapters/utils";
 import { BankRepository, BankUseCase } from "models/bank";
@@ -31,6 +30,7 @@ import { BankService } from "usecases/bank/bank.service";
 import { BudgetService } from "usecases/budget/budget.service";
 import { CardService } from "usecases/card/card.service";
 import { type PaginatedItems } from "types/paginated-items";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 @Injectable()
 export class TransactionService extends TransactionUseCase {
@@ -53,7 +53,7 @@ export class TransactionService extends TransactionUseCase {
 		@Inject(CardService)
 		private readonly cardService: CardUseCase,
 
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 		@Inject(UtilsAdapterService)
 		private readonly utilsAdapter: UtilsAdapter,

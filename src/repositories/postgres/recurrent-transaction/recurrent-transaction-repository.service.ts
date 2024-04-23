@@ -9,8 +9,8 @@ import {
 	type CreateInput,
 } from "models/recurrent-transaction";
 import { IdAdapter } from "adapters/id";
-import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
 import { type PaginatedRepository } from "types/paginated-items";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 import { InjectRepository, Repository } from "..";
 
@@ -20,7 +20,7 @@ export class RecurrentTransactionRepositoryService extends RecurrentTransactionR
 		@InjectRepository("recurrentTransaction")
 		private readonly recurrentTransactionRepository: Repository<"recurrentTransaction">,
 
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

@@ -8,12 +8,12 @@ import {
 } from "adapters/queue";
 import { IdAdapter } from "adapters/id";
 
-import { UIDAdapterService } from "../uid/uid.service";
+import { UlidAdapterService } from "../ulid/ulid.service";
 
 @Injectable()
 export class SQSAdapterService extends QueueAdapter {
 	constructor(
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 
 		private readonly client: SqsService,

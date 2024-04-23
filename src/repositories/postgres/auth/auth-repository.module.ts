@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { UIDAdapterModule } from "adapters/implementations/uid/uid.module";
+import { ULIDAdapterModule } from "adapters/implementations/ulid/ulid.module";
 
 import { PostgresModule } from "..";
 
@@ -9,7 +9,7 @@ import { AuthRepositoryService } from "./auth-repository.service";
 @Module({
 	imports: [
 		PostgresModule.forFeature(["account", "signInProvider"]),
-		UIDAdapterModule,
+		ULIDAdapterModule,
 	],
 	providers: [AuthRepositoryService],
 	exports: [AuthRepositoryService],

@@ -17,8 +17,8 @@ import {
 	type IncrementBalanceInput,
 } from "models/bank";
 import { IdAdapter } from "adapters/id";
-import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
 import { type PaginatedRepository } from "types/paginated-items";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 import { InjectRepository, Repository } from "..";
 
@@ -30,7 +30,7 @@ export class BankRepositoryService extends BankRepository {
 		@InjectRepository("bankAccount")
 		private readonly bankAccountRepository: Repository<"bankAccount">,
 
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();
