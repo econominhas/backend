@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
 
-import { HealthCheckModule } from "health-check/health-check.module";
+import { HealthCheckModule } from "usecases/health-check/health-check.module";
 
 import { AccountModule } from "./usecases/account/account.module";
 import { PostgresModule } from "./repositories/postgres";
