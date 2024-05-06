@@ -73,7 +73,7 @@ export class GoogleAdapterService extends AuthProviderAdapter {
 			})
 			.then(r => r.data as ExchangeCodeAPIOutput)
 			.catch(err => {
-				throw new Error(JSON.stringify(err?.response?.data || {}));
+				throw new Error(JSON.stringify(err?.response?.data || err));
 			});
 
 		return {
