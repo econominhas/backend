@@ -11,8 +11,8 @@ import {
 	type GetMonthlyAmountByCategoryInput,
 	type GetMonthlyAmountByCategoryOutput,
 } from "models/transaction";
-import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
 import { IdAdapter } from "adapters/id";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 import { InjectRepository, Repository } from "..";
 
@@ -22,7 +22,7 @@ export class TransactionRepositoryService extends TransactionRepository {
 		@InjectRepository("transaction")
 		private readonly transactionRepository: Repository<"transaction">,
 
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

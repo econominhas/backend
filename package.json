@@ -37,7 +37,8 @@
 		"reflect-metadata": "^0.1.13",
 		"rxjs": "^7.8.1",
 		"semver": "^7.5.4",
-		"uid": "^2.0.2"
+		"uid": "^2.0.2",
+		"ulid": "^2.3.0"
 	},
 	"devDependencies": {
 		"@econominhas/eslint-config": "^1.0.0",
@@ -110,5 +111,6 @@
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./test/jest-e2e.json",
 		"script:id": "ts-node -r tsconfig-paths/register scripts/id.ts"
-	}
+	},
+	"packageManager": "pnpm@9.0.4+sha1.b198ac6d38244fd829253720f9daafd6a606834d"
 }

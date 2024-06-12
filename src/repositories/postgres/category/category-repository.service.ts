@@ -9,7 +9,7 @@ import {
 } from "models/category";
 import { type PaginatedRepository } from "types/paginated-items";
 import { IdAdapter } from "adapters/id";
-import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 import { InjectRepository, Repository } from "..";
 
@@ -21,7 +21,7 @@ export class CategoryRepositoryService extends CategoryRepository {
 		@InjectRepository("category")
 		private readonly categoryRepository: Repository<"category">,
 
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

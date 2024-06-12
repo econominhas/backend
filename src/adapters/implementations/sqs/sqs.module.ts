@@ -4,7 +4,7 @@ import { ConfigModule } from "@nestjs/config";
 
 import { type AppConfig } from "config";
 
-import { UIDAdapterModule } from "../uid/uid.module";
+import { ULIDAdapterModule } from "../ulid/ulid.module";
 
 import { SQSAdapterService } from "./sqs.service";
 
@@ -31,7 +31,7 @@ export const getQueueProducers = (configService: AppConfig) => {
 
 @Module({
 	imports: [
-		UIDAdapterModule,
+		ULIDAdapterModule,
 
 		SqsModule.registerAsync({
 			inject: [ConfigModule],

@@ -10,9 +10,9 @@ import {
 	type UpsertManyBudgetDatesInput,
 } from "models/budget";
 import { IdAdapter } from "adapters/id";
-import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
 import { DateAdapter } from "adapters/date";
 import { DayjsAdapterService } from "adapters/implementations/dayjs/dayjs.service";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 import { InjectRepository, Repository } from "..";
 
@@ -26,7 +26,7 @@ export class BudgetRepositoryService extends BudgetRepository {
 
 		@Inject(DayjsAdapterService)
 		private readonly dateAdapter: DateAdapter,
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

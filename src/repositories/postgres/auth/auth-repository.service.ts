@@ -20,7 +20,7 @@ import {
 	CreateWithFacebook,
 } from "models/auth";
 import { IdAdapter } from "adapters/id";
-import { UIDAdapterService } from "adapters/implementations/uid/uid.service";
+import { UlidAdapterService } from "adapters/implementations/ulid/ulid.service";
 
 import { InjectRepository, Repository } from "..";
 
@@ -32,7 +32,7 @@ export class AuthRepositoryService extends AuthRepository {
 		@InjectRepository("signInProvider")
 		private readonly signInProviderRepository: Repository<"signInProvider">,
 
-		@Inject(UIDAdapterService)
+		@Inject(UlidAdapterService)
 		private readonly idAdapter: IdAdapter,
 	) {
 		super();

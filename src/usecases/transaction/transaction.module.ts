@@ -10,7 +10,7 @@ import { CategoryRepositoryModule } from "repositories/postgres/category/categor
 import { CardRepositoryModule } from "repositories/postgres/card/card-repository.module";
 import { BudgetModule } from "usecases/budget/budget.module";
 import { CardModule } from "usecases/card/card.module";
-import { UIDAdapterModule } from "adapters/implementations/uid/uid.module";
+import { ULIDAdapterModule } from "adapters/implementations/ulid/ulid.module";
 
 import { TransactionService } from "./transaction.service";
 
@@ -27,7 +27,7 @@ import { TransactionService } from "./transaction.service";
 		BudgetModule,
 		CardModule,
 
-		UIDAdapterModule,
+		ULIDAdapterModule,
 		UtilsAdapterModule,
 	],
 	providers: [TransactionService],

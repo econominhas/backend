@@ -35,7 +35,7 @@ enum SignInProviderEnum {
 
 /// Contains user's sign in information
 model Account {
-  id        String   @id @db.Char(16)
+  id        String   @id @db.Char(26)
   email     String?  @db.VarChar(150)
   phone     String?  @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
@@ -60,7 +60,7 @@ model Account {
 
 /// Contains user's link to sign in providers, like google, discord, etc
 model SignInProvider {
-  accountId    String             @map("account_id") @db.Char(16)
+  accountId    String             @map("account_id") @db.Char(26)
   provider     SignInProviderEnum
   providerId   String             @map("provider_id") @db.VarChar(50)
   accessToken  String             @map("access_token") @db.VarChar(300)
@@ -75,7 +75,7 @@ model SignInProvider {
 
 /// Contains user's account config
 model Config {
-  id              String  @id @db.Char(16) /// Same as accountId
+  id              String  @id @db.Char(26) /// Same as accountId
   accountId       String  @map("account_id") @db.Char(16)
   name            String? @db.VarChar(20)
   currentBudgetId String? @map("current_budget_id") @db.Char(16)
@@ -90,7 +90,7 @@ model Config {
 
 /// Contains codes to be used by the users to login
 model MagicLinkCode {
-  accountId     String   @id @map("account_id") @db.Char(16)
+  accountId     String   @id @map("account_id") @db.Char(26)
   code          String   @db.Char(32)
   isFirstAccess Boolean  @map("is_first_access")
   createdAt     DateTime @default(now()) @map("created_at")
@@ -102,7 +102,7 @@ model MagicLinkCode {
 
 /// Contains codes to be used to refresh the access token
 model RefreshToken {
-  accountId    String   @map("account_id") @db.Char(16)
+  accountId    String   @map("account_id") @db.Char(26)
   refreshToken String   @map("refresh_token") @db.Char(64)
   createdAt    DateTime @default(now()) @map("created_at")
 
@@ -121,7 +121,7 @@ model RefreshToken {
 
 /// Contains information about the subscriptions
 model Subscription {
-  id                    String  @id @db.Char(16)
+  id                    String  @id @db.Char(26)
   name                  String  @db.VarChar(30)
   icon                  String  @db.VarChar(50)
   color                 String  @db.Char(7)
@@ -151,7 +151,7 @@ model Subscription {
 
 /// Contains the user's subscription
 model UserSubscription {
-  id             String    @id @db.Char(16)
+  id             String    @id @db.Char(26)
   accountId      String    @map("account_id") @db.Char(16)
   subscriptionId String    @map("subscription_id") @db.Char(16)
   startedAt      DateTime  @default(now()) @map("started_at")
@@ -185,7 +185,7 @@ model TermsAndPolicies {
 
 /// Contains the record of all the terms accepted by the user
 model TermsAndPoliciesAccepted {
-  accountId  String   @map("account_id") @db.Char(16)
+  accountId  String   @map("account_id") @db.Char(26)
   semVer     String   @map("sem_ver") @db.Char(5) /// Terms and policies ID
   acceptedAt DateTime @default(now()) @map("accepted_at")
 
@@ -219,7 +219,7 @@ model BankProvider {
 
 /// Contains the record of all the user's banks accounts
 model BankAccount {
-  id             String   @id @db.Char(16)
+  id             String   @id @db.Char(26)
   accountId      String   @map("account_id") @db.Char(16)
   bankProviderId String   @map("bank_provider_id") @db.Char(16)
   name           String   @db.VarChar(30)
@@ -294,7 +294,7 @@ enum CardVariantEnum {
 
 /// Contains the record of all the existent cards
 model CardProvider {
-  id             String          @id @db.Char(16)
+  id             String          @id @db.Char(26)
   bankProviderId String?         @map("bank_provider_id") @db.Char(16)
   name           String          @db.VarChar(30)
   iconUrl        String          @map("icon_url") @db.VarChar(200)
@@ -313,7 +313,7 @@ model CardProvider {
 
 /// Contains the record of all the user's cards
 model Card {
-  id             String     @id @db.Char(16)
+  id             String     @id @db.Char(26)
   accountId      String     @map("account_id") @db.Char(16)
   cardProviderId String     @map("card_provider_id") @db.Char(16)
   name           String     @db.VarChar(30)
@@ -340,7 +340,7 @@ model Card {
 
 /// Contains the record of all card's bills, we save this to have a history of the bills dates, since the user can change the dueDay of the card, and if we define it dynamically, it will be inconsistent
 model CardBill {
-  id                   String    @id @db.Char(16)
+  id                   String    @id @db.Char(26)
   cardId               String    @map("card_id") @db.Char(16)
   month                DateTime  @db.Date /// The first day of the month relative to the card's dueDay
   startAt              DateTime  @map("start_at") @db.Date /// The day that the transactions start to count as part of this bill
@@ -434,7 +434,7 @@ model DefaultCategory {
 
 /// Contains all the user's categories
 model Category {
-  id          String   @id @db.Char(16)
+  id          String   @id @db.Char(26)
   accountId   String   @map("account_id") @db.Char(16)
   name        String   @db.VarChar(30)
   description String   @db.VarChar(300)
@@ -458,7 +458,7 @@ model Category {
 
 /// Contains the user's budget information
 model Budget {
-  id          String @id @db.Char(16)
+  id          String @id @db.Char(26)
   accountId   String @map("account_id") @db.Char(16)
   name        String @db.VarChar(30)
   description String @db.VarChar(300)
@@ -473,7 +473,7 @@ model Budget {
 
 /// Contains the budgets information by date (month-year)
 model BudgetDate {
-  id       String   @id @db.Char(16)
+  id       String   @id @db.Char(26)
   budgetId String   @map("budget_id") @db.Char(16)
   month    Int      @db.SmallInt
   year     Int      @db.SmallInt
@@ -517,7 +517,7 @@ enum TransactionTypeEnum {
 
 /// Contains all the user's transactions
 model Transaction {
-  id                     String              @id @db.Char(16)
+  id                     String              @id @db.Char(26)
   accountId              String              @map("account_id") @db.Char(16)
   type                   TransactionTypeEnum
   name                   String              @db.VarChar(30)
@@ -556,7 +556,7 @@ model Transaction {
 
 /// Contains the installment data of an transactions
 model Installment {
-  transactionId      String  @id @map("transaction_id") @db.Char(16)
+  transactionId      String  @id @map("transaction_id") @db.Char(26)
   installmentGroupId String  @map("installment_group_id") @db.Char(16) /// Group that the installment belongs, doesn't has an actual table because we don't need it
   total              Int     @db.SmallInt /// Total amount of installments
   current            Int     @db.SmallInt /// Number of the current installment
@@ -651,7 +651,7 @@ enum RecurrenceTryAgainEnum {
 /// Contains all the user's recurrent transactions.
 /// The recurrent transactions are linked to the budget, this way the user can have a better control of which transactions he wants to execute.
 model RecurrentTransaction {
-  id                String                   @id @db.Char(16)
+  id                String                   @id @db.Char(26)
   accountId         String                   @map("account_id") @db.Char(16)
   budgetId          String                   @map("budget_id") @db.Char(16)
   isSystemManaged   Boolean                  @map("is_system_managed") /// Define if the recurrent transaction is automatic controlled by the system, or if it\'s created and controled by the user
