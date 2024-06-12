@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
 
+import { HealthCheckModule } from "usecases/health-check/health-check.module";
+
 import { AccountModule } from "./usecases/account/account.module";
 import { PostgresModule } from "./repositories/postgres";
 import { TermsAndPoliciesModule } from "./usecases/terms-and-policies/terms-and-policies.module";
@@ -33,6 +35,7 @@ import { validateConfig } from "./config";
 		RecurrentTransactionModule,
 		TransactionModule,
 		WalletModule,
+		HealthCheckModule,
 	],
 })
 export class AppModule {}
